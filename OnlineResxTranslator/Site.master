@@ -67,15 +67,17 @@
 
                         <asp:LoginView runat="server" ViewStateMode="Disabled">
                             <AnonymousTemplate>
+                                <% if (SiteMaster.OpenRegistrationAllowed)
+                                    { %>
                                 <li><a runat="server" href="~/Account/Register">Registrieren</a></li>
-                                <li><a runat="server" href="~/Account/Login">Anmelden</a></li>
+                                <% } %>
+                                <li><a runat="server" href="~/Account/Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                             </AnonymousTemplate>
                             <LoggedInTemplate>
 
-                                <li><a runat="server" href="~/Account/Manage" title="Manage your account">Hello,
-                                    <asp:LoginName ID="LoginName1" runat="Server"></asp:LoginName>!</a></li>
+                                <li><a runat="server" href="~/Account/Manage" title="Manage your account">Hello, <%= HttpContext.Current.User.Identity.Name %>!</a></li>
                                 <li>
-                                    <asp:LoginStatus runat="server" LogoutAction="Redirect" LoginText="Anmelden" LogoutText="Abmelden" LogoutPageUrl="~/" OnLoggingOut="Unnamed_LoggingOut" />
+                                    <asp:LoginStatus runat="server" LogoutAction="Redirect" LogoutText="&lt;i aria-hidden=&quot;true&quot; class=&quot;glyphicon glyphicon-log-out&quot;&gt;&lt;/i&gt; Log out" LogoutPageUrl="~/" OnLoggingOut="Unnamed_LoggingOut"></asp:LoginStatus>
                                 </li>
                             </LoggedInTemplate>
                         </asp:LoginView>

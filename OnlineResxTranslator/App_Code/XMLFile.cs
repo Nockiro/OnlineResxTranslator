@@ -11,8 +11,7 @@ using System.IO;
 /// <summary>
 /// Zusammenfassungsbeschreibung für XMLFile
 /// </summary>
-public class XMLFile
-{
+public class XMLFile {
     public XMLFile()
     {
     }
@@ -74,8 +73,9 @@ public class XMLFile
     /// <param name="language">shortcut of language, e.g. de</param>
     /// <param name="filename">File which was updated, e.g. beta.aspx. Or nothing to check all files</param>
     /// <remarks></remarks>
-    public static void ComputePercentage(string project, string language, string filename)
+    public static int ComputePercentage(string project, string language, string filename)
     {
+        int Percentage = 0;
         XmlDocument LanguageXML = default(XmlDocument);
         //     // Logger.Write(LogTitle + " -> Start [" + project + " - " + language + " - " + filename + "]", Category, 10, 0, Diagnostics.TraceEventType.Start, LogTitle, logProperties);
         string projDir = ConfigurationManager.AppSettings["ProjectDirectory"] + project + "\\";
@@ -126,7 +126,6 @@ public class XMLFile
         bool SummaryUpdated = false;
         int FileElements = 0;
         int TranslatedFileElements = 0;
-        int Percentage = 0;
         if (!Directory.Exists(projDir + language))
         {
             // Logger.Write("Creating new directory '" + Directory + language + "' now.", Category, 10, 0, Diagnostics.TraceEventType.Verbose, LogTitle, logProperties);
@@ -239,23 +238,17 @@ public class XMLFile
                     SingleFile.SelectSingleNode("percentcompleted").InnerText = Percentage.ToString();
                     SingleFile.SelectSingleNode("lastchange").InnerText = DateTime.Now.ToString();
                     if (!SummaryUpdated)
-                    {
                         SummaryUpdated = true;
-                    }
 
                 }
             }
         }
-        if (!SummaryUpdated)
-        {
-            // Logger.Write("No percentage was updated. No need to save xml.", Category, 10, 0, Diagnostics.TraceEventType.Verbose, LogTitle, logProperties);
-        }
-        else
-        {
+        if (SummaryUpdated)
             // Logger.Write("Percentage was changed. Saving configuration file.", Category, 10, 0, Diagnostics.TraceEventType.Verbose, LogTitle, logProperties);
             LanguageXML.Save(projDir + language + ".xml");
-            // Logger.Write(Directory + language + ".xml updated.", Category, 10, 0, Diagnostics.TraceEventType.Verbose, LogTitle, logProperties);
-        }
+        // Logger.Write(Directory + language + ".xml updated.", Category, 10, 0, Diagnostics.TraceEventType.Verbose, LogTitle, logProperties);
+
+        return Percentage;
         // Logger.Write(LogTitle + " -> End.", Category, 10, 0, Diagnostics.TraceEventType.Stop, LogTitle, logProperties);
     }
 
@@ -265,15 +258,14 @@ public class XMLFile
     /// <param name="project">name of the project to be checked</param>
     /// <returns></returns>
     /// <remarks></remarks>
-    public static DataTable ComputeSummary(string project, double minPerc = 0, double maxPerc = 99.999)
+    public static List<ProjectShortSummary> ComputeSummary(string project, double minPerc = 0, double maxPerc = 99.999)
     {
-        DataTable functionReturnValue = default(DataTable);
+        List<ProjectShortSummary> functionReturnValue = new List<ProjectShortSummary>();
 
         string ProjDirectory = ConfigurationManager.AppSettings["ProjectDirectory"] + project + "\\";
         if (!Directory.Exists(ProjDirectory))
         {
             // Logger.Write("Directory '" + Directory + "' does not exist.", Category, 100, 0, Diagnostics.TraceEventType.Information, LogTitle, LogProperties);
-            functionReturnValue = null;
         }
         else
         {
@@ -281,14 +273,6 @@ public class XMLFile
 
             XmlDocument LanguageXML = default(XmlDocument);
             string[] AllLanguageFiles = Directory.GetFiles(ProjDirectory, "*.xml", SearchOption.TopDirectoryOnly);
-            DataTable DT = new DataTable("Summary");
-
-            var _with2 = DT.Columns;
-            _with2.Add("LanguageCode", typeof(string));
-            _with2.Add("Percentage", typeof(Double));
-            _with2.Add("LastUpdate", typeof(System.DateTime));
-
-            DataRow Row = default(DataRow);
 
             DateTime LastUpdate = default(DateTime);
             DateTime LastChange = default(DateTime);
@@ -296,8 +280,9 @@ public class XMLFile
             foreach (string LanguageFilename in AllLanguageFiles)
             {
                 LanguageXML = XMLFile.GetXMLDocument(LanguageFilename);
-                Row = DT.NewRow();
-                Row["LanguageCode"] = LanguageXML.SelectSingleNode("files").Attributes["language"].Value;
+                ProjectShortSummary pss = new ProjectShortSummary();
+                pss.LangCode = LanguageXML.SelectSingleNode("files").Attributes["language"].Value;
+
                 double Percentage = 0.0;
                 LastUpdate = DateTime.MinValue;
                 foreach (XmlNode FileNode in LanguageXML.SelectNodes("/files/file"))
@@ -311,15 +296,23 @@ public class XMLFile
                     }
                     catch (FormatException) { }
                 }
-                Percentage = Percentage / (double)LanguageXML.SelectNodes("/files/file").Count;
-                Row["Percentage"] = Percentage;
-                Row["LastUpdate"] = LastUpdate;
+                Percentage = Percentage / LanguageXML.SelectNodes("/files/file").Count;
+                pss.Percentage = Percentage;
+                pss.LastUpdate = LastUpdate;
+                pss.LangFile = LanguageFilename;
 
                 if (Percentage >= minPerc && Percentage <= maxPerc)
-                    DT.Rows.Add(Row);
+                    functionReturnValue.Add(pss);
             }
-            functionReturnValue = DT;
         }
         return functionReturnValue;
     }
+
+    public class ProjectShortSummary {
+        public string LangFile { get; set; }
+        public String LangCode { get; set; }
+        public Double Percentage { get; set; }
+        public DateTime LastUpdate { get; set; }
+    }
+
 }

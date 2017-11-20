@@ -27,7 +27,7 @@
                             <div class="col-md-10">
                                 <asp:TextBox runat="server" ID="password" TextMode="Password"  CssClass="form-control"  />
                                 <asp:RequiredFieldValidator runat="server" ControlToValidate="password"
-                                    CssClass="text-danger" ErrorMessage="Das Kennwortfeld ist erforderlich."
+                                    CssClass="text-danger" ErrorMessage="The password field is required."
                                     Display="Dynamic" ValidationGroup="SetPassword" />
                                 <asp:ModelErrorMessage runat="server" ModelStateKey="NewPassword" AssociatedControlID="password"
                                     CssClass="text-danger" SetFocusOnError="true" />
@@ -39,10 +39,10 @@
                             <div class="col-md-10">
                                 <asp:TextBox runat="server" ID="confirmPassword" TextMode="Password"  CssClass="form-control"  />
                                 <asp:RequiredFieldValidator runat="server" ControlToValidate="confirmPassword"
-                                    CssClass="text-danger" Display="Dynamic" ErrorMessage="Das Feld zum Bestätigen des Kennworts ist erforderlich."
+                                    CssClass="text-danger" Display="Dynamic" ErrorMessage="The password confirmation field is required."
                                     ValidationGroup="SetPassword" />
                                 <asp:CompareValidator runat="server" ControlToCompare="Password" ControlToValidate="confirmPassword"
-                                    CssClass="text-danger" Display="Dynamic" ErrorMessage="Das Kennwort stimmt nicht mit dem Bestätigungskennwort überein."
+                                    CssClass="text-danger" Display="Dynamic" ErrorMessage="The password does not match the confirmation."
                                     ValidationGroup="SetPassword" />
                             </div>
                         </div>
@@ -61,29 +61,29 @@
                         <h4>Formular zum Ändern des Kennworts</h4>
                         <asp:ValidationSummary runat="server" ShowModelStateErrors="true" CssClass="text-danger" />
                         <div class="form-group">
-                            <asp:Label runat="server" ID="CurrentPasswordLabel" AssociatedControlID="CurrentPassword" CssClass="col-md-2 control-label">Aktuelles Kennwort</asp:Label>
+                            <asp:Label runat="server" ID="CurrentPasswordLabel" AssociatedControlID="CurrentPassword" CssClass="col-md-2 control-label">Current password</asp:Label>
                             <div class="col-md-10">
                                 <asp:TextBox runat="server" ID="CurrentPassword" TextMode="Password" CssClass="form-control" />
                                 <asp:RequiredFieldValidator runat="server" ControlToValidate="CurrentPassword"
-                                    CssClass="text-danger" ErrorMessage="Das Feld für das aktuelle Kennwort ist erforderlich."
+                                    CssClass="text-danger" ErrorMessage="The field for your current password is required."
                                     ValidationGroup="ChangePassword" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <asp:Label runat="server" ID="NewPasswordLabel" AssociatedControlID="NewPassword" CssClass="col-md-2 control-label">Neues Kennwort</asp:Label>
+                            <asp:Label runat="server" ID="NewPasswordLabel" AssociatedControlID="NewPassword" CssClass="col-md-2 control-label">New password</asp:Label>
                             <div class="col-md-10">
                                 <asp:TextBox runat="server" ID="NewPassword" TextMode="Password" CssClass="form-control" />
                                 <asp:RequiredFieldValidator runat="server" ControlToValidate="NewPassword"
-                                    CssClass="text-danger" ErrorMessage="Das neue Kennwort ist erforderlich."
+                                    CssClass="text-danger" ErrorMessage="New password is required."
                                     ValidationGroup="ChangePassword" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <asp:Label runat="server" ID="ConfirmNewPasswordLabel" AssociatedControlID="ConfirmNewPassword" CssClass="col-md-2 control-label">Neues Kennwort bestätigen</asp:Label>
+                            <asp:Label runat="server" ID="ConfirmNewPasswordLabel" AssociatedControlID="ConfirmNewPassword" CssClass="col-md-2 control-label">Confirm new password</asp:Label>
                             <div class="col-md-10">
                                 <asp:TextBox runat="server" ID="ConfirmNewPassword" TextMode="Password" CssClass="form-control" />
                                 <asp:RequiredFieldValidator runat="server" ControlToValidate="ConfirmNewPassword"
-                                    CssClass="text-danger" Display="Dynamic" ErrorMessage="Das Bestätigen des neuen Kennworts ist erforderlich."
+                                    CssClass="text-danger" Display="Dynamic" ErrorMessage="Confirmation of new password is required."
                                     ValidationGroup="ChangePassword" />
                                 <asp:CompareValidator runat="server" ControlToCompare="NewPassword" ControlToValidate="ConfirmNewPassword"
                                     CssClass="text-danger" Display="Dynamic" ErrorMessage="The new password does not match the confirmation password."

@@ -17,6 +17,8 @@ public partial class SiteMaster : MasterPage
     //TODO: To be changed for a new project
     public static string ProjectName = ConfigurationManager.AppSettings["ProjectName"];
     public static string ProjectDescription = "Translate the " + ProjectName + " into other languages!";
+    public static Boolean OpenRegistrationAllowed = ConfigurationManager.AppSettings["EnableOpenRegistration"] != "false";
+    public static string CurrentlyChosenProject = ConfigurationManager.AppSettings["StandardChosenProject"];
 
     protected void Page_Init(object sender, EventArgs e)
     {
