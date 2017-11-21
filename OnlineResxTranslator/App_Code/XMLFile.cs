@@ -281,7 +281,16 @@ public class XMLFile {
             {
                 LanguageXML = XMLFile.GetXMLDocument(LanguageFilename);
                 ProjectShortSummary pss = new ProjectShortSummary();
-                pss.LangCode = LanguageXML.SelectSingleNode("files").Attributes["language"].Value;
+
+                // if there is something wrong with the xml file, it will raise an exception here for the first time
+                try
+                {
+                    pss.LangCode = LanguageXML.SelectSingleNode("files").Attributes["language"].Value;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Your language file " + LanguageFilename + " is damaged!", e);
+                }
 
                 double Percentage = 0.0;
                 LastUpdate = DateTime.MinValue;

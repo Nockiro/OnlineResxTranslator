@@ -6967,7 +6967,7 @@ a.list-group-item-danger.active:focus {
 .panel-default > .panel-heading {
   background-color: #464545;
 }
-
 .progress {
 	background-color: #a09f9f;
+	height: auto;
 }
