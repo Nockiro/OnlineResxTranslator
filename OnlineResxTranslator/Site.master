@@ -14,6 +14,8 @@
     </asp:PlaceHolder>
     <webopt:BundleReference runat="server" Path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <!-- Load your CSS file(s) -->
+    <link href="<%= ResolveUrl("~/Content/bootstrap_darkly.css") %>" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
@@ -39,7 +41,7 @@
             </Scripts>
         </asp:ScriptManager>
 
-        <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -59,7 +61,15 @@
                             <RoleGroups>
                                 <asp:RoleGroup Roles="admin">
                                     <ContentTemplate>
-                                        <li><a runat="server" href="~/Admin/Manage" title="Manage your account">Management</a></li>
+                                        <li class="dropdown">
+                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download" aria-expanded="false">Management <span class="caret"></span></a>
+                                            <ul class="dropdown-menu" aria-labelledby="download">
+                                                <li><a runat="server" href="~/Account/Register">Register user</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="./bootstrap.min.css">bootstrap.min.css</a></li>
+                                                <li><a href="./bootstrap.css">bootstrap.css</a></li>
+                                            </ul>
+                                        </li>
                                     </ContentTemplate>
                                 </asp:RoleGroup>
                             </RoleGroups>
@@ -69,9 +79,9 @@
                             <AnonymousTemplate>
                                 <% if (SiteMaster.OpenRegistrationAllowed)
                                     { %>
-                                <li><a runat="server" href="~/Account/Register">Registrieren</a></li>
+                                <li><a runat="server" href="~/Account/Register">Register</a></li>
                                 <% } %>
-                                <li><a runat="server" href="~/Account/Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                                <li><a runat="server" href="~/Account/Login"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;Login</a></li>
                             </AnonymousTemplate>
                             <LoggedInTemplate>
 
