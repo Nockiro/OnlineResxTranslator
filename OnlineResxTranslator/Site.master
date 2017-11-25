@@ -66,8 +66,7 @@
                                             <ul class="dropdown-menu" aria-labelledby="download">
                                                 <li><a runat="server" href="~/Account/Register">Register user</a></li>
                                                 <li class="divider"></li>
-                                                <li><a href="./bootstrap.min.css">bootstrap.min.css</a></li>
-                                                <li><a href="./bootstrap.css">bootstrap.css</a></li>
+                                                <li><a runat="server" href="~/Admin/Info">Info panel</a></li>
                                             </ul>
                                         </li>
                                     </ContentTemplate>

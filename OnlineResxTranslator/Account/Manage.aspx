@@ -25,7 +25,7 @@
                         <div class="form-group">
                             <asp:Label runat="server" AssociatedControlID="password" CssClass="col-md-2 control-label">Kennwort</asp:Label>
                             <div class="col-md-10">
-                                <asp:TextBox runat="server" ID="password" TextMode="Password"  CssClass="form-control"  />
+                                <asp:TextBox runat="server" ID="password" TextMode="Password" CssClass="form-control" />
                                 <asp:RequiredFieldValidator runat="server" ControlToValidate="password"
                                     CssClass="text-danger" ErrorMessage="The password field is required."
                                     Display="Dynamic" ValidationGroup="SetPassword" />
@@ -37,7 +37,7 @@
                         <div class="form-group">
                             <asp:Label runat="server" AssociatedControlID="confirmPassword" CssClass="col-md-2 control-label">Kennwort bestätigen</asp:Label>
                             <div class="col-md-10">
-                                <asp:TextBox runat="server" ID="confirmPassword" TextMode="Password"  CssClass="form-control"  />
+                                <asp:TextBox runat="server" ID="confirmPassword" TextMode="Password" CssClass="form-control" />
                                 <asp:RequiredFieldValidator runat="server" ControlToValidate="confirmPassword"
                                     CssClass="text-danger" Display="Dynamic" ErrorMessage="The password confirmation field is required."
                                     ValidationGroup="SetPassword" />
@@ -98,7 +98,7 @@
                     </div>
                 </asp:PlaceHolder>
             </section>
-            
+
         </div>
     </div>
 
