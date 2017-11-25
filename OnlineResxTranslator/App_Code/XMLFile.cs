@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Xml;
 using System.IO;
+using System.Data;
+using System.Data.SqlClient;
 
 /// <summary>
 /// XMLFile: Manages XML files
@@ -65,16 +67,16 @@ public class XMLFile {
     /// <summary>
     /// Refresh completed percentage
     /// </summary>
-    /// <param name="project">(Directory) name of the current project</param>
+    /// <param name="project">ProjectInfo of the current project</param>
     /// <param name="language">shortcut of language, e.g. de</param>
     /// <param name="filename">File which was updated, e.g. beta.aspx. Or nothing to check all files</param>
     /// <returns>Percentage as integer</returns>
     /// <remarks></remarks>
-    public static int ComputePercentage(string project, string language, string filename)
+    public static int ComputePercentage(ProjectInfo project, string language, string filename)
     {
         int Percentage = 0;
 
-        string projDir = ConfigurationManager.AppSettings["ProjectDirectory"] + project + "\\";
+        string projDir = ConfigurationManager.AppSettings["ProjectDirectory"] + project.Folder + "\\";
 
         // Language file does not exist, so create new language file in a potential new folder
         if (!File.Exists(projDir + language + ".xml"))
@@ -227,15 +229,15 @@ public class XMLFile {
     /// <summary>
     /// Compute a summary for given project containing languages and percentages
     /// </summary>
-    /// <param name="project">name of the project to be checked</param>
+    /// <param name="project">ProjectInfo of the project to be checked</param>
     /// <param name="maxPerc">only returns the objects in the list where the completed percentage is below gived value</param>
     /// <param name="minPerc">only returns the objects in the list where the completed percentage is above gived value</param>
-    /// <returns>A List of translated Languages as ProjectShortSummary object</returns>
-    public static List<ProjectShortSummary> ComputeSummary(string project, double minPerc = 0, double maxPerc = 99.999)
+    /// <returns>A List of translated Languages as ProjectFileShortSummary object</returns>
+    public static List<ProjectFileShortSummary> ComputeSummary(ProjectInfo project, double minPerc = 0, double maxPerc = 99.999)
     {
-        List<ProjectShortSummary> functionReturnValue = new List<ProjectShortSummary>();
+        List<ProjectFileShortSummary> functionReturnValue = new List<ProjectFileShortSummary>();
 
-        string ProjDirectory = ConfigurationManager.AppSettings["ProjectDirectory"] + project + "\\";
+        string ProjDirectory = ConfigurationManager.AppSettings["ProjectDirectory"] + project.Folder;
 
         if (Directory.Exists(ProjDirectory))
         {
@@ -243,14 +245,11 @@ public class XMLFile {
 
             string[] AllLanguageFiles = Directory.GetFiles(ProjDirectory, "*.xml", SearchOption.TopDirectoryOnly);
 
-            DateTime LastUpdate = default(DateTime);
-            DateTime LastChange = default(DateTime);
-
             foreach (string LanguageFilename in AllLanguageFiles)
             {
                 XmlDocument LanguageXML = XMLFile.GetXMLDocument(LanguageFilename);
 
-                ProjectShortSummary pss = new ProjectShortSummary();
+                ProjectFileShortSummary pss = new ProjectFileShortSummary();
 
                 // if there is something wrong with the xml file, it will raise an exception here for the first time
                 try
@@ -260,14 +259,14 @@ public class XMLFile {
                 catch (Exception e) { throw new Exception("Your language file " + LanguageFilename + " is damaged!", e); }
 
                 double Percentage = 0.0;
-                LastUpdate = DateTime.MinValue;
+                DateTime LastUpdate = DateTime.MinValue;
 
                 foreach (XmlNode FileNode in LanguageXML.SelectNodes("/files/file"))
                 {
                     Percentage += Convert.ToDouble(FileNode["percentcompleted"].InnerText);
                     try
                     {
-                        LastChange = Convert.ToDateTime(FileNode["lastchange"].InnerText);
+                        DateTime LastChange = Convert.ToDateTime(FileNode["lastchange"].InnerText);
                         if (LastChange > LastUpdate)
                             LastUpdate = LastChange;
                     }
@@ -286,7 +285,46 @@ public class XMLFile {
         return functionReturnValue;
     }
 
-    public class ProjectShortSummary {
+    public static List<ProjectInfo> getProjects()
+    {
+        List<ProjectInfo> list = new List<ProjectInfo>();
+        SQLHelper sqlhelper = new SQLHelper();
+        sqlhelper.OpenConnection();
+
+        try
+        {
+            DataTable projectList = sqlhelper.SelectFromTable("TrProjects", "id", "project", "folder");
+            foreach (DataRow r in projectList.Rows)
+                list.Add(new ProjectInfo() { ID = (int)r["id"], Name = (string)r["project"], Folder = (string)r["folder"] });
+
+            sqlhelper.CloseConnection();
+
+            return list;
+        }
+        catch (SqlException) // probably the table doesn't exist - but since this method is called on every page call, it'd cost a bit of resources, so only catch it if needed
+        {
+
+            sqlhelper.OpenConnection();
+            if (!sqlhelper.DoesTableExist("TrProjects"))
+                sqlhelper.CreateTable("TrProjects",
+                    new KeyValuePair<string, string>("id", "int NOT NULL IDENTITY (0,1) PRIMARY KEY"),
+                    new KeyValuePair<string, string>("project", "varchar(255) NOT NULL"),
+                    new KeyValuePair<string, string>("folder", "varchar(255) NOT NULL"));
+
+            sqlhelper.CloseConnection();
+
+            return getProjects();
+        }
+
+    }
+
+    public class ProjectInfo {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Folder { get; set; }
+    }
+
+    public class ProjectFileShortSummary {
         public string LangFile { get; set; }
         public String LangCode { get; set; }
         public Double Percentage { get; set; }

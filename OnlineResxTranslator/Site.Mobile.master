@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.master.cs" Inherits="SiteMaster" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.Mobile.master.cs" Inherits="Site_Mobile"  MasterPageFile="~/Site.master" %>
 
 <%@ Register Src="~/ViewSwitcher.ascx" TagPrefix="friendlyUrls" TagName="ViewSwitcher" %>
 
@@ -15,10 +15,11 @@
     <form id="form1" runat="server">
         <asp:ScriptManager runat="server" />
         <div>
-            <h1>Mobile Master Page</h1>
-            <asp:ContentPlaceHolder runat="server" ID="FeaturedContent" >
+            <h1>Mobile Page</h1>
+            <asp:ContentPlaceHolder runat="server" ID="FeaturedContent">
                 <p>
-                    Navigation</p>
+                    Navigation
+                </p>
             </asp:ContentPlaceHolder>
             <div class="container">
                 <div class="navbar-collapse collapse">
@@ -64,13 +65,12 @@
                 </div>
             </div>
         </div>
-       
-            <section class="content-wrapper main-content clear-fix">
-                <asp:ContentPlaceHolder runat="server" ID="MainContent" />
-            </section>
 
-            <friendlyUrls:ViewSwitcher ID="ViewSwitcher1" runat="server" />
-        </div>
+        <section class="content-wrapper main-content clear-fix">
+            <asp:ContentPlaceHolder runat="server" ID="MainContent" />
+        </section>
+
+        <friendlyUrls:ViewSwitcher ID="ViewSwitcher1" runat="server" />
     </form>
 </body>
 </html>

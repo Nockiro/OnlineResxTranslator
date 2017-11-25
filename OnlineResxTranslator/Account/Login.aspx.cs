@@ -12,6 +12,20 @@ public partial class Account_Login : Page
         RegisterHyperLink.NavigateUrl = "Register";
 
         var returnUrl = HttpUtility.UrlEncode(Request.QueryString["ReturnUrl"]);
+        var redirectProblem = HttpUtility.UrlEncode(Request.QueryString["re"]);
+
+        if (!String.IsNullOrEmpty(redirectProblem)) {
+            switch (redirectProblem)
+            {
+                // forbidden
+                case "403":
+                    FailureText.Text = "You... don't have access. Sorry.";
+                    break;
+
+            }
+            ErrorMessage.Visible = true;
+        }
+
         if (!String.IsNullOrEmpty(returnUrl))
         {
             RegisterHyperLink.NavigateUrl += "?ReturnUrl=" + returnUrl;

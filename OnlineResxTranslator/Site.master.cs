@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Security.Claims;
-using System.Security.Principal;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-public partial class SiteMaster : MasterPage
-{
+public partial class SiteMaster : MasterPage {
     private const string AntiXsrfTokenKey = "__AntiXsrfToken";
     private const string AntiXsrfUserNameKey = "__AntiXsrfUserName";
     private string _antiXsrfTokenValue;
@@ -18,7 +15,18 @@ public partial class SiteMaster : MasterPage
     public static string ProjectName = ConfigurationManager.AppSettings["ProjectName"];
     public static string ProjectDescription = "Translate " + ProjectName + " into other languages!";
     public static Boolean OpenRegistrationAllowed = ConfigurationManager.AppSettings["EnableOpenRegistration"] != "false";
-    public static string CurrentlyChosenProject = ConfigurationManager.AppSettings["StandardChosenProject"];
+    public static List<XMLFile.ProjectInfo> projects = XMLFile.getProjects();
+
+    protected void SelectProject(object sender, CommandEventArgs e)
+    {
+        Session["CurrentlyChosenProject"] = projects.Find(t => t.ID == Convert.ToInt32(e.CommandArgument));
+        Response.Redirect(Request.RawUrl);
+    }
+
+    protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
+    {
+        Context.GetOwinContext().Authentication.SignOut();
+    }
 
     protected void Page_Init(object sender, EventArgs e)
     {
@@ -50,6 +58,22 @@ public partial class SiteMaster : MasterPage
         }
 
         Page.PreLoad += master_Page_PreLoad;
+
+        if (Session["CurrentlyChosenProject"] == null)
+            Session["CurrentlyChosenProject"] = projects.Count > 0 ? projects[0] : new XMLFile.ProjectInfo() { Name = "", ID = -1, Folder = "" };
+
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        Repeater projectListRepeater = (Repeater)loginview1.FindControl("projectList");
+
+        // after a LOT of not getting why everything in asp has to be so completly idiotic I don't care if the user is logged in or not, just check if the element is there
+        if (projectListRepeater != null)
+        {
+            projectListRepeater.DataSource = XMLFile.getProjects();
+            projectListRepeater.DataBind();
+        }
     }
 
     protected void master_Page_PreLoad(object sender, EventArgs e)
@@ -69,15 +93,5 @@ public partial class SiteMaster : MasterPage
                 throw new InvalidOperationException("Fehler bei der Überprüfung des Anti-XSRF-Tokens.");
             }
         }
-    }
-
-    protected void Page_Load(object sender, EventArgs e)
-    {
-
-    }
-
-    protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
-    {
-        Context.GetOwinContext().Authentication.SignOut();
     }
 }
