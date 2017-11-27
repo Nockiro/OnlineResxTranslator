@@ -18,14 +18,18 @@
                     <div class="panel-heading">
                         Completely translated languages (yet)
                 
-                                    <asp:Button ID="btn_recalculatePoints"
-                                        runat="server"
-                                        Text="⟳"
-                                        Title="Recalculate progress"
-                                        Style="float: right;"
-                                        CommandName="recalcPercentage"
-                                        CommandArgument="Complete"
-                                        OnCommand="recalculatePoints_Click"></asp:Button>
+                        <asp:LoginView runat="server" ViewStateMode="Disabled">
+                            <LoggedInTemplate>
+                                <asp:Button ID="btn_recalculatePoints"
+                                    runat="server"
+                                    Text="⟳"
+                                    Title="Recalculate progress"
+                                    Style="float: right;"
+                                    CommandName="recalcPercentage"
+                                    CommandArgument="Complete"
+                                    OnCommand="recalculatePoints_Click"></asp:Button>
+                            </LoggedInTemplate>
+                        </asp:LoginView>
                         <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdtPnlForPbs">
                             <ProgressTemplate>
                                 <div style="float: right; position: relative; left: 4px; top: -26px;">
@@ -63,14 +67,19 @@
                     <div class="panel-heading">
                         Not completely translated
                 
-                        <asp:Button ID="btn_recalculatePointsUnc"
-                            runat="server"
-                            Text="⟳"
-                            Title="Recalculate progress"
-                            Style="float: right;"
-                            CommandName="recalcPercentage"
-                            CommandArgument="Uncomplete"
-                            OnCommand="recalculatePoints_Click"></asp:Button>
+                        <asp:LoginView runat="server" ViewStateMode="Disabled">
+                            <LoggedInTemplate>
+                                <asp:Button ID="btn_recalculatePointsUnc"
+                                    runat="server"
+                                    Text="⟳"
+                                    Title="Recalculate progress"
+                                    Style="float: right;"
+                                    CommandName="recalcPercentage"
+                                    CommandArgument="Uncomplete"
+                                    OnCommand="recalculatePoints_Click"></asp:Button>
+                            </LoggedInTemplate>
+                        </asp:LoginView>
+
                         <asp:UpdateProgress ID="UpdateProgress2" runat="server" AssociatedUpdatePanelID="UpdtPnlForUncPbs">
                             <ProgressTemplate>
                                 <div style="float: right; position: relative; left: 4px; top: -26px;">
