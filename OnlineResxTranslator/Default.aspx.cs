@@ -48,8 +48,8 @@ public partial class _Default : Page {
             // count list items before our new percentage values were calculated
             int prevCount = getItemCount(TranslationSummaryCategory.Completed) == -1 ? (int)ViewState["CompleteCount"] : getItemCount(TranslationSummaryCategory.Completed);
 
-            foreach (XMLFile.ProjectFileShortSummary psc in XMLFile.ComputeSummary((XMLFile.ProjectInfo)Session["CurrentlyChosenProject"], 100.0, 100.0))
-                XMLFile.ComputePercentage((XMLFile.ProjectInfo)Session["CurrentlyChosenProject"], psc.LangCode, null);
+            foreach (ProjectHelper.ProjectFileShortSummary psc in XMLFile.ComputeSummary((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], 100.0, 100.0))
+                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], psc.LangCode, null);
 
             updateData(TranslationSummaryCategory.Completed);
 
@@ -68,8 +68,8 @@ public partial class _Default : Page {
             // count list items before our new percentage values were calculated
             int prevCount = getItemCount(TranslationSummaryCategory.Uncompleted) == -1 ? (int)ViewState["UncompleteCount"] : getItemCount(TranslationSummaryCategory.Uncompleted);
 
-            foreach (XMLFile.ProjectFileShortSummary psc in XMLFile.ComputeSummary((XMLFile.ProjectInfo)Session["CurrentlyChosenProject"], 100.0, 100.0))
-                XMLFile.ComputePercentage((XMLFile.ProjectInfo)Session["CurrentlyChosenProject"], psc.LangCode, null);
+            foreach (ProjectHelper.ProjectFileShortSummary psc in XMLFile.ComputeSummary((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], 100.0, 100.0))
+                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], psc.LangCode, null);
 
             updateData(TranslationSummaryCategory.Uncompleted);
 
@@ -89,14 +89,14 @@ public partial class _Default : Page {
     {
         if (tsc.HasFlag(TranslationSummaryCategory.Completed))
         {
-            SuccessRepeater.DataSource = XMLFile.ComputeSummary((XMLFile.ProjectInfo)Session["CurrentlyChosenProject"], 100.0, 100.0);
+            SuccessRepeater.DataSource = XMLFile.ComputeSummary((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], 100.0, 100.0);
             ViewState["CompleteCount"] = getItemCount(TranslationSummaryCategory.Completed);
             SuccessRepeater.DataBind();
         }
 
         if (tsc.HasFlag(TranslationSummaryCategory.Uncompleted))
         {
-            UncompletedRepeater.DataSource = XMLFile.ComputeSummary((XMLFile.ProjectInfo)Session["CurrentlyChosenProject"]);
+            UncompletedRepeater.DataSource = XMLFile.ComputeSummary((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"]);
             ViewState["UncompleteCount"] = getItemCount(TranslationSummaryCategory.Uncompleted);
             UncompletedRepeater.DataBind();
         }
@@ -105,9 +105,9 @@ public partial class _Default : Page {
     private int getItemCount(TranslationSummaryCategory tsc)
     {
         if (tsc == TranslationSummaryCategory.Completed)
-            return SuccessRepeater.DataSource != null ? ((List<XMLFile.ProjectFileShortSummary>)SuccessRepeater.DataSource).Count : -1;
+            return SuccessRepeater.DataSource != null ? ((List<ProjectHelper.ProjectFileShortSummary>)SuccessRepeater.DataSource).Count : -1;
         else
-            return UncompletedRepeater.DataSource != null ? ((List<XMLFile.ProjectFileShortSummary>)UncompletedRepeater.DataSource).Count : -1;
+            return UncompletedRepeater.DataSource != null ? ((List<ProjectHelper.ProjectFileShortSummary>)UncompletedRepeater.DataSource).Count : -1;
 
     }
 }

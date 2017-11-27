@@ -12,7 +12,7 @@
         <asp:UpdatePanel ID="UpdtPnlForPbs" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
                 <hr />
-                <h4>Current selected project: <b><%= ((XMLFile.ProjectInfo)Session["CurrentlyChosenProject"]).Name %></b></h4>
+                <h4>Current selected project: <b><%= ((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"]).Name %></b></h4>
                 <br />
                 <div class="panel panel-success">
                     <div class="panel-heading">
@@ -20,7 +20,6 @@
                 
                                     <asp:Button ID="btn_recalculatePoints"
                                         runat="server"
-                                        CssClass="btn"
                                         Text="⟳"
                                         Title="Recalculate progress"
                                         Style="float: right;"
@@ -37,7 +36,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="alert alert-info">
-                            <asp:Repeater ID="SuccessRepeater" runat="server" ItemType="XMLFile.ProjectFileShortSummary">
+                            <asp:Repeater ID="SuccessRepeater" runat="server" ItemType="ProjectHelper.ProjectFileShortSummary">
                                 <ItemTemplate>
                                     <div class="container">
                                         <p>
@@ -66,7 +65,6 @@
                 
                         <asp:Button ID="btn_recalculatePointsUnc"
                             runat="server"
-                            CssClass="btn"
                             Text="⟳"
                             Title="Recalculate progress"
                             Style="float: right;"
@@ -83,7 +81,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="alert alert-info">
-                            <asp:Repeater ID="UncompletedRepeater" runat="server" ItemType="XMLFile.ProjectFileShortSummary">
+                            <asp:Repeater ID="UncompletedRepeater" runat="server" ItemType="ProjectHelper.ProjectFileShortSummary">
                                 <ItemTemplate>
                                     <div class="container">
                                         <p>

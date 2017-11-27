@@ -63,7 +63,7 @@
                                 <li class="dropdown">
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="projectchoose" aria-expanded="false">Projects <span class="caret"></span></a>
                                     <ul class="dropdown-menu" aria-labelledby="projectchoose">
-                                        <asp:Repeater runat="server" ID="projectList" ItemType="XMLFile.ProjectInfo">
+                                        <asp:Repeater runat="server" ID="projectList" ItemType="ProjectHelper.ProjectInfo">
                                             <ItemTemplate>
                                                 <li>
                                                     <asp:LinkButton OnCommand="SelectProject" CommandArgument="<%# Item.ID %>" Text="<%# Item.Name %>" runat="server"></asp:LinkButton>

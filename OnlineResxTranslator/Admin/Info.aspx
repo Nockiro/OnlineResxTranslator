@@ -9,23 +9,77 @@
     <hr />
 
     <h3>Users</h3>
-    <p>There are currently <%= getOnlineUsers().Count %> User(s) online:</p>
-    <%  foreach (System.Security.Principal.IPrincipal user in getOnlineUsers())
-        {
-    %>
+    <p>
+        There are currently <%= getOnlineUsers().Count %> User(s) online:
+    <%  Response.Write(string.Join(", ", getOnlineUsers().Select(user => user.Identity.GetUserName())));  %>
+    </p>
 
-    <li><%=user.Identity.GetUserName()%></li>
+    <asp:UpdatePanel ID="UpdateUserPanel" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <p>There are currently <%= userList.Rows.Count %> Users(s) registered: </p>
+            <asp:GridView ID="gvUsers" runat="server" AutoGenerateColumns="False"
+                OnRowEditing="gvUsers_RowEditing" OnRowUpdating="gvUsers_RowUpdating" OnRowCancelingEdit="gvUsers_RowCancelingEdit" OnRowDeleting="gvUsers_RowDeleting"
+                CssClass="table table-striped table-hover">
+                <Columns>
+                    <asp:TemplateField HeaderText="ID">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_UserID" runat="server" Text='<%#Eval("UserID") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="User Name">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_UserName" runat="server" Text='<%#Eval("UserName") %>'></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_UserName" runat="server" Text='<%#Eval("UserName") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="User Email">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_UserMail" runat="server" Text='<%#Eval("UserMail") %>'></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_UserMail" runat="server" Text='<%#Eval("UserMail") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Chosen Projects">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_Projects" runat="server" Text='<%#Eval("UserProjects") %>'></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_Projects" runat="server" Text='<%#Eval("UserProjects") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Language">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_UserLang" runat="server" Text='<%#Eval("UserLanguage") %>'></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_UserLang" runat="server" Text='<%#Eval("UserLanguage") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                            <asp:LinkButton ID="btn_Edit" runat="server" Text="Edit" CommandName="Edit" />
+                            <asp:LinkButton ID="btn_Delete" runat="server" Text="Delete" CommandName="Delete" OnClientClick="return confirm('Are you sure you want to *DELETE* this user?')" />
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:LinkButton ID="btn_Update" runat="server" Text="Update" CommandName="Update" />
+                            <asp:LinkButton ID="btn_Cancel" runat="server" Text="Cancel" CommandName="Cancel" />
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
 
-    <%  }  %>
-    <hr />
-
+        </ContentTemplate>
+    </asp:UpdatePanel>
 
     <asp:UpdatePanel ID="UpdateProjectsPanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
             <h3>Projects</h3>
             <p>There are currently <%= projectList.Rows.Count - 1%> Project(s) registered: </p>
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False"
-                OnRowEditing="GridView1_RowEditing" OnRowUpdating="GridView1_RowUpdating" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowDeleting="GridView1_RowDeleting"
+            <asp:GridView ID="gvProjects" runat="server" AutoGenerateColumns="False"
+                OnRowEditing="gvProjects_RowEditing" OnRowUpdating="gvProjects_RowUpdating" OnRowCancelingEdit="gvProjects_RowCancelingEdit" OnRowDeleting="gvProjects_RowDeleting"
                 CssClass="table table-striped table-hover">
                 <Columns>
                     <asp:TemplateField HeaderText="ID">

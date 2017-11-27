@@ -77,14 +77,18 @@ public class SQLHelper {
     /// <param name="table">table to read from</param>
     /// <param name="columns">columns to read</param>
     /// <param name="where">adds search restrictions (Like "col1 LIKE bla")</param>
+    /// <param name="addInfo">additional information (e.g. joins)</param>
     /// <returns>DataTable with returned data</returns>
-    public DataTable SelectFromTable(string table, string[] columns, string where)
+    public DataTable SelectFromTable(string table, string[] columns, string where, string addInfo = "")
     {
         try
         {
             DataTable dataTable = new DataTable();
 
             string command = "SELECT " + string.Join(",", columns) + " FROM " + table;
+
+            if (addInfo != "")
+                command += " " + addInfo;
 
             if (where != "")
                 command += " WHERE " + where;
@@ -115,7 +119,19 @@ public class SQLHelper {
     /// <returns>DataTable with returned data</returns>
     public DataTable SelectFromTable(string table, params string[] columns)
     {
-        return SelectFromTable(table, columns, "");
+        return SelectFromTable(table, columns, "", "");
+    }
+
+    /// <summary>
+    /// Selects data from Tables with inner join
+    /// </summary>
+    /// <param name="table">table to read from</param>
+    /// <param name="addInfo">additional information (e.g. joins)</param>
+    /// <param name="columns">columns to read</param>
+    /// <returns>DataTable with returned data</returns>
+    public DataTable SelectFromTables(string table, string addInfo, params string[] columns)
+    {
+        return SelectFromTable(table, columns, "", addInfo);
     }
 
     /// <summary>

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Xml;
+﻿using System.Xml;
 using System.IO;
-using System.Data;
-using System.Data.SqlClient;
+using System.Configuration;
+using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// XMLFile: Manages XML files
@@ -15,56 +13,6 @@ public class XMLFile {
     }
 
     /// <summary>
-    /// Get XML Document
-    /// </summary>
-    /// <param name="filename">Full Filepath</param>
-    /// <returns>XMLDoc or nothing</returns>
-    /// <remarks></remarks>
-    public static XmlDocument GetXMLDocument(string filename)
-    {
-        if (File.Exists(filename))
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(filename);
-            return doc;
-        }
-        else
-        {
-            // file does not exist
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// Gets value of give node
-    /// </summary>
-    /// <param name="xmlDoc">Document to be checked</param>
-    /// <param name="nodeName">Name of the node which values should be returned</param>
-    /// <returns>Value of the node. If node is nothing returns empty string</returns>
-    /// <remarks></remarks>
-    public static string GetXMLNodeValue(XmlDocument xmlDoc, string nodeName)
-    {
-        XmlNode ChildNode = default(XmlNode);
-        if (xmlDoc == null)
-        {
-            return "";
-        }
-        else
-        {
-            ChildNode = xmlDoc.SelectSingleNode(nodeName);
-            if (ChildNode == null)
-            {
-                return "";
-            }
-            else
-            {
-                return ChildNode.InnerText;
-            }
-        }
-    }
-
-
-    /// <summary>
     /// Refresh completed percentage
     /// </summary>
     /// <param name="project">ProjectInfo of the current project</param>
@@ -72,7 +20,7 @@ public class XMLFile {
     /// <param name="filename">File which was updated, e.g. beta.aspx. Or nothing to check all files</param>
     /// <returns>Percentage as integer</returns>
     /// <remarks></remarks>
-    public static int ComputePercentage(ProjectInfo project, string language, string filename)
+    public static int ComputePercentage(ProjectHelper.ProjectInfo project, string language, string filename)
     {
         int Percentage = 0;
 
@@ -200,9 +148,6 @@ public class XMLFile {
                         else
                             Percentage = Convert.ToInt32(TranslatedFileElements / FileElements * 100);
 
-                        // Logger.Write("Percent completed: " + Percentage.ToString + " %.", Category, 10, 0, Diagnostics.TraceEventType.Verbose, LogTitle, logProperties);
-                        //TotalElements += FileElements
-                        //TranslatedElements += TranslatedFileElements
                     }
                 }
 
@@ -233,9 +178,9 @@ public class XMLFile {
     /// <param name="maxPerc">only returns the objects in the list where the completed percentage is below gived value</param>
     /// <param name="minPerc">only returns the objects in the list where the completed percentage is above gived value</param>
     /// <returns>A List of translated Languages as ProjectFileShortSummary object</returns>
-    public static List<ProjectFileShortSummary> ComputeSummary(ProjectInfo project, double minPerc = 0, double maxPerc = 99.999)
+    public static List<ProjectHelper.ProjectFileShortSummary> ComputeSummary(ProjectHelper.ProjectInfo project, double minPerc = 0, double maxPerc = 99.999)
     {
-        List<ProjectFileShortSummary> functionReturnValue = new List<ProjectFileShortSummary>();
+        List<ProjectHelper.ProjectFileShortSummary> functionReturnValue = new List<ProjectHelper.ProjectFileShortSummary>();
 
         string ProjDirectory = ConfigurationManager.AppSettings["ProjectDirectory"] + project.Folder;
 
@@ -249,7 +194,7 @@ public class XMLFile {
             {
                 XmlDocument LanguageXML = XMLFile.GetXMLDocument(LanguageFilename);
 
-                ProjectFileShortSummary pss = new ProjectFileShortSummary();
+                ProjectHelper.ProjectFileShortSummary pss = new ProjectHelper.ProjectFileShortSummary();
 
                 // if there is something wrong with the xml file, it will raise an exception here for the first time
                 try
@@ -266,7 +211,7 @@ public class XMLFile {
                     Percentage += Convert.ToDouble(FileNode["percentcompleted"].InnerText);
                     try
                     {
-                        DateTime LastChange = Convert.ToDateTime(FileNode["lastchange"].InnerText);
+                        DateTime LastChange = DateTime.Parse(FileNode["lastchange"].InnerText);
                         if (LastChange > LastUpdate)
                             LastUpdate = LastChange;
                     }
@@ -285,50 +230,54 @@ public class XMLFile {
         return functionReturnValue;
     }
 
-    public static List<ProjectInfo> getProjects()
+    /// <summary>
+    /// Get XML Document
+    /// </summary>
+    /// <param name="filename">Full Filepath</param>
+    /// <returns>XMLDoc or nothing</returns>
+    /// <remarks></remarks>
+    public static XmlDocument GetXMLDocument(string filename)
     {
-        List<ProjectInfo> list = new List<ProjectInfo>();
-        SQLHelper sqlhelper = new SQLHelper();
-        sqlhelper.OpenConnection();
-
-        try
+        if (File.Exists(filename))
         {
-            DataTable projectList = sqlhelper.SelectFromTable("TrProjects", "id", "project", "folder");
-            foreach (DataRow r in projectList.Rows)
-                list.Add(new ProjectInfo() { ID = (int)r["id"], Name = (string)r["project"], Folder = (string)r["folder"] });
-
-            sqlhelper.CloseConnection();
-
-            return list;
+            XmlDocument doc = new XmlDocument();
+            doc.Load(filename);
+            return doc;
         }
-        catch (SqlException) // probably the table doesn't exist - but since this method is called on every page call, it'd cost a bit of resources, so only catch it if needed
+        else
         {
-
-            sqlhelper.OpenConnection();
-            if (!sqlhelper.DoesTableExist("TrProjects"))
-                sqlhelper.CreateTable("TrProjects",
-                    new KeyValuePair<string, string>("id", "int NOT NULL IDENTITY (0,1) PRIMARY KEY"),
-                    new KeyValuePair<string, string>("project", "varchar(255) NOT NULL"),
-                    new KeyValuePair<string, string>("folder", "varchar(255) NOT NULL"));
-
-            sqlhelper.CloseConnection();
-
-            return getProjects();
+            // file does not exist
+            return null;
         }
-
     }
 
-    public class ProjectInfo {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public string Folder { get; set; }
+    /// <summary>
+    /// Gets value of give node
+    /// </summary>
+    /// <param name="xmlDoc">Document to be checked</param>
+    /// <param name="nodeName">Name of the node which values should be returned</param>
+    /// <returns>Value of the node. If node is nothing returns empty string</returns>
+    /// <remarks></remarks>
+    public static string GetXMLNodeValue(XmlDocument xmlDoc, string nodeName)
+    {
+        XmlNode ChildNode = default(XmlNode);
+        if (xmlDoc == null)
+        {
+            return "";
+        }
+        else
+        {
+            ChildNode = xmlDoc.SelectSingleNode(nodeName);
+            if (ChildNode == null)
+            {
+                return "";
+            }
+            else
+            {
+                return ChildNode.InnerText;
+            }
+        }
     }
 
-    public class ProjectFileShortSummary {
-        public string LangFile { get; set; }
-        public String LangCode { get; set; }
-        public Double Percentage { get; set; }
-        public DateTime LastUpdate { get; set; }
-    }
 
 }

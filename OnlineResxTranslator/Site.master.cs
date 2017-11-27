@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Microsoft.AspNet.Identity;
 
 public partial class SiteMaster : MasterPage {
     private const string AntiXsrfTokenKey = "__AntiXsrfToken";
@@ -15,7 +16,7 @@ public partial class SiteMaster : MasterPage {
     public static string ProjectName = ConfigurationManager.AppSettings["ProjectName"];
     public static string ProjectDescription = "Translate " + ProjectName + " into other languages!";
     public static Boolean OpenRegistrationAllowed = ConfigurationManager.AppSettings["EnableOpenRegistration"] != "false";
-    public static List<XMLFile.ProjectInfo> projects = XMLFile.getProjects();
+    public static List<ProjectHelper.ProjectInfo> projects = ProjectHelper.getProjects();
 
     protected void SelectProject(object sender, CommandEventArgs e)
     {
@@ -60,7 +61,7 @@ public partial class SiteMaster : MasterPage {
         Page.PreLoad += master_Page_PreLoad;
 
         if (Session["CurrentlyChosenProject"] == null)
-            Session["CurrentlyChosenProject"] = projects.Count > 0 ? projects[0] : new XMLFile.ProjectInfo() { Name = "", ID = -1, Folder = "" };
+            Session["CurrentlyChosenProject"] = projects.Count > 0 ? projects[0] : new ProjectHelper.ProjectInfo() { Name = "", ID = -1, Folder = "" };
 
     }
 
@@ -71,7 +72,7 @@ public partial class SiteMaster : MasterPage {
         // after a LOT of not getting why everything in asp has to be so completly idiotic I don't care if the user is logged in or not, just check if the element is there
         if (projectListRepeater != null)
         {
-            projectListRepeater.DataSource = XMLFile.getProjects();
+            projectListRepeater.DataSource = ProjectHelper.getProjects(Context.User.Identity.GetUserId());
             projectListRepeater.DataBind();
         }
     }
