@@ -73,12 +73,17 @@ public partial class Admin_Info : System.Web.UI.Page {
         String userName = (gvUsers.Rows[e.RowIndex].FindControl("tb_UserName") as TextBox).Text;
         String userMail = (gvUsers.Rows[e.RowIndex].FindControl("tb_UserMail") as TextBox).Text;
         String userProjects = (gvUsers.Rows[e.RowIndex].FindControl("tb_Projects") as TextBox).Text;
+        String userLanguage = (gvUsers.Rows[e.RowIndex].FindControl("tb_UserLang") as TextBox).Text;
 
         sqlhelper.OpenConnection();
         // update user table
         sqlhelper.UpdateTable("AspNetUsers", "id = '" + id + "'",
          new KeyValuePair<string, string>("UserName", userName),
          new KeyValuePair<string, string>("Email", userMail));
+
+        // update language table
+        sqlhelper.UpdateTable("TrUserLanguages", "UserID = '" + id + "'",
+         new KeyValuePair<string, string>("Language", userLanguage));
 
         // update project table
         // its faster code to delete all projects of that user and readd the ones given in the list, really.
@@ -88,7 +93,9 @@ public partial class Admin_Info : System.Web.UI.Page {
             string projID = ((projectList.AsEnumerable().Where(r => r.Field<string>("project") == proj.Trim())).FirstOrDefault()["id"]).ToString();
             sqlhelper.InsertIntoTable("TrUserProjects", new KeyValuePair<string, string>("UserID", id), new KeyValuePair<string, string>("ProjID", projID));
         }
+
         sqlhelper.CloseConnection();
+
 
         // Setting the EditIndex property to -1 to cancel the Edit mode in Gridview  
         gvUsers.EditIndex = -1;

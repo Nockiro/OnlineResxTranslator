@@ -49,9 +49,9 @@ public partial class Account_Manage : System.Web.UI.Page
                 Form.Action = ResolveUrl("~/Account/Manage");
 
                 SuccessMessage =
-                    message == "ChangePwdSuccess" ? "Ihr Kennwort wurde geändert."
-                    : message == "SetPwdSuccess" ? "Ihr Kennwort wurde festgelegt."
-                    : message == "RemoveLoginSuccess" ? "Das Konto wurde entfernt."
+                    message == "ChangePwdSuccess" ? "Password was changed."
+                    : message == "SetPwdSuccess" ? "Password was set."
+                    : message == "RemoveLoginSuccess" ? "Login was removed."
                     : String.Empty;
                 successMessage.Visible = !String.IsNullOrEmpty(SuccessMessage);
             }

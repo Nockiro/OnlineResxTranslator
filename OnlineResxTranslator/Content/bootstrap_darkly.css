@@ -1604,7 +1604,7 @@ pre code {
 }
 @media (min-width: 1200px) {
   .container {
-    width: 1170px;
+    width: 90%;
   }
 }
 .container-fluid {
@@ -3063,7 +3063,7 @@ fieldset[disabled] a.btn {
 }
 .btn-default {
   color: #ffffff;
-  background-color: #464545;
+  background-color: #2f2f2f;
   border-color: #464545;
 }
 .btn-default:focus,

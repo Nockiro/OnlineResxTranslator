@@ -21,6 +21,9 @@ public partial class SiteMaster : MasterPage {
     protected void SelectProject(object sender, CommandEventArgs e)
     {
         Session["CurrentlyChosenProject"] = projects.Find(t => t.ID == Convert.ToInt32(e.CommandArgument));
+        // reset selected filename
+        Session["SelectedFilename"] = null;
+
         Response.Redirect(Request.RawUrl);
     }
 

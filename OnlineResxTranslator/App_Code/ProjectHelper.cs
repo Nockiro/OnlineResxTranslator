@@ -5,6 +5,7 @@ using System.Xml;
 using System.IO;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 
 /// <summary>
 /// Contains all methods regarding the translation projects (not the ones working with the XML files)
@@ -72,6 +73,84 @@ public class ProjectHelper {
 
         sqlhelper.CloseConnection();
     }
+
+    public static bool FTPUploadEnabled(ProjectInfo project)
+    {
+        string Filename = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + project.Name + ".xml";
+
+        if (File.Exists(Filename))
+        {
+            XmlDocument ProjectFile = XMLFile.GetXMLDocument(Filename);
+            if (ProjectFile.SelectNodes("/project/ftp/server").Count == 0)
+                return false;
+
+            else return true;
+        }
+        else return false;
+
+    }
+
+    public static bool FTPUpload(ProjectInfo project, string fullFilename)
+    {
+        string XMLFilename = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + project.Name + ".xml";
+
+        XmlDocument ProjectFile = XMLFile.GetXMLDocument(XMLFilename);
+
+        string Language = fullFilename.Split(".".ToCharArray())[fullFilename.Split(".".ToCharArray()).GetUpperBound(0) - 1];
+        string Filename = fullFilename.Split("\\".ToCharArray())[fullFilename.Split("\\".ToCharArray()).GetUpperBound(0)];
+
+        foreach (XmlNode FTPNode in ProjectFile.SelectNodes("/project/ftp"))
+        {
+            if (FTPNode.SelectSingleNode("server") == null)
+            {
+                throw new Exception("FTP-Upload not possible: Server node in XML file not found!");
+            }
+            else
+            {
+                string Servername = FTPNode.SelectSingleNode("server").InnerText;
+                if (Servername.Length == 0)
+                    throw new Exception("FTP-Upload not possible: Server node in XML file not properly defined!");
+                else
+                {
+                    string UploadPath = FTPNode.SelectSingleNode("path").InnerText;
+                    if (UploadPath.Length > 0)
+                    {
+                        if (UploadPath.Contains("%LANG%"))
+                            UploadPath = UploadPath.Replace("%LANG%", Language);
+
+                        if (!UploadPath.EndsWith("/")) UploadPath += "/";
+                    }
+                    else UploadPath = "/";
+
+                    string Username = FTPNode.SelectSingleNode("username").InnerText;
+                    string Password = FTPNode.SelectSingleNode("password").InnerText;
+
+
+                    // Get the object used to communicate with the server.
+                    FTP myFtp = new FTP(Servername, Username, Password);
+
+                    List<string> ExistingFiles;
+                    try
+                    {
+                        ExistingFiles = myFtp.directoryListDetailed(UploadPath).ToList();
+                    }
+                    catch (Exception)
+                    {
+                        myFtp.createDirectory(UploadPath);
+                        ExistingFiles = myFtp.directoryListDetailed(UploadPath).ToList();
+                    }
+
+                    if (ExistingFiles.Contains(Filename))
+                        myFtp.delete(UploadPath + Filename);
+
+                    myFtp.upload(UploadPath + Filename, fullFilename);
+                }
+            }
+        }
+        return false;
+    }
+
+
 
     public class ProjectInfo {
         public int ID { get; set; }

@@ -42,7 +42,7 @@
                             <asp:TextBox ID="tb_UserMail" runat="server" Text='<%#Eval("UserMail") %>'></asp:TextBox>
                         </EditItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Chosen Projects">
+                    <asp:TemplateField HeaderText="Visible Projects">
                         <ItemTemplate>
                             <asp:Label ID="lbl_Projects" runat="server" Text='<%#Eval("UserProjects") %>'></asp:Label>
                         </ItemTemplate>

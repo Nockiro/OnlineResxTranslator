@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Principal;
+using Microsoft.AspNet.Identity.Owin;
+using localhost;
 
 namespace localhost {
     // Sie können Benutzerdaten für den Benutzer hinzufügen, indem Sie der User-Klasse weitere Eigenschaften hinzufügen. Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?LinkID=317594.
@@ -46,6 +48,30 @@ public static class IdentityExtensions {
         return -1;
     }
 
+
+    public static void SetTranslatedStrings(this IIdentity identity, int value)
+    {
+        if (identity == null)
+        {
+            throw new ArgumentNullException("identity");
+        }
+
+        var ci = identity as ClaimsIdentity;
+        if (ci != null)
+        {
+            SQLHelper sqlhelper = new SQLHelper().OpenConnection();
+
+            // update user table
+            sqlhelper.UpdateTable("AspNetUsers", "id = '" + identity.GetUserId() + "'",
+             new KeyValuePair<string, string>("TranslatedStrings", value.ToString()));
+
+            sqlhelper.CloseConnection();
+
+
+        }
+
+        return;
+    }
 }
 
 namespace localhost {

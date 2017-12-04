@@ -21,6 +21,9 @@ public partial class Account_Login : Page
                 case "403":
                     FailureText.Text = "You... don't have access. Sorry.";
                     break;
+                case "se":
+                    FailureText.Text = "Apparently your session is expired - please login.";
+                    break;
 
             }
             ErrorMessage.Visible = true;

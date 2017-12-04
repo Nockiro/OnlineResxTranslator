@@ -16,7 +16,7 @@
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <!-- Load your CSS file(s) -->
     <link href="<%= ResolveUrl("~/Content/bootstrap_darkly.css") %>" rel="stylesheet" type="text/css" />
-
+    
 </head>
 <body>
     <form runat="server">
@@ -120,5 +120,13 @@
             </footer>
         </div>
     </form>
+    
+        <!-- Load Javascript for spoiler boxes -->
+
+        <script type="text/javascript">
+            $(".spoiler-trigger").click(function() {
+		            $(this).parent().next().collapse('toggle');
+	            });
+        </script>
 </body>
 </html>

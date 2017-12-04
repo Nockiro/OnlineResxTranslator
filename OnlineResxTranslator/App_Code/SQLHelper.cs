@@ -79,7 +79,7 @@ public class SQLHelper {
     /// <param name="where">adds search restrictions (Like "col1 LIKE bla")</param>
     /// <param name="addInfo">additional information (e.g. joins)</param>
     /// <returns>DataTable with returned data</returns>
-    public DataTable SelectFromTable(string table, string[] columns, string where, string addInfo = "")
+    public DataTable SelectFromTable(string table, string[] columns, string where = "", string addInfo = "")
     {
         try
         {
