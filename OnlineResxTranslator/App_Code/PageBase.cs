@@ -35,10 +35,10 @@ public class PageBase : Page {
     protected virtual void Page_Load(object sender, EventArgs e)
     {
         // prevent loading of default content if there is an error
-        if (String.IsNullOrEmpty(Session["ErrorMessage"]?.ToString()))
-        {
+        if (Session["ErrorMessage"] != null && !String.IsNullOrEmpty(Session["ErrorMessage"].ToString()))
+        { }
+        else
             Page_LoadBegin(sender, e);
-        }
 
         Page_LoadEnd();
     }

@@ -12,7 +12,7 @@ public partial class Site_Mobile : MasterPage {
 
     public Site_Mobile()
     {
-        if (!String.IsNullOrEmpty(Session["ErrorMessage"]?.ToString()))
+        if (Session["ErrorMessage"] != null && !String.IsNullOrEmpty(Session["ErrorMessage"].ToString()))
         {
             MainContent.Visible = false;
             ErrorMessage.Visible = true;

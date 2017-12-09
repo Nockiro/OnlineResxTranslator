@@ -125,7 +125,7 @@ public static class UriExtensions {
         return ExtendQuery(uri, values.GetType().GetProperties().ToDictionary
         (
             propInfo => propInfo.Name,
-            propInfo => { var value = propInfo.GetValue(values, null); return value?.ToString(); }
+            propInfo => { var value = propInfo.GetValue(values, null); return value != null ? value.ToString() : ""; }
         ));
     }
 }

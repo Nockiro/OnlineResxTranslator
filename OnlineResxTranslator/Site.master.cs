@@ -64,7 +64,8 @@ public partial class SiteMaster : MasterPage {
         Page.PreLoad += master_Page_PreLoad;
 
 
-        if (!String.IsNullOrEmpty(Session["ErrorMessage"]?.ToString()))
+
+        if (Session["ErrorMessage"] != null && !String.IsNullOrEmpty(Session["ErrorMessage"].ToString()))
         {
             MainContent.Visible = false;
             ErrorMessage.Visible = true;
