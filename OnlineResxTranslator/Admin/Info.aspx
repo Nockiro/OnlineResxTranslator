@@ -43,6 +43,9 @@
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Visible Projects">
+                        <HeaderTemplate>
+                            <asp:Label ID="hd_vp" CssClass="help" ToolTip="Projects have to be seperated by comma (,)" runat="server" Text="Visible Projects"></asp:Label>
+                        </HeaderTemplate>
                         <ItemTemplate>
                             <asp:Label ID="lbl_Projects" runat="server" Text='<%#Eval("UserProjects") %>'></asp:Label>
                         </ItemTemplate>
@@ -51,6 +54,9 @@
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Language">
+                        <HeaderTemplate>
+                            <asp:Label ID="hd_vp" CssClass="help" ToolTip="Note: There can only be one language at a time" runat="server" Text="Language"></asp:Label>
+                        </HeaderTemplate>
                         <ItemTemplate>
                             <asp:Label ID="lbl_UserLang" runat="server" Text='<%#Eval("UserLanguage") %>'></asp:Label>
                         </ItemTemplate>

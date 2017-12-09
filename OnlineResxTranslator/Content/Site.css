@@ -37,3 +37,9 @@ body {
 .panel {
   box-shadow: none !important;
 }
+
+.help {
+	cursor: help;
+	border-bottom: 1px dashed; 
+	text-decoration: none;
+}
