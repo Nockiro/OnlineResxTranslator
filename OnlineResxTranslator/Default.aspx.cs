@@ -4,7 +4,7 @@ using System.IO;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-public partial class _Default : Page {
+public partial class _Default : PageBase {
 
     [Flags]
     enum TranslationSummaryCategory {
@@ -12,16 +12,14 @@ public partial class _Default : Page {
         Completed
     }
 
-    protected void Page_Load(object sender, EventArgs e)
+
+    protected override void Page_LoadBegin(object sender, EventArgs e)
     {
         if (!Page.IsPostBack)
         {
             updateData(TranslationSummaryCategory.Uncompleted | TranslationSummaryCategory.Completed);
         }
-
     }
-
-
 
     public void recalculatePoints_Click(Object sender, CommandEventArgs e)
     {

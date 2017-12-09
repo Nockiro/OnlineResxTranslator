@@ -5,8 +5,7 @@ using System.Web;
 using System.Web.UI;
 using localhost;
 
-public partial class Account_Login : Page
-{
+public partial class Account_Login : Page {
     protected void Page_Load(object sender, EventArgs e)
     {
         RegisterHyperLink.NavigateUrl = "Register";
@@ -14,7 +13,8 @@ public partial class Account_Login : Page
         var returnUrl = HttpUtility.UrlEncode(Request.QueryString["ReturnUrl"]);
         var redirectProblem = HttpUtility.UrlEncode(Request.QueryString["re"]);
 
-        if (!String.IsNullOrEmpty(redirectProblem)) {
+        if (!String.IsNullOrEmpty(redirectProblem))
+        {
             switch (redirectProblem)
             {
                 // forbidden

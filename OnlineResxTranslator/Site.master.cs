@@ -63,6 +63,16 @@ public partial class SiteMaster : MasterPage {
 
         Page.PreLoad += master_Page_PreLoad;
 
+
+        if (!String.IsNullOrEmpty(Session["ErrorMessage"]?.ToString()))
+        {
+            MainContent.Visible = false;
+            ErrorMessage.Visible = true;
+            FailureText.Text = Session["ErrorMessage"].ToString();
+            return;
+        }
+        else ErrorMessage.Visible = false;
+
         if (Session["CurrentlyChosenProject"] == null)
             Session["CurrentlyChosenProject"] = projects.Count > 0 ? projects[0] : new ProjectHelper.ProjectInfo() { Name = "", ID = -1, Folder = "" };
 

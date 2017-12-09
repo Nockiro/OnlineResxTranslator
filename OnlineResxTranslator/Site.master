@@ -16,7 +16,7 @@
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
     <!-- Load your CSS file(s) -->
     <link href="<%= ResolveUrl("~/Content/bootstrap_darkly.css") %>" rel="stylesheet" type="text/css" />
-    
+
 </head>
 <body>
     <form runat="server">
@@ -112,6 +112,13 @@
             </div>
         </div>
         <div class="container body-content">
+            <asp:PlaceHolder runat="server" ID="ErrorMessage" Visible="false">
+                <hr />
+                <p class="text-danger">
+                    <asp:Literal runat="server" ID="FailureText" />
+                </p>
+                <hr />
+            </asp:PlaceHolder>
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
@@ -120,13 +127,13 @@
             </footer>
         </div>
     </form>
-    
-        <!-- Load Javascript for spoiler boxes -->
 
-        <script type="text/javascript">
+    <!-- Load Javascript for spoiler boxes -->
+
+    <script type="text/javascript">
             $(".spoiler-trigger").click(function() {
 		            $(this).parent().next().collapse('toggle');
 	            });
-        </script>
+    </script>
 </body>
 </html>

@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Web.UI.WebControls;
 
-public partial class Admin_Info : System.Web.UI.Page {
+public partial class Admin_Info : PageBase {
 
     private SQLHelper sqlhelper = new SQLHelper();
 
@@ -17,7 +17,7 @@ public partial class Admin_Info : System.Web.UI.Page {
     /// </summary>
     public int newIDif = 0;
 
-    protected void Page_Load(object sender, EventArgs e)
+    protected override void Page_LoadBegin(object sender, EventArgs e)
     {
         if (!User.Identity.IsAuthenticated || !User.IsInRole("admin"))
         {
@@ -88,11 +88,12 @@ public partial class Admin_Info : System.Web.UI.Page {
         // update project table
         // its faster code to delete all projects of that user and readd the ones given in the list, really.
         sqlhelper.DeleteRow("TrUserProjects", "UserID = '" + id + "'");
-        foreach (string proj in userProjects.Split(','))
-        {
-            string projID = ((projectList.AsEnumerable().Where(r => r.Field<string>("project") == proj.Trim())).FirstOrDefault()["id"]).ToString();
-            sqlhelper.InsertIntoTable("TrUserProjects", new KeyValuePair<string, string>("UserID", id), new KeyValuePair<string, string>("ProjID", projID));
-        }
+        if (userProjects != "")
+            foreach (string proj in userProjects.Split(','))
+            {
+                string projID = ((projectList.AsEnumerable().Where(r => r.Field<string>("project") == proj.Trim())).FirstOrDefault()["id"]).ToString();
+                sqlhelper.InsertIntoTable("TrUserProjects", new KeyValuePair<string, string>("UserID", id), new KeyValuePair<string, string>("ProjID", projID));
+            }
 
         sqlhelper.CloseConnection();
 

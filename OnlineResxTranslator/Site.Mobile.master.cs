@@ -12,6 +12,14 @@ public partial class Site_Mobile : MasterPage {
 
     public Site_Mobile()
     {
+        if (!String.IsNullOrEmpty(Session["ErrorMessage"]?.ToString()))
+        {
+            MainContent.Visible = false;
+            ErrorMessage.Visible = true;
+            FailureText.Text = Session["ErrorMessage"].ToString();
+            return;
+        }
+        else ErrorMessage.Visible = false;
     }
 
     protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)

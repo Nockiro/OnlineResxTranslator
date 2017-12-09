@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.Mobile.master.cs" Inherits="Site_Mobile"  MasterPageFile="~/Site.master" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.Mobile.master.cs" Inherits="Site_Mobile" MasterPageFile="~/Site.master" %>
 
 <%@ Register Src="~/ViewSwitcher.ascx" TagPrefix="friendlyUrls" TagName="ViewSwitcher" %>
 
@@ -67,6 +67,14 @@
         </div>
 
         <section class="content-wrapper main-content clear-fix">
+
+            <asp:PlaceHolder runat="server" ID="ErrorMessage" Visible="false">
+                <hr />
+                <p class="text-danger">
+                    <asp:Literal runat="server" ID="FailureText" />
+                </p>
+                <hr />
+            </asp:PlaceHolder>
             <asp:ContentPlaceHolder runat="server" ID="MainContent" />
         </section>
 

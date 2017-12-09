@@ -1,28 +1,21 @@
-﻿
-using Microsoft.VisualBasic;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Xml;
 using System.Web.UI;
 using System.Configuration;
 using Microsoft.AspNet.Identity;
 using System.IO;
 using System.Web.UI.WebControls;
-using System.Web;
 
-partial class _Translate : Page {
+partial class _Translate : PageBase {
 
     public static List<ProjectHelper.ProjectInfo> projects = ProjectHelper.getProjects();
     private SQLHelper sqlhelper = new SQLHelper();
 
-    protected void Page_Load(object sender, System.EventArgs e)
+
+    protected override void Page_LoadBegin(object sender, EventArgs e)
     {
-        Session["UserLanguage"] = getUserLanguage(User.Identity.GetUserId());
-
-
         if (!Page.IsPostBack)
         {
             if (!User.Identity.IsAuthenticated)
@@ -31,17 +24,18 @@ partial class _Translate : Page {
             }
             else
             {
+                Session["UserLanguage"] = getUserLanguage(User.Identity.GetUserId());
 
                 List<ProjectHelper.ProjectInfo> AllUserProjects = ProjectHelper.getProjects(User.Identity.GetUserId());
 
                 if (AllUserProjects.Count == 0)
                 {
-                    Session["ErrorMessage"] = "You are not registered for any project.";
-                    Response.Redirect("Error.aspx");
+                    showError("You are not registered for any project."); return;
                 }
                 else initTranslationTable();
             }
         }
+
     }
 
     protected void initTranslationTable()
@@ -60,8 +54,7 @@ partial class _Translate : Page {
 
         if (!File.Exists(Directory + Language + ".xml"))
         {
-            Session["ErrorMessage"] = "Language file for '" + Language + "' does not exist!";
-            Response.Redirect("Error.aspx");
+            showError("Language file for '" + Language + "' does not exist!"); return;
         }
         else
         {
@@ -143,7 +136,7 @@ partial class _Translate : Page {
             if (Filename.Length == 0)
             {
                 // No filename selected
-                Response.Redirect("Translate.aspx?re=nf");
+                showError("You didn't select any filename."); return;
             }
             else
             {
@@ -169,7 +162,7 @@ partial class _Translate : Page {
 
             if (Project == null || Language == null)
             {
-               // Session["ErrorMessage"] = "Session expired. Could not read Project or Language. Please login!";
+                // Session["ErrorMessage"] = "Session expired. Could not read Project or Language. Please login!";
                 // TODO: Save Values here for relog (like HttpCookie myCookie = new HttpCookie("savedValues");)
 
                 Response.Redirect("/Account/Login.aspx?re=se&ReturnUrl=/translate");
@@ -183,7 +176,7 @@ partial class _Translate : Page {
 
             XmlDocument TranslatedFile = XMLFile.GetXMLDocument(TargetFilename);
             string Filename = Convert.ToString(Session["SelectedFilename"]);
-            // Logger.Write("Checking for changes in '" + Filename + "'...", Category, 10, 0, Diagnostics.TraceEventType.Verbose, LogTitle, LogProperties);
+
             foreach (RepeaterItem Item in TextElements.Items)
             {
                 Label LB = Item.FindControl("Element") as Label;
