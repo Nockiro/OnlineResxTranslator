@@ -16,7 +16,7 @@
                     UseAccessibleHeader="true" OnRowCommand="FileList_RowCommand">
                     <Columns>
                         <asp:ButtonField DataTextField="name" HeaderText="Filename" CommandName="EditFile" />
-                        <asp:BoundField DataField="percentcompleted" HeaderText="Completed %" />
+                        <asp:BoundField DataField="percentcompleted" HeaderText="Completed %" DataFormatString="{0:d}" />
                         <asp:BoundField DataField="caption" HeaderText="Caption" NullDisplayText="" />
                     </Columns>
                 </asp:GridView>

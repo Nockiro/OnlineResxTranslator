@@ -3,6 +3,7 @@ using System.IO;
 using System.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 /// <summary>
 /// XMLFile: Manages XML files
@@ -152,10 +153,10 @@ public class XMLFile {
                 }
 
                 // Check whether percentage is changed - if this condition was true, the percentage was already stored correct
-                if (Convert.ToInt32(SingleFile.SelectSingleNode("percentcompleted").InnerText) != Percentage)
+                if (Convert.ToDouble(SingleFile.SelectSingleNode("percentcompleted").InnerText.Replace(",", "."), CultureInfo.InvariantCulture) != Percentage)
                 {
 
-                    SingleFile.SelectSingleNode("percentcompleted").InnerText = Percentage.ToString();
+                    SingleFile.SelectSingleNode("percentcompleted").InnerText = Percentage.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
                     SingleFile.SelectSingleNode("lastchange").InnerText = DateTime.Now.ToString();
 
                     if (!SummaryUpdated)
@@ -208,7 +209,7 @@ public class XMLFile {
 
                 foreach (XmlNode FileNode in LanguageXML.SelectNodes("/files/file"))
                 {
-                    Percentage += Convert.ToDouble(FileNode["percentcompleted"].InnerText);
+                    Percentage += Convert.ToDouble(FileNode["percentcompleted"].InnerText, CultureInfo.InvariantCulture);
                     try
                     {
                         DateTime LastChange = DateTime.Parse(FileNode["lastchange"].InnerText);
@@ -218,7 +219,7 @@ public class XMLFile {
                     catch (FormatException) { }
                 }
 
-                Percentage = Percentage / LanguageXML.SelectNodes("/files/file").Count;
+                Percentage = Math.Round(Percentage / LanguageXML.SelectNodes("/files/file").Count, 4);
                 pss.Percentage = Percentage;
                 pss.LastUpdate = LastUpdate;
                 pss.LangFile = LanguageFilename;
