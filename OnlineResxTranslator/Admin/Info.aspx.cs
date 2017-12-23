@@ -80,9 +80,9 @@ public partial class Admin_Info : PageBase {
         sqlhelper.UpdateTable("AspNetUsers", "id = '" + id + "'",
          new KeyValuePair<string, string>("UserName", userName),
          new KeyValuePair<string, string>("Email", userMail));
-
+        
         // update language table
-        sqlhelper.UpdateTable("TrUserLanguages", "UserID = '" + id + "'",
+        sqlhelper.UpdateOrInsertIntoTable("TrUserLanguages", new KeyValuePair<string, string>("UserID", id),
          new KeyValuePair<string, string>("Language", userLanguage));
 
         // update project table

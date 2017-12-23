@@ -165,6 +165,29 @@ public class SQLHelper {
     }
 
     /// <summary>
+    /// Inserts one row of data into a given table if it doesn't exist yet
+    /// </summary>
+    /// <param name="table">table to update</param>
+    /// <param name="where">parameters which entries are to update</param>
+    /// <param name="columns">entries as keyvaluepair (column, value)</param>
+    /// <returns>True if rows were updated/inserted</returns>
+    public Boolean UpdateOrInsertIntoTable(string table, KeyValuePair<string, string> PrimaryKey, params KeyValuePair<string, string>[] columns)
+    {
+        try
+        {
+            if (DoesEntryExist(table, PrimaryKey))
+                return UpdateTable(table, PrimaryKey.Key + "=" + "'" + PrimaryKey.Value + "'", columns);
+            else
+                return InsertIntoTable(table, columns.Concat(new KeyValuePair<string, string>[] { PrimaryKey }).ToArray()) > 0;
+        }
+        catch (Exception)
+        {
+            CloseConnection();
+            throw;
+        }
+    }
+
+    /// <summary>
     /// checks if table exists (obviously)
     /// </summary>
     /// <param name="table"></param>
@@ -188,35 +211,30 @@ public class SQLHelper {
     }
 
     /// <summary>
-    /// updates table with given entrie
+    /// checks if entry in table 
     /// </summary>
-    /// <param name="table">table to update</param>
-    /// <param name="where">parameters which entries are to update</param>
-    /// <param name="columns">entries as keyvaluepair (column, value)</param>
-    /// <returns>true if success</returns>
-    public bool CreateRow(string table, string where, params KeyValuePair<string, string>[] columns)
+    /// <param name="table"></param>
+    /// <returns>true if exists</returns>
+    private bool DoesEntryExist(string table, KeyValuePair<string, string> PrimaryKey)
     {
         try
         {
-            string cmd = "Update " + table + " set ";
-
-            foreach (KeyValuePair<string, string> col in columns)
+            if (DoesTableExist(table))
             {
-                cmd += col.Key + "='" + col.Value + "',";
+
+                // ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL.  
+                var cmd = new SqlCommand(
+                  "select case when exists(select 1 FROM " + table + " WHERE " + PrimaryKey.Key + " = '" + PrimaryKey.Value + "') then 1 else 0 end", conn);
+
+                object scal = cmd.ExecuteScalar();
+
+                return (int)scal == 1;
             }
-            cmd = cmd.Remove(cmd.LastIndexOf(","), 1);
-
-            if (where != "")
-                cmd += " where " + where;
-
-            var createTable = new SqlCommand(cmd, conn);
-
-            return createTable.ExecuteNonQuery() != -1;
+            else return false;
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            CloseConnection();
-            throw e;
+            return false;
         }
     }
 
