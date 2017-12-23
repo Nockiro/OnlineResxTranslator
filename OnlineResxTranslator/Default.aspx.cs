@@ -66,7 +66,7 @@ public partial class _Default : PageBase {
             // count list items before our new percentage values were calculated
             int prevCount = getItemCount(TranslationSummaryCategory.Uncompleted) == -1 ? (int)ViewState["UncompleteCount"] : getItemCount(TranslationSummaryCategory.Uncompleted);
 
-            foreach (ProjectHelper.ProjectFileShortSummary psc in XMLFile.ComputeSummary((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], 100.0, 100.0))
+            foreach (ProjectHelper.ProjectFileShortSummary psc in XMLFile.ComputeSummary((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], 0, 99.999))
                 XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], psc.LangCode, null);
 
             updateData(TranslationSummaryCategory.Uncompleted);

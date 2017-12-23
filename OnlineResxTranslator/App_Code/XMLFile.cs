@@ -20,9 +20,9 @@ public class XMLFile {
     /// <param name="filename">File which was updated, e.g. beta.aspx. Or nothing to check all files</param>
     /// <returns>Percentage as integer</returns>
     /// <remarks></remarks>
-    public static int ComputePercentage(ProjectHelper.ProjectInfo project, string language, string filename)
+    public static double ComputePercentage(ProjectHelper.ProjectInfo project, string language, string filename)
     {
-        int Percentage = 0;
+        double Percentage = 0;
 
         string projDir = ConfigurationManager.AppSettings["ProjectDirectory"] + project.Folder + "\\";
 
@@ -104,8 +104,8 @@ public class XMLFile {
                     }
                     else // if the english source file is there
                     {
-                        int FileElements = 0;
-                        int TranslatedFileElements = 0;
+                        double FileElements = 0;
+                        double TranslatedFileElements = 0;
 
                         // get through each node in the english doc ..
                         foreach (XmlNode EnglishNode in EnglishDoc.SelectNodes("root/data"))
@@ -146,7 +146,7 @@ public class XMLFile {
                         if (FileElements == 0)
                             Percentage = 100;
                         else
-                            Percentage = Convert.ToInt32(TranslatedFileElements / FileElements * 100);
+                            Percentage = (TranslatedFileElements / FileElements) * 100;
 
                     }
                 }

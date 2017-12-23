@@ -145,7 +145,7 @@ partial class _Translate : PageBase {
             else
             {
                 Session["SelectedFilename"] = Filename;
-                int pc = XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], (string)Session["UserLanguage"], Convert.ToString(Session["SelectedFilename"]));
+                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], (string)Session["UserLanguage"], Convert.ToString(Session["SelectedFilename"]));
                 initTranslationTable();
             }
 
