@@ -47,6 +47,7 @@
                             <th class="TLElement">Name of Element</th>
                             <th class="TLEnglish">English Text</th>
                             <th class="TLTranslated">Translated Text</th>
+                            <th class="TLComment help" title="Note: This is just for you translators.">Comment</th>
                         </tr>
                 </HeaderTemplate>
                 <ItemTemplate>
@@ -58,6 +59,9 @@
                         <td class="TLTranslated col-xs-6">
                             <asp:TextBox ID="TranslatedText" runat="server" Text='<%#DataBinder.Eval(Container,"DataItem.Translation")%>'
                                 TextMode="MultiLine" CssClass="TLTranslatedInput" Style="width: 100%" /></td>
+                        <td class="TLComment col-xs-2">
+                            <asp:TextBox ID="TranslateComment" runat="server" Text='<%#DataBinder.Eval(Container,"DataItem.Comment")%>'
+                                TextMode="MultiLine" Style="width: 100%" /></td>
                     </tr>
                 </ItemTemplate>
                 <FooterTemplate>

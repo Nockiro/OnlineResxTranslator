@@ -82,12 +82,16 @@ partial class _Translate : PageBase {
             Table.Columns.Add("TextName");
             Table.Columns.Add("English");
             Table.Columns.Add("Translation");
+            Table.Columns.Add("Comment");
 
             foreach (XmlNode Text in EnglishFile.SelectNodes("/root/data"))
             {
                 DataRow Row = Table.NewRow();
                 Row["TextName"] = Text.Attributes["name"].InnerText;
                 Row["English"] = Text.SelectSingleNode("value").InnerText;
+                Row["Comment"] = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment") != null ? 
+                    TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment").InnerText : "";
+
                 XmlNode Translated = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/value");
                 if (Translated == null)
                 {
@@ -181,7 +185,9 @@ partial class _Translate : PageBase {
             {
                 Label LB = Item.FindControl("Element") as Label;
                 TextBox TB = Item.FindControl("TranslatedText") as TextBox;
+                string TComment = (Item.FindControl("TranslateComment") as TextBox).Text;
                 string ElementName = Utils.HTMLDecode(LB.Text);
+
                 XmlNode Node = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + ElementName + "\"]/value");
 
                 // Node does not exist in translation file, so add it
@@ -206,6 +212,36 @@ partial class _Translate : PageBase {
                     {
                         Node.InnerText = NewValue;
                         Updates += 1;
+                    }
+                }
+
+
+                XmlNode CommentNode = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + ElementName + "\"]/comment");
+                // Node does not exist in translation file, so add it
+                if (CommentNode == null)
+                {
+                    CommentNode = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + ElementName + "\"]");
+                    XmlNode rootnode = TranslatedFile.SelectSingleNode("/root");
+                    XmlNode CopiedNode = TranslatedFile.ImportNode(CommentNode, true);
+
+                    //Create a new comment node.
+                    XmlElement elem = TranslatedFile.CreateElement("comment");
+                    elem.InnerText = TComment;
+                    CopiedNode.AppendChild(elem);
+
+                    rootnode.AppendChild(CopiedNode);
+                    Updates += 1;
+
+                }
+                else
+                {
+                    string CurrentValue = CommentNode.InnerText;
+
+                    // if value changed..
+                    if (CurrentValue != TComment)
+                    {
+                        Updates += 1;
+                        Node.InnerText = TComment;
                     }
                 }
             }

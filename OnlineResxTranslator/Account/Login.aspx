@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-md-8">
             <section id="loginForm">
-                <div class="form-horizontal">
+                <asp:Panel ID="pnl_login" runat="server" CssClass="form-horizontal" DefaultButton="btnLogin">
                     <hr />
                     <asp:PlaceHolder runat="server" ID="ErrorMessage" Visible="false">
                         <p class="text-danger">
@@ -38,7 +38,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10">
-                            <asp:LinkButton ID="btnRandom"
+                            <asp:LinkButton ID="btnLogin"
                                 runat="server"
                                 CssClass="btn btn-primary"
                                 OnClick="LogIn">
@@ -46,7 +46,7 @@
                             </asp:LinkButton>
                         </div>
                     </div>
-                </div>
+                </asp:Panel>
                 <% if (SiteMaster.OpenRegistrationAllowed)
                     { %>
                 <p>

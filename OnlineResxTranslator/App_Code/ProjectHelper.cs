@@ -53,9 +53,9 @@ public class ProjectHelper {
             sqlhelper.CloseConnection();
             return list;
         }
-        catch (SqlException) // probably the table doesn't exist - but since this method is called on every page call, it'd cost a bit of resources, so only catch it if needed
+        catch (Exception e) // probably the table doesn't exist - but since this method is called on every page call, it'd cost a bit of resources, so only catch it if needed
         {
-
+            if (e is SqlException || e is InvalidOperationException)
             createProjectTable();
             return getProjects(UserID);
         }
