@@ -35,10 +35,12 @@
 
     <asp:UpdatePanel ID="UpPanTranslations" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <h4><i>You've translated <%: this.User.Identity.GetTranslatedStrings() %> strings until so far.</i></h4>
-
-            <h1>
-                <asp:Label ID="CurrentFile" runat="server" /></h1>
+            <div>
+                <h4 style="float: left;"><i>You've translated <%: this.User.Identity.GetTranslatedStrings() %> strings until so far.</i></h4>
+                <asp:CheckBox ID="cb_showOnlyUntr" runat="server" Text="Show only untranslated elements" CssClass="right" AutoPostBack="true" OnCheckedChanged="cb_showOnlyUntr_CheckedChanged" />
+            </div>
+            <br />
+            <h1><asp:Label ID="CurrentFile" runat="server" /></h1>
 
             <asp:Repeater ID="TextElements" runat="server">
                 <HeaderTemplate>

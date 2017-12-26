@@ -106,14 +106,15 @@ partial class _Translate : PageBase {
 
                 // set the not checked items
                 string[] NotArgs = new string[] { "Icon", "Size", "ImageStream", "Image", "Width", "Location", "ImeMode", "TabIndex", "TextAlign",
-                                "ToolTip", "Dock", "ClientSize", "Enabled", "Groups", "ThousandsSeparator", "AutoSize", "BackgroundImage" };
+                    "Dock", "ClientSize", "Enabled", "Groups", "ThousandsSeparator", "AutoSize", "BackgroundImage" };
 
                 bool CanBeAdded = true;
 
                 for (int i = 0; i <= NotArgs.Length - 1; i++)
                     if (Row["TextName"].ToString().Contains("." + NotArgs[i])) CanBeAdded = false;
 
-                if (CanBeAdded & (!object.ReferenceEquals(Row["English"].ToString(), "")))
+                if (CanBeAdded && !String.IsNullOrEmpty(Row["English"].ToString()) && 
+                    (!cb_showOnlyUntr.Checked || String.IsNullOrEmpty(Row["Translation"].ToString())))
                     Table.Rows.Add(Row);
 
             }
@@ -123,7 +124,6 @@ partial class _Translate : PageBase {
         }
         else
             Save.Visible = false;
-
     }
 
     protected void FileList_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -150,6 +150,11 @@ partial class _Translate : PageBase {
             }
 
         }
+    }
+    
+    protected void cb_showOnlyUntr_CheckedChanged(object sender, EventArgs e)
+    {
+        initTranslationTable();
     }
 
     protected void Save_Click(object sender, System.EventArgs e)
@@ -222,14 +227,13 @@ partial class _Translate : PageBase {
                 {
                     CommentNode = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + ElementName + "\"]");
                     XmlNode rootnode = TranslatedFile.SelectSingleNode("/root");
-                    XmlNode CopiedNode = TranslatedFile.ImportNode(CommentNode, true);
 
                     //Create a new comment node.
                     XmlElement elem = TranslatedFile.CreateElement("comment");
                     elem.InnerText = TComment;
-                    CopiedNode.AppendChild(elem);
+                    CommentNode.AppendChild(elem);
 
-                    rootnode.AppendChild(CopiedNode);
+                    rootnode.AppendChild(CommentNode);
                     Updates += 1;
 
                 }
@@ -320,6 +324,5 @@ partial class _Translate : PageBase {
     {
         Load += Page_Load;
     }
-
 
 }
