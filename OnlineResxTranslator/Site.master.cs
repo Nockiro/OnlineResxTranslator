@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Microsoft.AspNet.Identity;
 
-public partial class SiteMaster : MasterPage {
+public partial class SiteMaster : MasterPage
+{
     private const string AntiXsrfTokenKey = "__AntiXsrfToken";
     private const string AntiXsrfUserNameKey = "__AntiXsrfUserName";
     private string _antiXsrfTokenValue;
-    
+
     public static string ProjectName = ConfigurationManager.AppSettings["ProjectName"];
     public static string ProjectDescription = "Translate " + ProjectName + " into other languages!";
     public static Boolean OpenRegistrationAllowed = ConfigurationManager.AppSettings["EnableOpenRegistration"] != "false";
@@ -24,6 +26,11 @@ public partial class SiteMaster : MasterPage {
         Session["SelectedFilename"] = null;
 
         Response.Redirect(Request.RawUrl);
+    }
+
+    protected void SelectLanguage(object sender, CommandEventArgs e)
+    {
+        Session["CurrentlyChosenLanguage"] = e.CommandArgument;
     }
 
     protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
@@ -87,6 +94,20 @@ public partial class SiteMaster : MasterPage {
         {
             projectListRepeater.DataSource = ProjectHelper.getProjects(Context.User.Identity.GetUserId());
             projectListRepeater.DataBind();
+        }
+
+        Repeater languageListRepeater = (Repeater)loginview1.FindControl("rpt_languages");
+
+        if (languageListRepeater != null)
+        {
+            List<CultureInfo> list = ProjectHelper.getLanguages(Context.User.Identity.GetUserId());
+            if (list.Count > 1)
+            {
+                languageListRepeater.DataSource = list;
+                languageListRepeater.DataBind();
+            }
+            else
+                loginview1.FindControl("langList").Visible = false;
         }
     }
 

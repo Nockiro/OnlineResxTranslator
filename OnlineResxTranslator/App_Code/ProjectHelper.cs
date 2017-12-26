@@ -6,6 +6,7 @@ using System.IO;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Globalization;
 
 /// <summary>
 /// Contains all methods regarding the translation projects (not the ones working with the XML files)
@@ -72,6 +73,24 @@ public class ProjectHelper {
                 new KeyValuePair<string, string>("folder", "varchar(255) NOT NULL"));
 
         sqlhelper.CloseConnection();
+    }
+    
+    /// <summary>
+    /// Gets a list with all currently registered languages from that user
+    /// </summary>
+    /// <param name="UserID">only languages for that user will be returned</param>
+    public static List<CultureInfo> getLanguages(string UserID)
+    {
+            SQLHelper sqlhelper = new SQLHelper();
+            sqlhelper.OpenConnection();
+            List<CultureInfo> list;
+
+            // take the string out of the database, split it by comma and create cultureinfos from it
+            list = ((string)sqlhelper.SelectFromTable("TrUserLanguages", new string[] { "language" }, "TrUserLanguages.UserID = '" + UserID + "'")
+                .Rows[0]["language"]).Split(',').Select(s => new CultureInfo(s.Trim())).ToList();
+
+            sqlhelper.CloseConnection();
+            return list;
     }
 
     public static bool FTPUploadEnabled(ProjectInfo project)

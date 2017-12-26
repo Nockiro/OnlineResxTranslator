@@ -72,6 +72,18 @@
                                         </asp:Repeater>
                                     </ul>
                                 </li>
+                                <li class="dropdown" id="langList" runat="server">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="langchoose" aria-expanded="false">Languages <span class="caret"></span></a>
+                                    <ul class="dropdown-menu" aria-labelledby="projectchoose">
+                                        <asp:Repeater runat="server" ID="rpt_languages" ItemType="System.Globalization.CultureInfo">
+                                            <ItemTemplate>
+                                                <li>
+                                                    <asp:LinkButton OnCommand="SelectLanguage" CommandArgument="<%# Item.TwoLetterISOLanguageName %>" Text="<%# Item.EnglishName %>" runat="server"></asp:LinkButton>
+                                                </li>
+                                            </ItemTemplate>
+                                        </asp:Repeater>
+                                    </ul>
+                                </li>
                             </LoggedInTemplate>
                         </asp:LoginView>
                         <asp:LoginView runat="server" ViewStateMode="Disabled">
@@ -131,9 +143,9 @@
     <!-- Load Javascript for spoiler boxes -->
 
     <script type="text/javascript">
-            $(".spoiler-trigger").click(function() {
-		            $(this).parent().next().collapse('toggle');
-	            });
+        $(".spoiler-trigger").click(function () {
+            $(this).parent().next().collapse('toggle');
+        });
     </script>
 </body>
 </html>

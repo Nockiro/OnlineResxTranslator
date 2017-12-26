@@ -8,7 +8,8 @@ using Microsoft.AspNet.Identity;
 using System.IO;
 using System.Web.UI.WebControls;
 
-partial class _Translate : PageBase {
+partial class _Translate : PageBase
+{
 
     public static List<ProjectHelper.ProjectInfo> projects = ProjectHelper.getProjects();
     private SQLHelper sqlhelper = new SQLHelper();
@@ -43,7 +44,7 @@ partial class _Translate : PageBase {
         // if none was chosen, on site.master.cs the first one will be selected as default
         ProjectHelper.ProjectInfo Project = (ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"];
         string Directory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
-        string Language = (string)Session["UserLanguage"];
+        string Language = getUserLanguage(User.Identity.GetUserId());
 
         SelectedProject.Text = Project.Name + " files";
 
@@ -89,7 +90,7 @@ partial class _Translate : PageBase {
                 DataRow Row = Table.NewRow();
                 Row["TextName"] = Text.Attributes["name"].InnerText;
                 Row["English"] = Text.SelectSingleNode("value").InnerText;
-                Row["Comment"] = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment") != null ? 
+                Row["Comment"] = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment") != null ?
                     TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment").InnerText : "";
 
                 XmlNode Translated = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/value");
@@ -113,7 +114,7 @@ partial class _Translate : PageBase {
                 for (int i = 0; i <= NotArgs.Length - 1; i++)
                     if (Row["TextName"].ToString().Contains("." + NotArgs[i])) CanBeAdded = false;
 
-                if (CanBeAdded && !String.IsNullOrEmpty(Row["English"].ToString()) && 
+                if (CanBeAdded && !String.IsNullOrEmpty(Row["English"].ToString()) &&
                     (!cb_showOnlyUntr.Checked || String.IsNullOrEmpty(Row["Translation"].ToString())))
                     Table.Rows.Add(Row);
 
@@ -145,13 +146,13 @@ partial class _Translate : PageBase {
             else
             {
                 Session["SelectedFilename"] = Filename;
-                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], (string)Session["UserLanguage"], Convert.ToString(Session["SelectedFilename"]));
+                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], getUserLanguage(User.Identity.GetUserId()), Convert.ToString(Session["SelectedFilename"]));
                 initTranslationTable();
             }
 
         }
     }
-    
+
     protected void cb_showOnlyUntr_CheckedChanged(object sender, EventArgs e)
     {
         initTranslationTable();
@@ -166,7 +167,7 @@ partial class _Translate : PageBase {
         else
         {
             ProjectHelper.ProjectInfo Project = (ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"];
-            string Language = (string)Session["UserLanguage"];
+            string Language = getUserLanguage(User.Identity.GetUserId());
             string Directory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
 
             if (Project == null || Language == null)
@@ -287,20 +288,17 @@ partial class _Translate : PageBase {
     }
 
     /// <summary>
-    /// Gets a Users Language by ID
+    /// Gets the users language
     /// </summary>
-    /// <returns></returns>
-    public string getUserLanguage(string UserID)
+    public string getUserLanguage(string userID)
     {
-        sqlhelper.OpenConnection();
+        if (Session["CurrentlyChosenLanguage"] == null || String.IsNullOrEmpty((string)Session["CurrentlyChosenLanguage"]))
+        {
+            List<System.Globalization.CultureInfo> availableLangs = ProjectHelper.getLanguages(userID);
+            Session["CurrentlyChosenLanguage"] = availableLangs.Count > 0 ? availableLangs[0].TwoLetterISOLanguageName : "";
+        }
 
-        DataTable langList = sqlhelper.SelectFromTable("TrUserLanguages", new string[] { "Language" }, "UserID = '" + UserID + "'");
-
-        sqlhelper.CloseConnection();
-
-
-        return (string)langList.Rows[0]["Language"];
-
+        return (string)Session["CurrentlyChosenLanguage"];
     }
 
     /// <summary>

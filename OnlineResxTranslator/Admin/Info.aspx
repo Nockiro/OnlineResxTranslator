@@ -55,7 +55,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Language">
                         <HeaderTemplate>
-                            <asp:Label ID="hd_vp" CssClass="help" ToolTip="Note: There can only be one language at a time" runat="server" Text="Language"></asp:Label>
+                            <asp:Label ID="hd_vp" CssClass="help" ToolTip="Note: For more than one language, seperate by comma (,). Note also: The user will only get the language menu shown if there is one than more language for him available." runat="server" Text="Language"></asp:Label>
                         </HeaderTemplate>
                         <ItemTemplate>
                             <asp:Label ID="lbl_UserLang" runat="server" Text='<%#Eval("UserLanguage") %>'></asp:Label>

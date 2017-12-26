@@ -8,7 +8,8 @@ using System.Globalization;
 /// <summary>
 /// XMLFile: Manages XML files
 /// </summary>
-public class XMLFile {
+public class XMLFile
+{
     public XMLFile()
     {
     }
@@ -26,13 +27,11 @@ public class XMLFile {
         double Percentage = 0;
 
         string projDir = ConfigurationManager.AppSettings["ProjectDirectory"] + project.Folder + "\\";
-
         // Language file does not exist, so create new language file in a potential new folder
         if (!File.Exists(projDir + language + ".xml"))
         {
             // Now write the main chart xml for Form Update
             XmlTextWriter writer = new XmlTextWriter(projDir + language + ".xml", System.Text.Encoding.UTF8);
-
             var _with1 = writer;
             _with1.Formatting = Formatting.Indented;
             _with1.Indentation = 3;

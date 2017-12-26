@@ -47,7 +47,7 @@ public partial class Admin_Info : PageBase {
             @"UserProjects = STUFF((
 
                 SELECT ', ' + TrProjects.project
-                FROM TrProjects, TrUserProjects, AspNetUsers
+                FROM TrProjects, TrUserProjects
                 WHERE TrUserProjects.UserID = AspNetUsers.id AND TrUserProjects.ProjID = TrProjects.id
 
             FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '')");
