@@ -8,14 +8,19 @@ using System.Security.Claims;
 using System.Security.Principal;
 using Microsoft.AspNet.Identity.Owin;
 using localhost;
+using System.Globalization;
+using System.Web.SessionState;
 
-namespace localhost {
+namespace localhost
+{
     // Sie können Benutzerdaten für den Benutzer hinzufügen, indem Sie der User-Klasse weitere Eigenschaften hinzufügen. Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?LinkID=317594.
-    public class ApplicationUser : IdentityUser {
+    public class ApplicationUser : IdentityUser
+    {
         public int TranslatedStrings { get; set; }
     }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser> {
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    {
         public ApplicationDbContext()
             : base("DefaultConnection")
         {
@@ -23,7 +28,8 @@ namespace localhost {
     }
 
     #region Hilfsprogramme
-    public class UserManager : UserManager<ApplicationUser> {
+    public class UserManager : UserManager<ApplicationUser>
+    {
         public UserManager()
             : base(new UserStore<ApplicationUser>(new ApplicationDbContext()))
         {
@@ -31,8 +37,34 @@ namespace localhost {
     }
 }
 
-public static class IdentityExtensions {
+public static class IdentityExtensions
+{
 
+    /// <summary>
+    /// Gets the users currently selected language
+    /// </summary>
+    /// <param name="Identity">The users current identity</param>
+    /// <param name="Session">The current page session</param>
+    public static string getUserLanguage(this IIdentity Identity, HttpSessionState Session)
+    {
+        if (Session["CurrentlyChosenLanguage"] == null || String.IsNullOrEmpty((string)Session["CurrentlyChosenLanguage"]))
+        {
+            List<CultureInfo> availableLangs = Identity.getUserLanguages();
+            Session["CurrentlyChosenLanguage"] = availableLangs.Count > 0 ? availableLangs[0].TwoLetterISOLanguageName : "";
+        }
+
+        return (string)Session["CurrentlyChosenLanguage"];
+    }
+
+    public static List<CultureInfo> getUserLanguages(this IIdentity identity)
+    {
+        return ProjectHelper.getLanguages(identity.GetUserId());
+    }
+
+    public static List<ProjectHelper.ProjectInfo> getUserProjects(this IIdentity identity)
+    {
+        return ProjectHelper.getProjects(identity.GetUserId());
+    }
 
     public static int GetTranslatedStrings(this IIdentity identity)
     {
@@ -66,16 +98,16 @@ public static class IdentityExtensions {
              new KeyValuePair<string, string>("TranslatedStrings", value.ToString()));
 
             sqlhelper.CloseConnection();
-
-
         }
 
         return;
     }
 }
 
-namespace localhost {
-    public static class IdentityHelper {
+namespace localhost
+{
+    public static class IdentityHelper
+    {
         // Wird für XSRF beim Verknüpfen externer Anmeldungen verwendet.
         public const string XsrfKey = "XsrfId";
 

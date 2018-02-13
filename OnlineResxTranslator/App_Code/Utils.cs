@@ -12,7 +12,8 @@ using System.Web.SessionState;
 /// <summary>
 /// Zusammenfassungsbeschreibung für Utils
 /// </summary>
-public static class Utils {
+public static class Utils
+{
 
     public static string HTMLDecode(string sText)
     {
@@ -59,26 +60,8 @@ public static class Utils {
     }
 
 }
-public static class UserExtensions
+public static class StringExtensions
 {
-    /// <summary>
-    /// Gets the users language
-    /// </summary>
-    /// <param name="Identity">The users current identity</param>
-    /// <param name="Session">The current page session</param>
-    public static string getUserLanguage(this IIdentity Identity, HttpSessionState Session)
-    {
-        if (Session["CurrentlyChosenLanguage"] == null || String.IsNullOrEmpty((string)Session["CurrentlyChosenLanguage"]))
-        {
-            List<CultureInfo> availableLangs = ProjectHelper.getLanguages(Identity.GetUserId());
-            Session["CurrentlyChosenLanguage"] = availableLangs.Count > 0 ? availableLangs[0].TwoLetterISOLanguageName : "";
-        }
-
-        return (string)Session["CurrentlyChosenLanguage"];
-    }
-    
-}
-public static class StringExtensions {
     public static string Left(this string value, int maxLength)
     {
         if (string.IsNullOrEmpty(value)) return value;
@@ -90,7 +73,8 @@ public static class StringExtensions {
                );
     }
 }
-public static class UriExtensions {
+public static class UriExtensions
+{
     /// <summary>
     ///     Adds query string value to an existing url, both absolute and relative URI's are supported.
     /// </summary>

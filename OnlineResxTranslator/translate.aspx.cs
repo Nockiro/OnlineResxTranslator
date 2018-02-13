@@ -27,7 +27,7 @@ partial class _Translate : PageBase
             {
                 Session["UserLanguage"] = User.Identity.getUserLanguage(Session);
 
-                List<ProjectHelper.ProjectInfo> AllUserProjects = ProjectHelper.getProjects(User.Identity.GetUserId());
+                List<ProjectHelper.ProjectInfo> AllUserProjects = User.Identity.getUserProjects();
 
                 if (AllUserProjects.Count == 0)
                 {

@@ -92,7 +92,7 @@ public partial class SiteMaster : MasterPage
         // after a LOT of not getting why everything in asp has to be so completly idiotic I don't care if the user is logged in or not, just check if the element is there
         if (projectListRepeater != null)
         {
-            projectListRepeater.DataSource = ProjectHelper.getProjects(Context.User.Identity.GetUserId());
+            projectListRepeater.DataSource = Context.User.Identity.getUserProjects();
             projectListRepeater.DataBind();
         }
 
@@ -100,7 +100,7 @@ public partial class SiteMaster : MasterPage
 
         if (languageListRepeater != null)
         {
-            List<CultureInfo> list = ProjectHelper.getLanguages(Context.User.Identity.GetUserId());
+            List<CultureInfo> list = Context.User.Identity.getUserLanguages();
             if (list.Count > 1)
             {
                 languageListRepeater.DataSource = list;
