@@ -12,7 +12,8 @@
         <asp:UpdatePanel ID="UpdtPnlForPbs" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
                 <hr />
-                <h4>Current selected project: <b><%= ((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"]).Name %></b></h4>
+                <h4>Currently selected project: <b><%= ((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"]).Name %></b></h4>
+                <h4>Currently selected language: <b><%= new System.Globalization.CultureInfo(User.Identity.getUserLanguage(Session)).EnglishName %></b></h4>
                 <br />
                 <div class="panel panel-success">
                     <div class="panel-heading">

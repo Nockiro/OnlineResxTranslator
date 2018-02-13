@@ -25,7 +25,7 @@ partial class _Translate : PageBase
             }
             else
             {
-                Session["UserLanguage"] = getUserLanguage(User.Identity.GetUserId());
+                Session["UserLanguage"] = User.Identity.getUserLanguage(Session);
 
                 List<ProjectHelper.ProjectInfo> AllUserProjects = ProjectHelper.getProjects(User.Identity.GetUserId());
 
@@ -44,7 +44,7 @@ partial class _Translate : PageBase
         // if none was chosen, on site.master.cs the first one will be selected as default
         ProjectHelper.ProjectInfo Project = (ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"];
         string Directory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
-        string Language = getUserLanguage(User.Identity.GetUserId());
+        string Language = User.Identity.getUserLanguage(Session);
 
         SelectedProject.Text = Project.Name + " files";
 
@@ -146,7 +146,7 @@ partial class _Translate : PageBase
             else
             {
                 Session["SelectedFilename"] = Filename;
-                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], getUserLanguage(User.Identity.GetUserId()), Convert.ToString(Session["SelectedFilename"]));
+                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], User.Identity.getUserLanguage(Session), Convert.ToString(Session["SelectedFilename"]));
                 initTranslationTable();
             }
 
@@ -167,7 +167,7 @@ partial class _Translate : PageBase
         else
         {
             ProjectHelper.ProjectInfo Project = (ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"];
-            string Language = getUserLanguage(User.Identity.GetUserId());
+            string Language = User.Identity.getUserLanguage(Session);
             string Directory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
 
             if (Project == null || Language == null)
@@ -285,20 +285,6 @@ partial class _Translate : PageBase
             }
 
         }
-    }
-
-    /// <summary>
-    /// Gets the users language
-    /// </summary>
-    public string getUserLanguage(string userID)
-    {
-        if (Session["CurrentlyChosenLanguage"] == null || String.IsNullOrEmpty((string)Session["CurrentlyChosenLanguage"]))
-        {
-            List<System.Globalization.CultureInfo> availableLangs = ProjectHelper.getLanguages(userID);
-            Session["CurrentlyChosenLanguage"] = availableLangs.Count > 0 ? availableLangs[0].TwoLetterISOLanguageName : "";
-        }
-
-        return (string)Session["CurrentlyChosenLanguage"];
     }
 
     /// <summary>

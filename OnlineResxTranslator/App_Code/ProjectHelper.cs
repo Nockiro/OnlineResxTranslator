@@ -11,7 +11,8 @@ using System.Globalization;
 /// <summary>
 /// Contains all methods regarding the translation projects (not the ones working with the XML files)
 /// </summary>
-public class ProjectHelper {
+public class ProjectHelper
+{
     public ProjectHelper()
     {
 
@@ -57,7 +58,7 @@ public class ProjectHelper {
         catch (Exception e) // probably the table doesn't exist - but since this method is called on every page call, it'd cost a bit of resources, so only catch it if needed
         {
             if (e is SqlException || e is InvalidOperationException)
-            createProjectTable();
+                createProjectTable();
             return getProjects(UserID);
         }
     }
@@ -74,23 +75,32 @@ public class ProjectHelper {
 
         sqlhelper.CloseConnection();
     }
-    
+
     /// <summary>
     /// Gets a list with all currently registered languages from that user
     /// </summary>
     /// <param name="UserID">only languages for that user will be returned</param>
     public static List<CultureInfo> getLanguages(string UserID)
     {
-            SQLHelper sqlhelper = new SQLHelper();
-            sqlhelper.OpenConnection();
-            List<CultureInfo> list;
+        if (UserID == null)
+            return new List<CultureInfo>();
 
+        SQLHelper sqlhelper = new SQLHelper();
+        sqlhelper.OpenConnection();
+        List<CultureInfo> list;
+        try
+        {
             // take the string out of the database, split it by comma and create cultureinfos from it
             list = ((string)sqlhelper.SelectFromTable("TrUserLanguages", new string[] { "language" }, "TrUserLanguages.UserID = '" + UserID + "'")
                 .Rows[0]["language"]).Split(',').Select(s => new CultureInfo(s.Trim())).ToList();
+        }
+        catch (IndexOutOfRangeException e)
+        {
+            throw new Exception("UserID " + UserID + " not found", e);
+        }
 
-            sqlhelper.CloseConnection();
-            return list;
+        sqlhelper.CloseConnection();
+        return list;
     }
 
     public static bool FTPUploadEnabled(ProjectInfo project)
@@ -171,13 +181,15 @@ public class ProjectHelper {
 
 
 
-    public class ProjectInfo {
+    public class ProjectInfo
+    {
         public int ID { get; set; }
         public string Name { get; set; }
         public string Folder { get; set; }
     }
 
-    public class ProjectFileShortSummary {
+    public class ProjectFileShortSummary
+    {
         public string LangFile { get; set; }
         public String LangCode { get; set; }
         public Double Percentage { get; set; }

@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Web;
+using System.Web.SessionState;
 
 /// <summary>
 /// Zusammenfassungsbeschreibung für Utils
@@ -54,6 +58,25 @@ public static class Utils {
         return false;
     }
 
+}
+public static class UserExtensions
+{
+    /// <summary>
+    /// Gets the users language
+    /// </summary>
+    /// <param name="Identity">The users current identity</param>
+    /// <param name="Session">The current page session</param>
+    public static string getUserLanguage(this IIdentity Identity, HttpSessionState Session)
+    {
+        if (Session["CurrentlyChosenLanguage"] == null || String.IsNullOrEmpty((string)Session["CurrentlyChosenLanguage"]))
+        {
+            List<CultureInfo> availableLangs = ProjectHelper.getLanguages(Identity.GetUserId());
+            Session["CurrentlyChosenLanguage"] = availableLangs.Count > 0 ? availableLangs[0].TwoLetterISOLanguageName : "";
+        }
+
+        return (string)Session["CurrentlyChosenLanguage"];
+    }
+    
 }
 public static class StringExtensions {
     public static string Left(this string value, int maxLength)
