@@ -37,15 +37,14 @@ public class XMLFile
         {
             // Now write the main chart xml for Form Update
             XmlTextWriter writer = new XmlTextWriter(projDir + language + ".xml", System.Text.Encoding.UTF8);
-            var _with1 = writer;
-            _with1.Formatting = Formatting.Indented;
-            _with1.Indentation = 3;
-            _with1.WriteStartDocument();
-            _with1.WriteComment("Created on " + DateTime.Now.ToString());
+            writer.Formatting = Formatting.Indented;
+            writer.Indentation = 3;
+            writer.WriteStartDocument();
+            writer.WriteComment("Created on " + DateTime.Now.ToString());
 
             // <files>
-            _with1.WriteStartElement("files");
-            _with1.WriteAttributeString("language", language);
+            writer.WriteStartElement("files");
+            writer.WriteAttributeString("language", language);
 
             string ResXFile = null;
             string ShortName = null;
@@ -53,22 +52,22 @@ public class XMLFile
             {
                 // <file>
                 ResXFile = ResXFile_loopVariable;
-                _with1.WriteStartElement("file");
+                writer.WriteStartElement("file");
                 ShortName = ResXFile.Substring(projDir.Length).Replace(".resx", "");
 
-                _with1.WriteElementString("name", ShortName);
-                _with1.WriteElementString("percentcompleted", "0");
-                _with1.WriteElementString("caption", "");
-                _with1.WriteElementString("lastchange", DateTime.Now.ToShortDateString());
-                _with1.WriteEndElement();
+                writer.WriteElementString("name", ShortName);
+                writer.WriteElementString("percentcompleted", "0");
+                writer.WriteElementString("caption", "");
+                writer.WriteElementString("lastchange", DateTime.Now.ToShortDateString());
+                writer.WriteEndElement();
                 // </file>
             }
 
-            _with1.WriteEndElement();
+            writer.WriteEndElement();
             // </files>
 
-            _with1.WriteEndDocument();
-            _with1.Close();
+            writer.WriteEndDocument();
+            writer.Close();
         }
 
         XmlDocument LanguageXML = XMLFile.GetXMLDocument(projDir + language + ".xml");
