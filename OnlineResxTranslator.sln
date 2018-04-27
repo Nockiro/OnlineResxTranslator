@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "translateNG", "D:\Google Drive\Websites\TranslateNG\translateNG\", "{6F32B6CB-0FA0-421E-A54D-B0A912285022}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OnlineResxTranslator", "D:\Google Drive\Websites\TranslateNG\OnlineResxTranslator\", "{6F32B6CB-0FA0-421E-A54D-B0A912285022}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6.1"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_51114"
-		Debug.AspNetCompiler.PhysicalPath = "..\-translateNG\"
+		Debug.AspNetCompiler.PhysicalPath = "..\-OnlineResxTranslator\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51114\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/localhost_51114"
-		Release.AspNetCompiler.PhysicalPath = "..\-translateNG\"
+		Release.AspNetCompiler.PhysicalPath = "..\-OnlineResxTranslator\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51114\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "51114"
-		SlnRelativePath = "translateNG\"
+		SlnRelativePath = "OnlineResxTranslator\"
 	EndProjectSection
 EndProject
 Global
