@@ -7,6 +7,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Globalization;
+using System.Security.Principal;
+using Microsoft.AspNet.Identity;
 
 /// <summary>
 /// Contains all methods regarding the translation projects (not the ones working with the XML files)
@@ -117,7 +119,7 @@ public class ProjectHelper
                     new KeyValuePair<string, string>[]
                     {
                 new KeyValuePair<string, string>("UserID", "nvarchar(128) NOT NULL"),
-                new KeyValuePair<string, string>("Language", "varchar(8) NOT NULL")
+                new KeyValuePair<string, string>("Language", "varchar(128) NOT NULL")
                     },
                     new string[]
                      {
@@ -138,24 +140,21 @@ public class ProjectHelper
     /// Gets a list with all currently registered languages from that user
     /// </summary>
     /// <param name="UserID">only languages for that user will be returned</param>
-    public static List<CultureInfo> getLanguages(string UserID)
+    public static List<CultureInfo> getLanguages(IIdentity User)
     {
-        if (UserID == null)
+        if (User.GetUserId() == null)
             return new List<CultureInfo>();
 
         SQLHelper sqlhelper = new SQLHelper();
         sqlhelper.OpenConnection();
-        List<CultureInfo> list;
-        try
-        {
-            // take the string out of the database, split it by comma and create cultureinfos from it
-            list = ((string)sqlhelper.SelectFromTable("TrUserLanguages", new string[] { "language" }, "TrUserLanguages.UserID = '" + UserID + "'")
-                .Rows[0]["language"]).Split(',').Select(s => new CultureInfo(s.Trim())).ToList();
-        }
-        catch (IndexOutOfRangeException e)
-        {
-            throw new Exception("UserID " + UserID + " not found", e);
-        }
+        List<CultureInfo> list = new List<CultureInfo>();
+
+        list.Add(new CultureInfo(User.GetDefaultLanguage()));
+
+        // take the string out of the database, split it by comma and create cultureinfos from it
+        DataRowCollection tableRows = sqlhelper.SelectFromTable("TrUserLanguages", new string[] { "language" }, "TrUserLanguages.UserID = '" + User.GetUserId() + "'").Rows;
+        if (tableRows.Count > 0 && !String.IsNullOrEmpty((string)tableRows[0]["language"]))
+            list.AddRange(((string)tableRows[0]["language"]).Split(',').Select(s => new CultureInfo(s.Trim())));
 
         sqlhelper.CloseConnection();
         return list;

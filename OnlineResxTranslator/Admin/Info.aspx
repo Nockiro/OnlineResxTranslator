@@ -53,7 +53,7 @@
                             <asp:TextBox ID="tb_Projects" runat="server" Text='<%#Eval("UserProjects") %>'></asp:TextBox>
                         </EditItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="DefaultLanguage">
+                    <asp:TemplateField HeaderText="Default Language">
                         <ItemTemplate>
                             <asp:Label ID="lbl_UserDefLang" runat="server" Text='<%#Eval("UserDefaultLanguage") %>'></asp:Label>
                         </ItemTemplate>
@@ -63,7 +63,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Additional Languages">
                         <HeaderTemplate>
-                            <asp:Label ID="hd_vp" CssClass="help" ToolTip="Note: For more than one language, seperate by comma (,). Note also: The user will only get the language menu shown if there is one than more language for him available." runat="server" Text="Language"></asp:Label>
+                            <asp:Label ID="hd_vp" CssClass="help" ToolTip="Note: For more than one language, seperate by comma (,). Note also: The user will only get the language menu shown if there is one than more language for him available." runat="server" Text="Additional Languages"></asp:Label>
                         </HeaderTemplate>
                         <ItemTemplate>
                             <asp:Label ID="lbl_UserLang" runat="server" Text='<%#Eval("UserLanguages") %>'></asp:Label>

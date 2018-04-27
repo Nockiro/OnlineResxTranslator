@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 /// <summary>
 /// Base class for pages which can use some extended functions (eg error messages)
 /// </summary>
-public class PageBase : Page {
+public class PageBase : Page
+{
     public PageBase()
     {
     }

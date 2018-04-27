@@ -10,6 +10,11 @@ using System.Globalization;
 /// </summary>
 public class XMLFile
 {
+    // set the not checked items
+    public static readonly string[] NotArgs = new string[] { "Icon", "Size", "ImageStream", "Image", "Width", "Location", "ImeMode", "TabIndex", "TextAlign",
+                                "ToolTip", "Dock", "ClientSize", "Enabled", "Visible", "Groups", "ThousandsSeparator", "AutoSize", "BackgroundImage", "Type", "ZOrder", "Parent", "Name",
+                                "Padding", "Anchor", "AutoScaleDimensions", "Multiline", "Font"};
+
     public XMLFile()
     {
     }
@@ -21,7 +26,7 @@ public class XMLFile
     /// <param name="language">shortcut of language, e.g. de</param>
     /// <param name="filename">File which was updated, e.g. beta.aspx. Or nothing to check all files</param>
     /// <returns>Percentage as integer</returns>
-    /// <remarks></remarks>
+    /// <remarks>Creates info file if not existing</remarks>
     public static double ComputePercentage(ProjectHelper.ProjectInfo project, string language, string filename)
     {
         double Percentage = 0;
@@ -53,6 +58,7 @@ public class XMLFile
 
                 _with1.WriteElementString("name", ShortName);
                 _with1.WriteElementString("percentcompleted", "0");
+                _with1.WriteElementString("caption", "");
                 _with1.WriteElementString("lastchange", DateTime.Now.ToShortDateString());
                 _with1.WriteEndElement();
                 // </file>
@@ -115,9 +121,6 @@ public class XMLFile
                             Array NodePoints = default(Array);
                             NodePoints = NodeName.Split('.');
 
-                            // set the not checked items
-                            string[] NotArgs = new string[] { "Icon", "Size", "ImageStream", "Image", "Width", "Location", "ImeMode", "TabIndex", "TextAlign",
-                                "ToolTip", "Dock", "ClientSize", "Enabled", "Groups", "ThousandsSeparator", "AutoSize", "BackgroundImage" };
 
                             bool CanBeAdded = true;
 
@@ -238,15 +241,22 @@ public class XMLFile
     /// <remarks></remarks>
     public static XmlDocument GetXMLDocument(string filename)
     {
-        if (File.Exists(filename))
+        try
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(filename);
-            return doc;
+            if (File.Exists(filename))
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(filename);
+                return doc;
+            }
+            else
+            {
+                // file does not exist
+                return null;
+            }
         }
-        else
+        catch (FileNotFoundException) // in my case File.Exists didn't completely work on symlinks
         {
-            // file does not exist
             return null;
         }
     }

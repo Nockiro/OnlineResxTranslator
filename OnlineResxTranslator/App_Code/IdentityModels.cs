@@ -59,14 +59,7 @@ public static class IdentityExtensions
 
     public static List<CultureInfo> getUserLanguages(this IIdentity identity)
     {
-        try
-        {
-            return ProjectHelper.getLanguages(identity.GetUserId());
-        }
-        catch (Exception)
-        {
-            return new List<CultureInfo>() { new CultureInfo(identity.GetDefaultLanguage()) };
-        }
+            return ProjectHelper.getLanguages(identity);
     }
 
     public static List<ProjectHelper.ProjectInfo> getUserProjects(this IIdentity identity)

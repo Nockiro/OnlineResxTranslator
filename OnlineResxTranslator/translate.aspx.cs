@@ -20,23 +20,18 @@ partial class _Translate : PageBase
         if (!Page.IsPostBack)
         {
             if (!User.Identity.IsAuthenticated)
-            {
                 Response.Redirect("/Account/Login.aspx?re=403");
-            }
-            else
-            {
-                Session["UserLanguage"] = User.Identity.getUserLanguage(Session);
-
-                List<ProjectHelper.ProjectInfo> AllUserProjects = User.Identity.getUserProjects();
-
-                if (AllUserProjects.Count == 0)
-                {
-                    showError("You are not registered for any project."); return;
-                }
-                else initTranslationTable();
-            }
+            else if (User.Identity.getUserProjects().Count == 0)
+                showError("You are not registered for any project."); return;
         }
+    }
 
+    protected override void OnPreRenderComplete(EventArgs e)
+    {
+        if (!Page.IsPostBack || Page.Request?.Form?["__EVENTTARGET"]?.Contains("rpt_languages") == true)
+            initTranslationTable();
+
+        base.OnPreRenderComplete(e);
     }
 
     protected void initTranslationTable()
@@ -55,7 +50,7 @@ partial class _Translate : PageBase
 
         if (!File.Exists(Directory + Language + ".xml"))
         {
-            showError("Language file for '" + Language + "' does not exist!"); return;
+            showError("Language file for '" + Language + "' could not be created!"); return;
         }
         else
         {
@@ -90,10 +85,9 @@ partial class _Translate : PageBase
                 DataRow Row = Table.NewRow();
                 Row["TextName"] = Text.Attributes["name"].InnerText;
                 Row["English"] = Text.SelectSingleNode("value").InnerText;
-                Row["Comment"] = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment") != null ?
-                    TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment").InnerText : "";
+                Row["Comment"] = TranslatedFile?.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment")?.InnerText ?? "";
 
-                XmlNode Translated = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/value");
+                XmlNode Translated = TranslatedFile?.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/value");
                 if (Translated == null)
                 {
                     Row["Translation"] = string.Empty;
@@ -104,15 +98,10 @@ partial class _Translate : PageBase
                     //HttpUtility.HtmlEncode(Translated.InnerText)
                 }
 
-
-                // set the not checked items
-                string[] NotArgs = new string[] { "Icon", "Size", "ImageStream", "Image", "Width", "Location", "ImeMode", "TabIndex", "TextAlign",
-                    "Dock", "ClientSize", "Enabled", "Groups", "ThousandsSeparator", "AutoSize", "BackgroundImage" };
-
                 bool CanBeAdded = true;
 
-                for (int i = 0; i <= NotArgs.Length - 1; i++)
-                    if (Row["TextName"].ToString().Contains("." + NotArgs[i])) CanBeAdded = false;
+                foreach (String notToCheck in XMLFile.NotArgs)
+                    if (Row["TextName"].ToString().Contains("." + notToCheck)) CanBeAdded = false;
 
                 if (CanBeAdded && !String.IsNullOrEmpty(Row["English"].ToString()) &&
                     (!cb_showOnlyUntr.Checked || String.IsNullOrEmpty(Row["Translation"].ToString())))
@@ -168,7 +157,7 @@ partial class _Translate : PageBase
         {
             ProjectHelper.ProjectInfo Project = (ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"];
             string Language = User.Identity.getUserLanguage(Session);
-            string Directory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
+            string ProjectDirectory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
 
             if (Project == null || Language == null)
             {
@@ -180,9 +169,13 @@ partial class _Translate : PageBase
 
             int Updates = 0;
 
-            XmlDocument EnglishFile = XMLFile.GetXMLDocument(Directory + Convert.ToString(Session["SelectedFilename"]) + ".resx");
-            string TargetFilename = Directory + Language + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx";
-            string TargetFileNameForGen = Directory + Language + "\\Download" + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx";
+            XmlDocument EnglishFile = XMLFile.GetXMLDocument(ProjectDirectory + Convert.ToString(Session["SelectedFilename"]) + ".resx");
+            string TargetFilename = ProjectDirectory + Language + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx";
+            string TargetFileNameForGen = ProjectDirectory + Language + "\\Download" + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx";
+
+            // if download directory does not exist, create it
+            if (!Directory.Exists(ProjectDirectory + Language + "\\Download"))
+                Directory.CreateDirectory(ProjectDirectory + Language + "\\Download");
 
             XmlDocument TranslatedFile = XMLFile.GetXMLDocument(TargetFilename);
             string Filename = Convert.ToString(Session["SelectedFilename"]);

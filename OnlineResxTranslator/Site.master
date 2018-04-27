@@ -95,7 +95,7 @@
                                             <ul class="dropdown-menu" aria-labelledby="management">
                                                 <li><a runat="server" href="~/Account/Register">Register user</a></li>
                                                 <li class="divider"></li>
-                                                <li><a runat="server" href="~/Admin/Info">Info panel</a></li>
+                                                <li><a runat="server" href="~/Admin/Info">Admin panel</a></li>
                                             </ul>
                                         </li>
                                     </ContentTemplate>
