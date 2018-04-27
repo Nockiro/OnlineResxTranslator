@@ -8,7 +8,8 @@ using System.Linq;
 /// <summary>
 /// Helps with SQL queries
 /// </summary>
-public class SQLHelper {
+public class SQLHelper
+{
 
     private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
     private SqlConnection conn = new SqlConnection(connectionString);
@@ -48,15 +49,20 @@ public class SQLHelper {
     /// creates table with given columns
     /// </summary>
     /// <param name="table">table to create</param>
-    /// <param name="column">columns as keyvaluepair (name, type)</param>
+    /// <param name="columns">columns as keyvaluepair (name, type)</param>
+    /// <param name="constraints">if given, add those constraints</param>
     /// <returns>true if success</returns>
-    public bool CreateTable(string table, params KeyValuePair<string, string>[] columns)
+    public bool CreateTable(string table, KeyValuePair<string, string>[] columns, string[] constraints = null)
     {
         string cmd = "Create Table " + table + "( ";
         try
         {
             foreach (KeyValuePair<string, string> col in columns)
                 cmd += col.Key + " " + col.Value + ",";
+
+            if (constraints != null)
+                foreach (string constraint in constraints)
+                    cmd += "Constraint " + constraint + ",";
 
             cmd = cmd.Remove(cmd.LastIndexOf(","), 1) + ");";
 
@@ -67,7 +73,7 @@ public class SQLHelper {
         catch (Exception e)
         {
             CloseConnection();
-            throw e;
+            throw new Exception("Executed command: " + cmd, e);
         }
     }
 
@@ -194,6 +200,7 @@ public class SQLHelper {
     /// <returns>true if exists</returns>
     public bool DoesTableExist(string table)
     {
+        bool exists = false;
         try
         {
             // ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL.  
@@ -202,12 +209,22 @@ public class SQLHelper {
 
             object scal = cmd.ExecuteScalar();
 
-            return (int)scal == 1;
+            exists = (int)scal == 1;
         }
-        catch (Exception)
+        catch
         {
-            return false;
+            try
+            {
+                // Other RDBMS.
+                var cmdOthers = new SqlCommand("select 1 from " + table + " where 1 = 0");
+                cmdOthers.ExecuteNonQuery();
+                exists = true;
+            }
+            catch
+            {
+            }
         }
+        return exists;
     }
 
     /// <summary>

@@ -17,6 +17,7 @@ namespace localhost
     public class ApplicationUser : IdentityUser
     {
         public int TranslatedStrings { get; set; }
+        public string DefaultLanguage { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -47,7 +48,7 @@ public static class IdentityExtensions
     /// <param name="Session">The current page session</param>
     public static string getUserLanguage(this IIdentity Identity, HttpSessionState Session)
     {
-        if (Session["CurrentlyChosenLanguage"] == null || String.IsNullOrEmpty((string)Session["CurrentlyChosenLanguage"]))
+        if (Session["CurrentlyChosenLanguage"] == null || String.IsNullOrEmpty((string)Session["CurrentlyChosenLanguage"]) || (string)Session["CurrentlyChosenLanguage"] == "iv")
         {
             List<CultureInfo> availableLangs = Identity.getUserLanguages();
             Session["CurrentlyChosenLanguage"] = availableLangs.Count > 0 ? availableLangs[0].TwoLetterISOLanguageName : "";
@@ -58,7 +59,14 @@ public static class IdentityExtensions
 
     public static List<CultureInfo> getUserLanguages(this IIdentity identity)
     {
-        return ProjectHelper.getLanguages(identity.GetUserId());
+        try
+        {
+            return ProjectHelper.getLanguages(identity.GetUserId());
+        }
+        catch (Exception e)
+        {
+            return new List<CultureInfo>() { new CultureInfo(identity.GetDefaultLanguage()) };
+        }
     }
 
     public static List<ProjectHelper.ProjectInfo> getUserProjects(this IIdentity identity)
@@ -75,9 +83,24 @@ public static class IdentityExtensions
         var ci = identity as ClaimsIdentity;
         if (ci != null)
         {
-            return Convert.ToInt32(ci.FindFirstValue("TranslatedStrings"));
+            return Convert.ToInt32(ci.FindFirst("TranslatedStrings").Value);
         }
         return -1;
+    }
+
+    public static string GetDefaultLanguage(this IIdentity identity)
+    {
+        if (identity == null)
+        {
+            throw new ArgumentNullException("identity");
+        }
+
+        var ci = identity as ClaimsIdentity;
+        if (ci != null)
+        {
+            return ci.FindFirst("Language").Value;
+        }
+        return "";
     }
 
 
@@ -119,6 +142,7 @@ namespace localhost
 
             // Add custom user claims here
             identity.AddClaim(new Claim("TranslatedStrings", user.TranslatedStrings.ToString()));
+            identity.AddClaim(new Claim("Language", user.DefaultLanguage));
 
             authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, identity);
         }

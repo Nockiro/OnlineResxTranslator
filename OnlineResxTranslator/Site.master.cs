@@ -81,7 +81,10 @@ public partial class SiteMaster : MasterPage
         else ErrorMessage.Visible = false;
 
         if (Session["CurrentlyChosenProject"] == null)
-            Session["CurrentlyChosenProject"] = projects.Count > 0 ? projects[0] : new ProjectHelper.ProjectInfo() { Name = "", ID = -1, Folder = "" };
+        {
+            projects = ProjectHelper.getProjects();
+            Session["CurrentlyChosenProject"] = projects.Count > 0 ? projects[0] : null;
+        }
 
     }
 

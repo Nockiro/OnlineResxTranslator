@@ -13,6 +13,7 @@ using System.Globalization;
 /// </summary>
 public class ProjectHelper
 {
+    public const int NOPROJID = -1;
     public ProjectHelper()
     {
 
@@ -43,37 +44,94 @@ public class ProjectHelper
         {
             SQLHelper sqlhelper = new SQLHelper();
             sqlhelper.OpenConnection();
-            List<ProjectInfo> list;
 
-            if (UserID == "")
-                list = getProjectListFromDataTable(sqlhelper.SelectFromTable("TrProjects", new string[] { "id", "project", "folder" }));
-            else
-                list = getProjectListFromDataTable(sqlhelper.SelectFromTable("TrProjects, TrUserProjects",
-                    new string[] { "TrProjects.id as id", "TrProjects.project as project", "TrProjects.folder as folder" },
-                    "TrUserProjects.UserID = '" + UserID + "' AND TrUserProjects.ProjID = TrProjects.id"));
+            if (sqlhelper.connectionOpen)
+            {
+                List<ProjectInfo> list;
 
-            sqlhelper.CloseConnection();
-            return list;
+                if (UserID == "")
+                    list = getProjectListFromDataTable(sqlhelper.SelectFromTable("TrProjects", new string[] { "id", "project", "folder" }));
+                else
+                    list = getProjectListFromDataTable(sqlhelper.SelectFromTable("TrProjects, TrUserProjects",
+                        new string[] { "TrProjects.id as id", "TrProjects.project as project", "TrProjects.folder as folder" },
+                        "TrUserProjects.UserID = '" + UserID + "' AND TrUserProjects.ProjID = TrProjects.id"));
+
+                sqlhelper.CloseConnection();
+                return list;
+            }
+            else return new List<ProjectInfo>();
         }
         catch (Exception e) // probably the table doesn't exist - but since this method is called on every page call, it'd cost a bit of resources, so only catch it if needed
         {
             if (e is SqlException || e is InvalidOperationException)
-                createProjectTable();
-            return getProjects(UserID);
+                if (createMainTables()) return getProjects(UserID);
+
+            return new List<ProjectInfo>();
         }
     }
 
-    public static void createProjectTable()
+    /// <summary>
+    /// Creates all additional tables not automatically created by the entity framework
+    /// </summary>
+    /// <returns>True if main tables were created successfully</returns>
+    public static bool createMainTables()
     {
+        Boolean success = false;
         SQLHelper sqlhelper = new SQLHelper();
         sqlhelper.OpenConnection();
-        if (!sqlhelper.DoesTableExist("TrProjects"))
-            sqlhelper.CreateTable("TrProjects",
+
+        // we can't create the tables until the automatic creation process for the identity tables hasn't begun, so skip it in that case
+        if (sqlhelper.DoesTableExist("AspNetUsers"))
+        {
+            if (!sqlhelper.DoesTableExist("TrProjects"))
+                sqlhelper.CreateTable("TrProjects",
+                    new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("id", "int NOT NULL IDENTITY (0,1) PRIMARY KEY"),
                 new KeyValuePair<string, string>("project", "varchar(255) NOT NULL"),
-                new KeyValuePair<string, string>("folder", "varchar(255) NOT NULL"));
+                new KeyValuePair<string, string>("folder", "varchar(255) NOT NULL")
+                    }
+                );
+
+            if (!sqlhelper.DoesTableExist("TrUserProjects"))
+                sqlhelper.CreateTable("TrUserProjects",
+                    new KeyValuePair<string, string>[]
+                    {
+                new KeyValuePair<string, string>("UserID", "nvarchar(128) NOT NULL"),
+                new KeyValuePair<string, string>("ProjID", "int NOT NULL")
+                    },
+                    new string[]
+                     {
+                     @" FK_PROJECT_USERS FOREIGN KEY (UserID) 
+                        REFERENCES AspNetUsers (Id) 
+                        ON DELETE CASCADE
+                        ON UPDATE CASCADE",
+                     @" FK_PROJECT_Projects FOREIGN KEY (ProjID) 
+                        REFERENCES TrProjects (id) 
+                        ON DELETE CASCADE
+                        ON UPDATE CASCADE",
+                     }
+                );
+
+            if (!sqlhelper.DoesTableExist("TrUserLanguages"))
+                sqlhelper.CreateTable("TrUserLanguages",
+                    new KeyValuePair<string, string>[]
+                    {
+                new KeyValuePair<string, string>("UserID", "nvarchar(128) NOT NULL"),
+                new KeyValuePair<string, string>("Language", "varchar(8) NOT NULL")
+                    },
+                    new string[]
+                     {
+                     @" FK_PROJECTLANG_USERS FOREIGN KEY (UserID) 
+                        REFERENCES AspNetUsers (Id) 
+                        ON DELETE CASCADE
+                        ON UPDATE CASCADE"
+                     }
+                );
+            success = true;
+        }
 
         sqlhelper.CloseConnection();
+        return success;
     }
 
     /// <summary>

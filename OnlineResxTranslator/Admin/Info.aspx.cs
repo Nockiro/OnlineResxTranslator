@@ -5,7 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Web.UI.WebControls;
 
-public partial class Admin_Info : PageBase {
+public partial class Admin_Info : PageBase
+{
 
     private SQLHelper sqlhelper = new SQLHelper();
 
@@ -42,7 +43,8 @@ public partial class Admin_Info : PageBase {
             "AspNetUsers.id as UserID",
             "AspNetUsers.UserName as UserName",
             "AspNetUsers.Email as UserMail",
-            "TrUserLanguages.Language as UserLanguage",
+            "AspNetUsers.DefaultLanguage as UserDefaultLanguage",
+            "TrUserLanguages.Language as UserLanguages",
 
             @"UserProjects = STUFF((
 
@@ -74,16 +76,19 @@ public partial class Admin_Info : PageBase {
         String userMail = (gvUsers.Rows[e.RowIndex].FindControl("tb_UserMail") as TextBox).Text;
         String userProjects = (gvUsers.Rows[e.RowIndex].FindControl("tb_Projects") as TextBox).Text;
         String userLanguage = (gvUsers.Rows[e.RowIndex].FindControl("tb_UserLang") as TextBox).Text;
+        String userDefaultLanguage = (gvUsers.Rows[e.RowIndex].FindControl("tb_UserDefLang") as TextBox).Text;
 
         sqlhelper.OpenConnection();
         // update user table
         sqlhelper.UpdateTable("AspNetUsers", "id = '" + id + "'",
          new KeyValuePair<string, string>("UserName", userName),
-         new KeyValuePair<string, string>("Email", userMail));
-        
+         new KeyValuePair<string, string>("Email", userMail),
+         new KeyValuePair<string, string>("DefaultLanguage", userDefaultLanguage));
+
         // update language table
-        sqlhelper.UpdateOrInsertIntoTable("TrUserLanguages", new KeyValuePair<string, string>("UserID", id),
-         new KeyValuePair<string, string>("Language", userLanguage));
+        if (userLanguage != "")
+            sqlhelper.UpdateOrInsertIntoTable("TrUserLanguages", new KeyValuePair<string, string>("UserID", id),
+             new KeyValuePair<string, string>("Language", userLanguage));
 
         // update project table
         // its faster code to delete all projects of that user and readd the ones given in the list, really.

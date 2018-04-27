@@ -12,13 +12,10 @@ public partial class _Default : PageBase {
         Completed
     }
 
-
     protected override void Page_LoadBegin(object sender, EventArgs e)
     {
-        if (!Page.IsPostBack)
-        {
+        if (!Page.IsPostBack && Session["CurrentlyChosenProject"] != null)
             updateData(TranslationSummaryCategory.Uncompleted | TranslationSummaryCategory.Completed);
-        }
     }
 
     public void recalculatePoints_Click(Object sender, CommandEventArgs e)
@@ -36,7 +33,6 @@ public partial class _Default : PageBase {
             }
 
         }
-
     }
 
     private void refreshData(TranslationSummaryCategory tsc)
