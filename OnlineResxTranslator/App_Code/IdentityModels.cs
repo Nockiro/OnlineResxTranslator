@@ -63,7 +63,7 @@ public static class IdentityExtensions
         {
             return ProjectHelper.getLanguages(identity.GetUserId());
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return new List<CultureInfo>() { new CultureInfo(identity.GetDefaultLanguage()) };
         }
