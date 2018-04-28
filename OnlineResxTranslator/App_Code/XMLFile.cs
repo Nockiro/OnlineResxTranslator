@@ -7,6 +7,9 @@ using System.Globalization;
 
 /// <summary>
 /// XMLFile: Manages XML files
+/// Original work Copyright (C) 2010 Kai Wilzer
+/// Modified by Nockiro 2017-2018 in order to improve and document the code 
+/// and adapt it to the rest of the project
 /// </summary>
 public class XMLFile
 {
@@ -36,9 +39,11 @@ public class XMLFile
         if (!File.Exists(projDir + language + ".xml"))
         {
             // Now write the main chart xml for Form Update
-            XmlTextWriter writer = new XmlTextWriter(projDir + language + ".xml", System.Text.Encoding.UTF8);
-            writer.Formatting = Formatting.Indented;
-            writer.Indentation = 3;
+            XmlTextWriter writer = new XmlTextWriter(projDir + language + ".xml", System.Text.Encoding.UTF8)
+            {
+                Formatting = Formatting.Indented,
+                Indentation = 3
+            };
             writer.WriteStartDocument();
             writer.WriteComment("Created on " + DateTime.Now.ToString());
 

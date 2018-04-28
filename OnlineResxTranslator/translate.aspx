@@ -4,6 +4,8 @@
     <h2><%: this.Title %>.</h2>
 
 
+    <%if (Session["CurrentlyChosenProject"] != null)
+        { %>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4 style="display: inline-block;">
@@ -25,10 +27,11 @@
     </div>
 
     <!-- if javascript is enabled, collapse the file list if a file was selected -->
-    <% if (Session["SelectedFilename"] != null) { %>
+    <% if (Session["SelectedFilename"] != null)
+        { %>
 
     <script type="text/javascript">
-		            $("#filelisttoggle").parent().next().collapse('hide');
+        $("#filelisttoggle").parent().next().collapse('hide');
     </script>
 
     <% } %>
@@ -40,7 +43,8 @@
                 <asp:CheckBox ID="cb_showOnlyUntr" runat="server" Text="Show only untranslated elements" CssClass="right" AutoPostBack="true" OnCheckedChanged="cb_showOnlyUntr_CheckedChanged" />
             </div>
             <br />
-            <h1><asp:Label ID="CurrentFile" runat="server" /></h1>
+            <h1>
+                <asp:Label ID="CurrentFile" runat="server" /></h1>
 
             <asp:Repeater ID="TextElements" runat="server">
                 <HeaderTemplate>
@@ -81,4 +85,9 @@
         </ContentTemplate>
     </asp:UpdatePanel>
 
+    <% } else { %>
+    <div class="alert alert-warning">
+        <strong>Warning!</strong> No projects registered. Please add one in the administration panel.
+    </div>
+    <% } %>
 </asp:Content>

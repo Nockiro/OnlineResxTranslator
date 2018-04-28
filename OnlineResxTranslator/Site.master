@@ -123,7 +123,7 @@
                 </div>
             </div>
         </div>
-        <div class="container body-content">
+        <div class="container body-content fill">
             <asp:PlaceHolder runat="server" ID="ErrorMessage" Visible="false">
                 <hr />
                 <p class="text-danger">
@@ -134,8 +134,10 @@
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
-            <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - <%: ProjectName %> </p>
+            <footer><div class="container">
+                <div class="left ">See <a runat="server"  href="https://github.com/Nockiro/OnlineResxTranslator">OnlineResxTranslator on Github</a></div>
+                <div class="right"><%: ProjectName %> | <a runat="server" href="~/Contact">Contact</a></div> 
+        </div>
             </footer>
         </div>
     </form>

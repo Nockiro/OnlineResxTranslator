@@ -6,7 +6,8 @@ using System.Net;
 using System.Web;
 
 /// <summary>
-/// Zusammenfassungsbeschreibung für FTP
+/// Files for Transfer over the FTP Protocol
+/// Licensed under CPOL // taken from: https://www.codeproject.com/Tips/443588/Simple-Csharp-FTP-Class
 /// </summary>
 public class FTP {
     private string host = null;
@@ -84,7 +85,7 @@ public class FTP {
             /* Establish Return Communication with the FTP Server */
             ftpStream = ftpRequest.GetRequestStream();
             /* Open a File Stream to Read the File for Upload */
-            FileStream localFileStream = new FileStream(localFile, FileMode.Create);
+            FileStream localFileStream = new FileStream(localFile, FileMode.Open, FileAccess.Read);
             /* Buffer for the Downloaded Data */
             byte[] byteBuffer = new byte[bufferSize];
             int bytesSent = localFileStream.Read(byteBuffer, 0, bufferSize);
@@ -182,46 +183,6 @@ public class FTP {
         }
         catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         return;
-    }
-
-    /* Get the Date/Time a File was Created */
-    public string getFileCreatedDateTime(string fileName)
-    {
-        try
-        {
-            /* Create an FTP Request */
-            ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + fileName);
-            /* Log in to the FTP Server with the User Name and Password Provided */
-            ftpRequest.Credentials = new NetworkCredential(user, pass);
-            /* When in doubt, use these options */
-            ftpRequest.UseBinary = true;
-            ftpRequest.UsePassive = true;
-            ftpRequest.KeepAlive = true;
-            /* Specify the Type of FTP Request */
-            ftpRequest.Method = WebRequestMethods.Ftp.GetDateTimestamp;
-            /* Establish Return Communication with the FTP Server */
-            ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-            //              /* Establish Return Communication with the FTP Server */
-            //                ftpStream = ftpResponse.GetResponseStream();
-            //                /* Get the FTP Server's Response Stream */
-            //                StreamReader ftpReader = new StreamReader(ftpStream);
-            //                /* Store the Raw Response */
-            string fileInfo = null;
-            /* Read the Full Response Stream */
-            //try { fileInfo = ftpReader.ReadToEnd(); }
-            //catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-            try { fileInfo = ftpResponse.LastModified.ToString(); }
-            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-            /* Resource Cleanup */
-            ftpStream.Close();
-            ftpResponse.Close();
-            ftpRequest = null;
-            /* Return File Created Date Time */
-            return fileInfo;
-        }
-        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-        /* Return an Empty string Array if an Exception Occurs */
-        return "";
     }
 
     /* Get the Size of a File */

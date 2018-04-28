@@ -188,9 +188,7 @@ public class ProjectHelper
         foreach (XmlNode FTPNode in ProjectFile.SelectNodes("/project/ftp"))
         {
             if (FTPNode.SelectSingleNode("server") == null)
-            {
                 throw new Exception("FTP-Upload not possible: Server node in XML file not found!");
-            }
             else
             {
                 string Servername = FTPNode.SelectSingleNode("server").InnerText;

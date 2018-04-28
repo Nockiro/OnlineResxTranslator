@@ -3,6 +3,9 @@ body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
+html, body {
+    height: 100%;
+}
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
@@ -32,7 +35,15 @@ body {
 }
 
 .container {
-  margin-top: 10px;
+    margin-top: 10px;
+}
+.fill {
+    height: auto;
+    /* height - footer - header*/
+    min-height: calc(100vh - 95px - 70px);
+    min-height: -o-calc(100vh - 95px - 70px); /* opera */
+    min-height: -webkit-calc(100vh - 95px - 70px); /* google, safari */
+    min-height: -moz-calc(100vh - 95px - 70px); /* firefox */
 }
 .panel {
   box-shadow: none !important;
@@ -47,6 +58,10 @@ body {
 .right {
     float: right;
 }
+.left {
+    float: left;
+}
+
 input[type=checkbox] + label {
     padding-left: 4px;
 }

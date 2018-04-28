@@ -28,7 +28,7 @@ partial class _Translate : PageBase
 
     protected override void OnPreRenderComplete(EventArgs e)
     {
-        if (!Page.IsPostBack || Page.Request?.Form?["__EVENTTARGET"]?.Contains("rpt_languages") == true)
+        if ((!Page.IsPostBack || Page.Request?.Form?["__EVENTTARGET"]?.Contains("rpt_languages") == true) && Session["CurrentlyChosenProject"] != null)
             initTranslationTable();
 
         base.OnPreRenderComplete(e);
@@ -249,7 +249,7 @@ partial class _Translate : PageBase
 
             User.Identity.SetTranslatedStrings(alreadyTranslated + updateCount);
 
-            // No updates made. No need to save file.
+            // No updates made. No need to save file, but recalculate the percentage in case the file changed externally
             if (Updates == 0)
             {
                 XMLFile.ComputePercentage(Project, Language, Convert.ToString(Session["SelectedFilename"]));
@@ -265,15 +265,22 @@ partial class _Translate : PageBase
                 //Session["GlobalMessage"] = "File '" + TargetFilename.Split("\\".ToCharArray())[TargetFilename.Split("\\".ToCharArray()).GetUpperBound(0)] + "' saved sucessfully!";
 
                 if (ProjectHelper.FTPUploadEnabled(Project))
-                {
                     ProjectHelper.FTPUpload(Project, TargetFilename);
-                }
 
                 TranslatedFile.Save(TargetFileNameForGen);
 
+                if (ProjectHelper.FTPUploadEnabled(Project))
+                    try
+                    {
+                        ProjectHelper.FTPUpload(Project, TargetFilename);
+                    }
+                    catch (Exception ex)
+                    {
+                        showError("Error: " + ex.Message);
+                    }
+
                 Response.Redirect("Translate.aspx");
                 Session.Remove("SelectedFilename");
-                // Logger.Write("Removed Session 'SelectedFilename'.", Category, 10, 0, Diagnostics.TraceEventType.Verbose, LogTitle, LogProperties);
 
             }
 
