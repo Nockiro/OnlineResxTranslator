@@ -240,7 +240,7 @@ partial class _Translate : PageBase
                     if (CurrentValue != TComment)
                     {
                         Updates += 1;
-                        Node.InnerText = TComment;
+                        CommentNode.InnerText = TComment;
                     }
                 }
             }

@@ -10,13 +10,13 @@
 
     <h3>Users</h3>
     <p>
-        There are currently <%= getOnlineUsers().Count %> User(s) online:
-    <%  Response.Write(string.Join(", ", getOnlineUsers().Select(user => user.Identity.GetUserName())));  %>
+        There is/are currently <%= getOnlineUsers().Select(user => user.Identity.GetUserName()).Where(s => !String.IsNullOrEmpty(s)).Count() %> User(s) online:
+    <%  Response.Write(string.Join(", ", getOnlineUsers().Select(user => user.Identity.GetUserName()).Where(s => !String.IsNullOrEmpty(s))));  %>
     </p>
 
     <asp:UpdatePanel ID="UpdateUserPanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <p>There are currently <%= userList.Rows.Count %> Users(s) registered: </p>
+            <p>There is/are currently <%= userList.Rows.Count %> User(s) registered: </p>
             <asp:GridView ID="gvUsers" runat="server" AutoGenerateColumns="False"
                 OnRowEditing="gvUsers_RowEditing" OnRowUpdating="gvUsers_RowUpdating" OnRowCancelingEdit="gvUsers_RowCancelingEdit" OnRowDeleting="gvUsers_RowDeleting"
                 CssClass="table table-striped table-hover">
