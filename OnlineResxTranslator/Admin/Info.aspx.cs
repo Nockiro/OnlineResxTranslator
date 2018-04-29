@@ -12,6 +12,7 @@ public partial class Admin_Info : PageBase
 
     public static DataTable projectList = new DataTable();
     public DataTable userList = new DataTable();
+    public DataTable ftpList = new DataTable();
 
     /// <summary>
     /// Save the ID a new entry would get so we can handle it separately later
@@ -29,6 +30,7 @@ public partial class Admin_Info : PageBase
         {
             ShowProjectData();
             ShowUserData();
+            ShowFTPData();
         }
     }
 
@@ -137,7 +139,14 @@ public partial class Admin_Info : PageBase
         if (!sqlhelper.connectionOpen)
             return;
 
-        projectList = sqlhelper.SelectFromTable("TrProjects", "id", "project", "folder");
+        projectList = sqlhelper.SelectFromTable("TrProjects", "id", "project", "folder",
+                            @"ftps = STUFF((
+
+                                SELECT CONVERT(NVARCHAR, ', ')  + CONVERT(NVARCHAR,TrProjectFTPTargets.TargetID)
+                                FROM TrProjects, TrProjectFTPTargets, TrFTPTargets
+                                WHERE TrProjects.id = TrProjectFTPTargets.ProjID
+
+                                FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '')");
 
         if (projectList.Rows.Count > 0)
             newIDif = (int)projectList.Rows[projectList.Rows.Count - 1]["id"];
@@ -171,6 +180,7 @@ public partial class Admin_Info : PageBase
         Int32 id = Convert.ToInt32((gvProjects.Rows[e.RowIndex].FindControl("lbl_ID") as Label).Text);
         String project_name = (gvProjects.Rows[e.RowIndex].FindControl("tb_project") as TextBox).Text;
         String project_folder = (gvProjects.Rows[e.RowIndex].FindControl("tb_folder") as TextBox).Text;
+        String ftp = (gvProjects.Rows[e.RowIndex].FindControl("tb_ftps") as TextBox).Text;
 
         sqlhelper.OpenConnection();
 
@@ -187,6 +197,18 @@ public partial class Admin_Info : PageBase
             new KeyValuePair<string, string>("project", project_name),
             new KeyValuePair<string, string>("folder", project_folder));
         }
+
+        // its faster code to delete all targets of that projecs and read the ones given in the list
+        sqlhelper.DeleteRow("TrProjectFTPTargets", "ProjID = '" + id + "'");
+        // update ftp target assignment table
+        if (ftp != "")
+            foreach (string ftpTarget in ftp.Split(','))
+            {
+                // check if entered number is actually valid number
+                if (int.TryParse(ftpTarget, out int ftpTargetID))
+                    sqlhelper.InsertIntoTable("TrProjectFTPTargets", new KeyValuePair<string, string>("TargetID", ftpTargetID.ToString()), new KeyValuePair<string, string>("ProjID", id.ToString()));
+            }
+
         sqlhelper.CloseConnection();
 
         // Setting the EditIndex property to -1 to cancel the Edit mode in Gridview  
@@ -215,6 +237,105 @@ public partial class Admin_Info : PageBase
         sqlhelper.CloseConnection();
 
         ShowProjectData();
+    }
+    #endregion
+    #region FTP
+    protected void ShowFTPData()
+    {
+        sqlhelper.OpenConnection();
+
+        if (!sqlhelper.connectionOpen)
+            return;
+
+        ftpList = sqlhelper.SelectFromTable("TrFTPTargets", "id", "server", "username", "password", "path");
+
+        if (ftpList.Rows.Count > 0)
+            newIDif = (int)ftpList.Rows[ftpList.Rows.Count - 1]["id"];
+
+        // get ID for a possible new row we are preparing here
+        newIDif = (newIDif > ftpList.Rows.Count) ? newIDif + 1 : ftpList.Rows.Count;
+
+
+        int newRowIndex = ftpList.Rows.IndexOf(ftpList.Rows.Add(new object[] { newIDif, "", "" }));
+
+        // if currently there is no row being edited, set the "new" possible row in edit state
+        if (gvFtps.EditIndex == -1)
+            gvFtps.EditIndex = newRowIndex;
+
+        gvFtps.DataSource = ftpList;
+        gvFtps.DataBind();
+
+        sqlhelper.CloseConnection();
+    }
+
+    protected void gvFtps_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        // NewEditIndex property used to determine the index of the row being edited.  
+        gvFtps.EditIndex = e.NewEditIndex;
+        ShowFTPData();
+    }
+
+    protected void gvFtps_RowUpdating(object sender, GridViewUpdateEventArgs e)
+    {
+        // Finding the controls from Gridview for the row which is going to update  
+        Int32 id = Convert.ToInt32((gvFtps.Rows[e.RowIndex].FindControl("lbl_FTPID") as Label).Text);
+        String server_name = (gvFtps.Rows[e.RowIndex].FindControl("tb_server") as TextBox).Text;
+        String username = (gvFtps.Rows[e.RowIndex].FindControl("tb_user") as TextBox).Text;
+        String password = (gvFtps.Rows[e.RowIndex].FindControl("tb_pass") as TextBox).Text;
+        String path = (gvFtps.Rows[e.RowIndex].FindControl("tb_path") as TextBox).Text;
+
+        sqlhelper.OpenConnection();
+
+        // if it's a new entry - check here for the id given in the table since we can't be sure if the newID variable is still correct
+        if (id == Convert.ToInt32((gvFtps.Rows[gvFtps.Rows.Count - 1].FindControl("lbl_FTPID") as Label).Text))
+        {
+            sqlhelper.InsertIntoTable("TrFTPTargets", new KeyValuePair<string, string>("server", server_name),
+            new KeyValuePair<string, string>("username", username),
+            new KeyValuePair<string, string>("password", password),
+            new KeyValuePair<string, string>("path", path));
+
+        }
+        else
+        {
+            List<KeyValuePair<string, string>> valuePairs = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("server", server_name),
+                new KeyValuePair<string, string>("username", username),
+                new KeyValuePair<string, string>("path", path)
+            };
+            if (password != "")
+                valuePairs.Add(new KeyValuePair<string, string>("password", password.ToString()));
+
+            // otherwise update it
+            sqlhelper.UpdateTable("TrFTPTargets", "id = " + id, valuePairs.ToArray());
+        }
+
+
+        sqlhelper.CloseConnection();
+
+        // gvFtps the EditIndex property to -1 to cancel the Edit mode in Gridview  
+        gvFtps.EditIndex = -1;
+
+        // Call ShowData method for displaying updated data  
+        ShowFTPData();
+    }
+
+    protected void gvFtps_RowCancelingEdit(object sender, System.Web.UI.WebControls.GridViewCancelEditEventArgs e)
+    {
+        //Setting the EditIndex property to -1 to cancel the Edit mode in Gridview  
+        gvFtps.EditIndex = -1;
+        ShowFTPData();
+    }
+
+    protected void gvFtps_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        Int32 id = Convert.ToInt32((gvFtps.Rows[e.RowIndex].FindControl("lbl_FTPID") as Label).Text);
+
+        sqlhelper.OpenConnection();
+        sqlhelper.DeleteRow("TrFTPTargets", "id = " + id);
+        sqlhelper.CloseConnection();
+
+        ShowFTPData();
     }
     #endregion
 

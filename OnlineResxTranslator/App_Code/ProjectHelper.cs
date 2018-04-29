@@ -37,7 +37,22 @@ public class ProjectHelper
     }
 
     /// <summary>
-    /// Gets a list with all currently registered projects
+    /// Creates a list with FTPTarget objects upon a datatable
+    /// </summary>
+    public static List<FTPTarget> getFTPTargetsFromDataTable(DataTable targetTable)
+    {
+        List<FTPTarget> list = new List<FTPTarget>();
+
+        DataTable projectList = targetTable;
+        foreach (DataRow r in projectList.Rows)
+            list.Add(new FTPTarget() { ID = (int)r["id"], Username = (string)r["username"], Password = (string)r["password"], Path = (string)r["path"] });
+
+        return list;
+    }
+
+
+    /// <summary>
+    /// Gets a list with (all) currently registered projects
     /// </summary>
     /// <param name="UserID">if given, only projects for that user will be returned</param>
     public static List<ProjectInfo> getProjects(string UserID = "")
@@ -65,11 +80,41 @@ public class ProjectHelper
         }
         catch (Exception e) // probably the table doesn't exist - but since this method is called on every page call, it'd cost a bit of resources, so only catch it if needed
         {
-            if (e is SqlException || e is InvalidOperationException)
+            if ((e is SqlException && !e.Message.Contains("syntax")) || e is InvalidOperationException)
+            {
                 if (createMainTables()) return getProjects(UserID);
+            }
+            else throw;
 
             return new List<ProjectInfo>();
         }
+    }
+
+    /// <summary>
+    /// Gets a list with (all) currently registered ftp targets
+    /// </summary>
+    /// <param name="UserID">if given, only targets for that project will be returned</param>
+    public static List<FTPTarget> getFTPTargets(ProjectInfo project = null)
+    {
+        SQLHelper sqlhelper = new SQLHelper();
+        sqlhelper.OpenConnection();
+
+        if (sqlhelper.connectionOpen)
+        {
+            List<FTPTarget> list;
+
+            if (project == null)
+                list = getFTPTargetsFromDataTable(sqlhelper.SelectFromTable("TrFTPTargets", new string[] { "id", "username", "password", "path" }));
+            else
+                list = getFTPTargetsFromDataTable(sqlhelper.SelectFromTable("TrFTPTargets, TrProjectFTPTargets",
+                    new string[] { "TrFTPTargets.id as id", "TrFTPTargets.username as username", "TrFTPTargets.password as password","TrFTPTargets.path as path",
+                            "TrProjectFTPTargets.ProjID as ProjID"},
+                        "ProjID = '" + project.ID));
+
+            sqlhelper.CloseConnection();
+            return list;
+        }
+        else return new List<FTPTarget>();
     }
 
     /// <summary>
@@ -127,6 +172,37 @@ public class ProjectHelper
                         REFERENCES AspNetUsers (Id) 
                         ON DELETE CASCADE
                         ON UPDATE CASCADE"
+                     }
+                );
+
+            if (!sqlhelper.DoesTableExist("TrFTPTargets"))
+                sqlhelper.CreateTable("TrFTPTargets",
+                    new KeyValuePair<string, string>[] {
+                new KeyValuePair<string, string>("id", "int NOT NULL IDENTITY (0,1) PRIMARY KEY"),
+                new KeyValuePair<string, string>("server", "varchar(255) NOT NULL"),
+                new KeyValuePair<string, string>("username", "varchar(255) NOT NULL"),
+                new KeyValuePair<string, string>("password", "varchar(255) NOT NULL"),
+                new KeyValuePair<string, string>("path", "varchar(1023) NOT NULL")
+                    }
+                );
+
+            if (!sqlhelper.DoesTableExist("TrProjectFTPTargets"))
+                sqlhelper.CreateTable("TrProjectFTPTargets",
+                    new KeyValuePair<string, string>[]
+                    {
+                new KeyValuePair<string, string>("ProjID", "int NOT NULL"),
+                new KeyValuePair<string, string>("TargetID", "int NOT NULL")
+                    },
+                    new string[]
+                     {
+                     @" FK_FTPS_PROJECT FOREIGN KEY (ProjID) 
+                        REFERENCES TrProjects (id) 
+                        ON DELETE CASCADE
+                        ON UPDATE CASCADE",
+                     @" FK_FTPS_TARGET FOREIGN KEY (TargetID) 
+                        REFERENCES TrFTPTargets (id) 
+                        ON DELETE CASCADE
+                        ON UPDATE CASCADE",
                      }
                 );
             success = true;
@@ -241,6 +317,14 @@ public class ProjectHelper
         public int ID { get; set; }
         public string Name { get; set; }
         public string Folder { get; set; }
+    }
+
+    public class FTPTarget
+    {
+        public int ID { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Path { get; set; }
     }
 
     public class ProjectFileShortSummary

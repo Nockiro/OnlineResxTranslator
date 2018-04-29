@@ -39,7 +39,7 @@
                             <asp:Label ID="lbl_UserMail" runat="server" Text='<%#Eval("UserMail") %>'></asp:Label>
                         </ItemTemplate>
                         <EditItemTemplate>
-                            <asp:TextBox ID="tb_UserMail" runat="server" Text='<%#Eval("UserMail") %>'></asp:TextBox>
+                            <asp:TextBox ID="tb_UserMail" runat="server" TextMode="Email" Text='<%#Eval("UserMail") %>'></asp:TextBox>
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Visible Projects">
@@ -117,6 +117,17 @@
                             <asp:TextBox ID="tb_folder" runat="server" Text='<%#Eval("folder") %>'></asp:TextBox>
                         </EditItemTemplate>
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText="FTP targets">
+                        <HeaderTemplate>
+                            <asp:Label ID="hd_ftps" CssClass="help" ToolTip="If you want to upload edited files to a ftp server, enter the ID of the FTP target - for more than one, separate them with ','" runat="server" Text="FTP targets"></asp:Label>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_ftps" runat="server" Text='<%#Eval("ftps") %>'></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_ftps" runat="server" Text='<%#Eval("ftps") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField>
                         <ItemTemplate>
                             <asp:LinkButton ID="btn_Edit" runat="server" Text="Edit" CommandName="Edit" />
@@ -129,7 +140,66 @@
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
-
+        </ContentTemplate>
+    </asp:UpdatePanel>
+    
+    <asp:UpdatePanel ID="UpdateFTPPanel" runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <h3>FTP-Servers</h3>
+            <p>There are currently <%= ftpList.Rows.Count - 1%> FTP target(s) registered: </p>
+            <asp:GridView ID="gvFtps" runat="server" AutoGenerateColumns="False"
+                OnRowEditing="gvFtps_RowEditing" OnRowUpdating="gvFtps_RowUpdating" OnRowCancelingEdit="gvFtps_RowCancelingEdit" OnRowDeleting="gvFtps_RowDeleting"
+                CssClass="table table-striped table-hover">
+                <Columns>
+                    <asp:TemplateField HeaderText="ID">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_FTPID" runat="server" Text='<%#Eval("id") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Server adress">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_server" runat="server" Text='<%#Eval("server") %>'></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_server" runat="server" Text='<%#Eval("server") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Username">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_user" runat="server" Text='<%#Eval("username") %>'></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_user" runat="server" Text='<%#Eval("username") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Password">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_pass" runat="server" Text=''></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_pass" runat="server" TextMode="Password" Text='<%#Eval("password") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Path">
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_path" runat="server" Text='<%#Eval("path") %>'></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_path" runat="server" Text='<%#Eval("path") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                            <asp:LinkButton ID="btn_Edit" runat="server" Text="Edit" CommandName="Edit" />
+                            <asp:LinkButton ID="btn_Delete" runat="server" Text="Delete" CommandName="Delete" />
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:LinkButton ID="btn_Update" runat="server" Text="Update" CommandName="Update" />
+                            <asp:LinkButton ID="btn_Cancel" runat="server" Text="Cancel" CommandName="Cancel" />
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>
