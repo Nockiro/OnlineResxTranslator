@@ -111,12 +111,12 @@ public class ProjectHelper
             List<FTPTarget> list;
 
             if (project == null)
-                list = getFTPTargetsFromDataTable(sqlhelper.SelectFromTable("TrFTPTargets", new string[] { "id", "username", "password", "path" }));
+                list = getFTPTargetsFromDataTable(sqlhelper.SelectFromTable("TrFTPTargets", new string[] { "id", "username", "password", "path", "server", "ssl" }));
             else
                 list = getFTPTargetsFromDataTable(sqlhelper.SelectFromTable("TrFTPTargets, TrProjectFTPTargets",
-                    new string[] { "TrFTPTargets.id as id", "TrFTPTargets.username as username", "TrFTPTargets.password as password","TrFTPTargets.path as path",
-                            "TrProjectFTPTargets.ProjID as ProjID"},
-                        "ProjID = '" + project.ID));
+                    new string[] { "TrFTPTargets.id as id", "TrFTPTargets.username as username", "TrFTPTargets.password as password","TrFTPTargets.path as path", "TrFTPTargets.server as server",
+                        "TrFTPTargets.ssl as TrFTPTargets", "TrProjectFTPTargets.ProjID as ProjID"},
+                        "ProjID = " + project.ID));
 
             sqlhelper.CloseConnection();
             return list;
@@ -189,7 +189,8 @@ public class ProjectHelper
                 new KeyValuePair<string, string>("server", "varchar(255) NOT NULL"),
                 new KeyValuePair<string, string>("username", "varchar(255) NOT NULL"),
                 new KeyValuePair<string, string>("password", "varchar(255) NOT NULL"),
-                new KeyValuePair<string, string>("path", "varchar(1023) NOT NULL")
+                new KeyValuePair<string, string>("path", "varchar(1023) NOT NULL"),
+                new KeyValuePair<string, string>("ssl", "bit NOT NULL")
                     }
                 );
 
@@ -263,14 +264,14 @@ public class ProjectHelper
                 else UploadPath = "/";
 
                 // Get the object used to communicate with the server.
-                FTP myFtp = new FTP(ftpTarget.Server, ftpTarget.Username, ftpTarget.Password);
+                FTP myFtp = new FTP(ftpTarget.Server, ftpTarget.Username, ftpTarget.Password, ftpTarget.SSL);
 
                 List<string> ExistingFiles;
                 try
                 {
                     ExistingFiles = myFtp.directoryListDetailed(UploadPath).ToList();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     myFtp.createDirectory(UploadPath);
                     ExistingFiles = myFtp.directoryListDetailed(UploadPath).ToList();
@@ -295,10 +296,12 @@ public class ProjectHelper
     public class FTPTarget
     {
         public int ID { get; set; }
-        public string Server { get; set; }
+        private string _server;
+        public string Server { get { return _server.StartsWith("ftp://") ? _server : "ftp://" + _server; } set { _server = value; } }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Path { get; set; }
+        public Boolean SSL { get; set; }
     }
 
     public class ProjectFileShortSummary

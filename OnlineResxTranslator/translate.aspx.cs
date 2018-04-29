@@ -31,8 +31,7 @@ partial class _Translate : PageBase
         if ((!Page.IsPostBack || Page.Request?.Form?["__EVENTTARGET"]?.Contains("rpt_languages") == true) && Session["CurrentlyChosenProject"] != null)
             initTranslationTable();
 
-        base.OnPreRenderComplete(e);
-    }
+        base.OnPreRenderComplete(e);    }
 
     protected void initTranslationTable()
     {
@@ -61,7 +60,9 @@ partial class _Translate : PageBase
             DataSet oDs = new DataSet();
             oDs.ReadXml(Directory + Language + ".xml");
 
-            FileList.DataSource = oDs.Tables[1];
+            if (oDs.Tables.Count >= 2)
+                FileList.DataSource = oDs.Tables[1];
+
             FileList.DataBind();
         }
 
@@ -261,9 +262,6 @@ partial class _Translate : PageBase
                 XMLFile.ComputePercentage(Project, Language, Convert.ToString(Session["SelectedFilename"]));
 
                 //Session["GlobalMessage"] = "File '" + TargetFilename.Split("\\".ToCharArray())[TargetFilename.Split("\\".ToCharArray()).GetUpperBound(0)] + "' saved sucessfully!";
-
-                if (ProjectHelper.FTPUploadEnabled(Project))
-                    ProjectHelper.FTPUpload(Project, TargetFilename, Language);
 
                 TranslatedFile.Save(TargetFileNameForGen);
 

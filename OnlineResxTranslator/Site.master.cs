@@ -36,6 +36,7 @@ public partial class SiteMaster : MasterPage
     protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
     {
         Context.GetOwinContext().Authentication.SignOut();
+        Session.Clear();
     }
 
     protected void Page_Init(object sender, EventArgs e)
@@ -82,7 +83,7 @@ public partial class SiteMaster : MasterPage
 
         if (Session["CurrentlyChosenProject"] == null)
         {
-            projects = ProjectHelper.getProjects();
+            projects = Context.User.Identity.getUserProjects();
             Session["CurrentlyChosenProject"] = projects.Count > 0 ? projects[0] : null;
         }
 

@@ -35,6 +35,14 @@ public class XMLFile
         double Percentage = 0;
 
         string projDir = ConfigurationManager.AppSettings["ProjectDirectory"] + project.Folder + "\\";
+        if (!Directory.Exists(projDir))
+            Directory.CreateDirectory(projDir);
+
+        string[] allMainProjectFiles = Directory.GetFiles(projDir, "*.resx", SearchOption.TopDirectoryOnly);
+
+        if (allMainProjectFiles.Length == 0)
+            throw new Exception("No Resource files in the project directories");
+
         // Language file does not exist, so create new language file in a potential new folder
         if (!File.Exists(projDir + language + ".xml"))
         {
@@ -53,7 +61,7 @@ public class XMLFile
 
             string ResXFile = null;
             string ShortName = null;
-            foreach (string ResXFile_loopVariable in Directory.GetFiles(projDir, "*.resx", SearchOption.TopDirectoryOnly))
+            foreach (string ResXFile_loopVariable in allMainProjectFiles)
             {
                 // <file>
                 ResXFile = ResXFile_loopVariable;

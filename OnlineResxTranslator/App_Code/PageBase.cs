@@ -12,6 +12,7 @@ public class PageBase : Page
 {
     public PageBase()
     {
+        this.Load += Page_Load;
     }
 
     /// <summary>

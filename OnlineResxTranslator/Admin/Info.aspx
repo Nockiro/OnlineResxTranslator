@@ -142,7 +142,7 @@
             </asp:GridView>
         </ContentTemplate>
     </asp:UpdatePanel>
-    
+
     <asp:UpdatePanel ID="UpdateFTPPanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
             <h3>FTP-Servers</h3>
@@ -189,6 +189,14 @@
                         </ItemTemplate>
                         <EditItemTemplate>
                             <asp:TextBox ID="tb_path" runat="server" Text='<%#Eval("path") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Use SSL?">
+                        <ItemTemplate>
+                            <asp:CheckBox ID="cb_ssl" runat="server" Checked='<%# Eval("ssl") == DBNull.Value ? true : Convert.ToBoolean(Eval("ssl")) %>' Width="100px" Enabled="false" />
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:CheckBox ID="cb_ssl" runat="server" Checked='<%# Eval("ssl") == DBNull.Value ? true : Convert.ToBoolean(Eval("ssl")) %>' Width="100px" Enabled="true" />
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField>

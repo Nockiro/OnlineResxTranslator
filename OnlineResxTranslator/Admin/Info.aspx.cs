@@ -248,7 +248,7 @@ public partial class Admin_Info : PageBase
         if (!sqlhelper.connectionOpen)
             return;
 
-        ftpList = sqlhelper.SelectFromTable("TrFTPTargets", "id", "server", "username", "password", "path");
+        ftpList = sqlhelper.SelectFromTable("TrFTPTargets", "id", "server", "username", "password", "path", "ssl");
 
         if (ftpList.Rows.Count > 0)
             newIDif = (int)ftpList.Rows[ftpList.Rows.Count - 1]["id"];
@@ -284,16 +284,20 @@ public partial class Admin_Info : PageBase
         String username = (gvFtps.Rows[e.RowIndex].FindControl("tb_user") as TextBox).Text;
         String password = (gvFtps.Rows[e.RowIndex].FindControl("tb_pass") as TextBox).Text;
         String path = (gvFtps.Rows[e.RowIndex].FindControl("tb_path") as TextBox).Text;
+        Boolean ssl = (gvFtps.Rows[e.RowIndex].FindControl("cb_ssl") as CheckBox).Checked;
 
         sqlhelper.OpenConnection();
 
         // if it's a new entry - check here for the id given in the table since we can't be sure if the newID variable is still correct
         if (id == Convert.ToInt32((gvFtps.Rows[gvFtps.Rows.Count - 1].FindControl("lbl_FTPID") as Label).Text))
         {
-            sqlhelper.InsertIntoTable("TrFTPTargets", new KeyValuePair<string, string>("server", server_name),
-            new KeyValuePair<string, string>("username", username),
-            new KeyValuePair<string, string>("password", password),
-            new KeyValuePair<string, string>("path", path));
+            sqlhelper.InsertIntoTable("TrFTPTargets",
+                new KeyValuePair<string, string>("server", server_name),
+                new KeyValuePair<string, string>("username", username),
+                new KeyValuePair<string, string>("password", password),
+                new KeyValuePair<string, string>("path", path),
+                new KeyValuePair<string, string>("ssl", ssl ? "1" : "0")
+            );
 
         }
         else
@@ -302,7 +306,8 @@ public partial class Admin_Info : PageBase
             {
                 new KeyValuePair<string, string>("server", server_name),
                 new KeyValuePair<string, string>("username", username),
-                new KeyValuePair<string, string>("path", path)
+                new KeyValuePair<string, string>("path", path),
+                new KeyValuePair<string, string>("ssl", ssl ? "1" : "0")
             };
             if (password != "")
                 valuePairs.Add(new KeyValuePair<string, string>("password", password.ToString()));

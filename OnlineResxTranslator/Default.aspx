@@ -113,9 +113,13 @@
                     </div>
                 </ContentTemplate>
             </asp:UpdatePanel>
-        <% } else { %>
+        <% } else if (Context.User.Identity.IsAuthenticated) { %>
             <div class="alert alert-warning">
                 <strong>Warning!</strong> No projects registered. Please add one in the administration panel.
+            </div>
+        <% } else { %>
+            <div class="alert alert-info">
+                <strong>Note:</strong> You are not logged in and therefore not allowed to see this projects' statistics.
             </div>
         <% } %>
 
