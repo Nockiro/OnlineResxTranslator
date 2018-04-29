@@ -10,6 +10,7 @@ Multi-user online translation platform (looks good on most browsers through the 
 There are also images under [Screens/](https://github.com/Nockiro/OnlineResxTranslator/blob/master/Screens/MainOverview.png) if you want to have a closer look at it.
 
 ## Quick start
+(0. Might be necessary if nuget doesn't install all dependencies: run `Update-Package -reinstall` in the nuget package manager console, see also the troubleshooting section)  
 1. Have a look at the web.config and replace the default platform name and the translation-containing folder with your strings.
 2. Register your first account (Note: The first account will always be an admin-privileged account, all subsequent accounts will have standard user privileges)
 3. Add a folder with your project files (probably you want them to be _not_ in the publicly accessible directory) in a directory of your choice (the choice you made two sentences earlier) and create a reference in the admin panel with your just new created admin account
