@@ -161,7 +161,7 @@ partial class _Translate : PageBase
 
             if (Project == null || Language == null)
             {
-                // Session["ErrorMessage"] = "Session expired. Could not read Project or Language. Please login!";
+                showError("Session expired. Could not read Project or Language. Please login!");
                 // TODO: Save Values here for relog (like HttpCookie myCookie = new HttpCookie("savedValues");)
 
                 Response.Redirect("/Account/Login.aspx?re=se&ReturnUrl=/translate");
@@ -251,9 +251,7 @@ partial class _Translate : PageBase
 
             // No updates made. No need to save file, but recalculate the percentage in case the file changed externally
             if (Updates == 0)
-            {
                 XMLFile.ComputePercentage(Project, Language, Convert.ToString(Session["SelectedFilename"]));
-            }
             else
             {
                 TranslatedFile.Save(TargetFilename);
@@ -265,14 +263,14 @@ partial class _Translate : PageBase
                 //Session["GlobalMessage"] = "File '" + TargetFilename.Split("\\".ToCharArray())[TargetFilename.Split("\\".ToCharArray()).GetUpperBound(0)] + "' saved sucessfully!";
 
                 if (ProjectHelper.FTPUploadEnabled(Project))
-                    ProjectHelper.FTPUpload(Project, TargetFilename);
+                    ProjectHelper.FTPUpload(Project, TargetFilename, Language);
 
                 TranslatedFile.Save(TargetFileNameForGen);
 
                 if (ProjectHelper.FTPUploadEnabled(Project))
                     try
                     {
-                        ProjectHelper.FTPUpload(Project, TargetFilename);
+                        ProjectHelper.FTPUpload(Project, TargetFilename, Language);
                     }
                     catch (Exception ex)
                     {

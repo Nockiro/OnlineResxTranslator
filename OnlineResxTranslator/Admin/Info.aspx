@@ -117,9 +117,9 @@
                             <asp:TextBox ID="tb_folder" runat="server" Text='<%#Eval("folder") %>'></asp:TextBox>
                         </EditItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="FTP targets">
+                    <asp:TemplateField HeaderText="FTP target ID(s)">
                         <HeaderTemplate>
-                            <asp:Label ID="hd_ftps" CssClass="help" ToolTip="If you want to upload edited files to a ftp server, enter the ID of the FTP target - for more than one, separate them with ','" runat="server" Text="FTP targets"></asp:Label>
+                            <asp:Label ID="hd_ftps" CssClass="help" ToolTip="If you want to upload edited files to a ftp server, enter the ID of the FTP target - for more than one, separate them with ','" runat="server" Text="FTP target ID(s)"></asp:Label>
                         </HeaderTemplate>
                         <ItemTemplate>
                             <asp:Label ID="lbl_ftps" runat="server" Text='<%#Eval("ftps") %>'></asp:Label>
@@ -181,6 +181,9 @@
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Path">
+                        <HeaderTemplate>
+                            <asp:Label ID="hd_ftps" CssClass="help" ToolTip="if you use %LANG% in the path, this will be replaced with the language of the file. &#013;Example: test/%LANG%/files/ could result in test/en/files." runat="server" Text="Path"></asp:Label>
+                        </HeaderTemplate>
                         <ItemTemplate>
                             <asp:Label ID="lbl_path" runat="server" Text='<%#Eval("path") %>'></asp:Label>
                         </ItemTemplate>

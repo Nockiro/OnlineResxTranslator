@@ -85,7 +85,7 @@ public class FTP {
             /* Establish Return Communication with the FTP Server */
             ftpStream = ftpRequest.GetRequestStream();
             /* Open a File Stream to Read the File for Upload */
-            FileStream localFileStream = new FileStream(localFile, FileMode.Open, FileAccess.Read);
+            FileStream localFileStream = new FileStream(localFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             /* Buffer for the Downloaded Data */
             byte[] byteBuffer = new byte[bufferSize];
             int bytesSent = localFileStream.Read(byteBuffer, 0, bufferSize);

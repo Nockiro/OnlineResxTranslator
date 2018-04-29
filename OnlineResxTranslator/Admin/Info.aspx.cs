@@ -28,8 +28,8 @@ public partial class Admin_Info : PageBase
 
         if (!IsPostBack)
         {
-            ShowProjectData();
             ShowUserData();
+            ShowProjectData();
             ShowFTPData();
         }
     }
@@ -143,8 +143,9 @@ public partial class Admin_Info : PageBase
                             @"ftps = STUFF((
 
                                 SELECT CONVERT(NVARCHAR, ', ')  + CONVERT(NVARCHAR,TrProjectFTPTargets.TargetID)
-                                FROM TrProjects, TrProjectFTPTargets, TrFTPTargets
-                                WHERE TrProjects.id = TrProjectFTPTargets.ProjID
+								 
+                                FROM TrProjectFTPTargets
+                                WHERE TrProjects.id = TrProjectFTPTargets.ProjID 
 
                                 FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '')");
 
@@ -199,7 +200,7 @@ public partial class Admin_Info : PageBase
         }
 
         // its faster code to delete all targets of that projecs and read the ones given in the list
-        sqlhelper.DeleteRow("TrProjectFTPTargets", "ProjID = '" + id + "'");
+        sqlhelper.DeleteRow("TrProjectFTPTargets", "ProjID = " + id);
         // update ftp target assignment table
         if (ftp != "")
             foreach (string ftpTarget in ftp.Split(','))

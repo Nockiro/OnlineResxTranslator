@@ -45,7 +45,14 @@ public class ProjectHelper
 
         DataTable projectList = targetTable;
         foreach (DataRow r in projectList.Rows)
-            list.Add(new FTPTarget() { ID = (int)r["id"], Username = (string)r["username"], Password = (string)r["password"], Path = (string)r["path"] });
+            list.Add(new FTPTarget()
+            {
+                ID = (int)r["id"],
+                Server = (string)r["server"],
+                Username = (string)r["username"],
+                Password = (string)r["password"],
+                Path = (string)r["path"]
+            });
 
         return list;
     }
@@ -238,79 +245,45 @@ public class ProjectHelper
 
     public static bool FTPUploadEnabled(ProjectInfo project)
     {
-        string Filename = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + project.Name + ".xml";
-
-        if (File.Exists(Filename))
-        {
-            XmlDocument ProjectFile = XMLFile.GetXMLDocument(Filename);
-            if (ProjectFile.SelectNodes("/project/ftp/server").Count == 0)
-                return false;
-
-            else return true;
-        }
-        else return false;
-
+        return getFTPTargets(project).Count > 0;
     }
 
-    public static bool FTPUpload(ProjectInfo project, string fullFilename)
+    public static bool FTPUpload(ProjectInfo project, string fullFilename, string language)
     {
-        string XMLFilename = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + project.Name + ".xml";
-
-        XmlDocument ProjectFile = XMLFile.GetXMLDocument(XMLFilename);
-
-        string Language = fullFilename.Split(".".ToCharArray())[fullFilename.Split(".".ToCharArray()).GetUpperBound(0) - 1];
-        string Filename = fullFilename.Split("\\".ToCharArray())[fullFilename.Split("\\".ToCharArray()).GetUpperBound(0)];
-
-        foreach (XmlNode FTPNode in ProjectFile.SelectNodes("/project/ftp"))
+        foreach (FTPTarget ftpTarget in getFTPTargets(project))
         {
-            if (FTPNode.SelectSingleNode("server") == null)
-                throw new Exception("FTP-Upload not possible: Server node in XML file not found!");
-            else
             {
-                string Servername = FTPNode.SelectSingleNode("server").InnerText;
-                if (Servername.Length == 0)
-                    throw new Exception("FTP-Upload not possible: Server node in XML file not properly defined!");
-                else
+                string UploadPath = ftpTarget.Path;
+                if (UploadPath.Length > 0)
                 {
-                    string UploadPath = FTPNode.SelectSingleNode("path").InnerText;
-                    if (UploadPath.Length > 0)
-                    {
-                        if (UploadPath.Contains("%LANG%"))
-                            UploadPath = UploadPath.Replace("%LANG%", Language);
+                    UploadPath = UploadPath.Replace("%LANG%", language);
 
-                        if (!UploadPath.EndsWith("/")) UploadPath += "/";
-                    }
-                    else UploadPath = "/";
-
-                    string Username = FTPNode.SelectSingleNode("username").InnerText;
-                    string Password = FTPNode.SelectSingleNode("password").InnerText;
-
-
-                    // Get the object used to communicate with the server.
-                    FTP myFtp = new FTP(Servername, Username, Password);
-
-                    List<string> ExistingFiles;
-                    try
-                    {
-                        ExistingFiles = myFtp.directoryListDetailed(UploadPath).ToList();
-                    }
-                    catch (Exception)
-                    {
-                        myFtp.createDirectory(UploadPath);
-                        ExistingFiles = myFtp.directoryListDetailed(UploadPath).ToList();
-                    }
-
-                    if (ExistingFiles.Contains(Filename))
-                        myFtp.delete(UploadPath + Filename);
-
-                    myFtp.upload(UploadPath + Filename, fullFilename);
+                    if (!UploadPath.EndsWith("/")) UploadPath += "/";
                 }
+                else UploadPath = "/";
+
+                // Get the object used to communicate with the server.
+                FTP myFtp = new FTP(ftpTarget.Server, ftpTarget.Username, ftpTarget.Password);
+
+                List<string> ExistingFiles;
+                try
+                {
+                    ExistingFiles = myFtp.directoryListDetailed(UploadPath).ToList();
+                }
+                catch (Exception)
+                {
+                    myFtp.createDirectory(UploadPath);
+                    ExistingFiles = myFtp.directoryListDetailed(UploadPath).ToList();
+                }
+
+                /*  if (ExistingFiles.Contains(Filename))
+                      myFtp.delete(UploadPath + Filename);*/
+
+                myFtp.upload(UploadPath + Path.GetFileName(fullFilename), fullFilename);
             }
         }
         return false;
     }
-
-
 
     public class ProjectInfo
     {
@@ -322,6 +295,7 @@ public class ProjectHelper
     public class FTPTarget
     {
         public int ID { get; set; }
+        public string Server { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Path { get; set; }
