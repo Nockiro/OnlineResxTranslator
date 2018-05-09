@@ -233,7 +233,8 @@ public class ProjectHelper
         sqlhelper.OpenConnection();
         List<CultureInfo> list = new List<CultureInfo>();
 
-        list.Add(new CultureInfo(User.GetDefaultLanguage()));
+        if (User.GetDefaultLanguage() != "")
+            list.Add(new CultureInfo(User.GetDefaultLanguage()));
 
         // take the string out of the database, split it by comma and create cultureinfos from it
         DataRowCollection tableRows = sqlhelper.SelectFromTable("TrUserLanguages", new string[] { "language" }, "TrUserLanguages.UserID = '" + User.GetUserId() + "'").Rows;

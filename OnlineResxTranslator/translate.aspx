@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Translate" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="translate.aspx.cs" Inherits="_Translate" %>
+﻿<%@ Page Title="Translate" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="translate.aspx.cs" ValidateRequest="false" Inherits="_Translate" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <h2><%: this.Title %>.</h2>
@@ -60,13 +60,14 @@
 
                     <tr class="<%# IsTranslatedCSS(DataBinder.Eval(Container,"DataItem.Translation")) %>">
                         <td class="TLElement">
-                            <asp:Label ID="Element" runat="server" Text='<%#DataBinder.Eval(Container,"DataItem.TextName")%>' /></td>
+                            <asp:Label ID="Element" runat="server" Text='<%#Eval("TextName")%>' /></td>
                         <td class="TLEnglish"><%#DataBinder.Eval(Container,"DataItem.English")%></td>
+
                         <td class="TLTranslated col-xs-6">
-                            <asp:TextBox ID="TranslatedText" runat="server" Text='<%#DataBinder.Eval(Container,"DataItem.Translation")%>'
+                            <asp:TextBox ID="TranslatedText" runat="server" Text='<%#Server.HtmlDecode((string)Eval("Translation"))%>'
                                 TextMode="MultiLine" CssClass="TLTranslatedInput" Style="width: 100%" /></td>
                         <td class="TLComment col-xs-2">
-                            <asp:TextBox ID="TranslateComment" runat="server" Text='<%#DataBinder.Eval(Container,"DataItem.Comment")%>'
+                            <asp:TextBox ID="TranslateComment" runat="server" Text='<%#Eval("Comment")%>'
                                 TextMode="MultiLine" Style="width: 100%" /></td>
                     </tr>
                 </ItemTemplate>

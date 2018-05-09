@@ -12,7 +12,7 @@
         RouteConfig.RegisterRoutes(RouteTable.Routes);
         BundleConfig.RegisterBundles(BundleTable.Bundles);
     }
-
+    
     public static List<System.Security.Principal.IPrincipal> Sessions
     {
         get

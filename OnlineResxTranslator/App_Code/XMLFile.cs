@@ -16,7 +16,7 @@ public class XMLFile
     // set the not checked items
     public static readonly string[] NotArgs = new string[] { "Icon", "Size", "ImageStream", "Image", "Width", "Location", "ImeMode", "TabIndex", "TextAlign",
                                 "ToolTip", "Dock", "ClientSize", "Enabled", "Visible", "Groups", "ThousandsSeparator", "AutoSize", "BackgroundImage", "Type", "ZOrder", "Parent", "Name",
-                                "Padding", "Anchor", "AutoScaleDimensions", "Multiline", "Font"};
+                                "Padding", "Anchor", "AutoScaleDimensions", "Multiline", "Font", "TextImageRelation", "SplitterDistance","FlatStyle", "ColumnCount", "RowCount", "LayoutSettings", "CheckAlign"};
 
     public XMLFile()
     {
@@ -41,7 +41,7 @@ public class XMLFile
         string[] allMainProjectFiles = Directory.GetFiles(projDir, "*.resx", SearchOption.TopDirectoryOnly);
 
         if (allMainProjectFiles.Length == 0)
-            throw new Exception("No Resource files in the project directories");
+            throw new Exception("No Resource files in the project directory " + projDir);
 
         // Language file does not exist, so create new language file in a potential new folder
         if (!File.Exists(projDir + language + ".xml"))
@@ -100,10 +100,10 @@ public class XMLFile
 
             if (CurrentFile != null && CurrentFile != filename)
             {
-                XmlDocument EnglishDoc = XMLFile.GetXMLDocument(projDir + CurrentFile + ".resx");
+                XmlDocument SourceDoc = XMLFile.GetXMLDocument(projDir + CurrentFile + ".resx");
 
-                // if null, english source file was not found
-                if (EnglishDoc != null)
+                // if not null, english source file was found
+                if (SourceDoc != null)
                 {
                     XmlDocument TranslatedDoc = XMLFile.GetXMLDocument(projDir + language + "\\" + CurrentFile + "." + language + ".resx");
 
@@ -112,23 +112,23 @@ public class XMLFile
                     {
                         // Create empty translation file
 
-                        foreach (XmlNode Node in EnglishDoc.SelectNodes("/root/data/value"))
+                        foreach (XmlNode Node in SourceDoc.SelectNodes("/root/data/value"))
                             Node.InnerText = string.Empty;
 
                         // save the "emptied" english source file to the translated file name
-                        EnglishDoc.Save(projDir + language + "\\" + CurrentFile + "." + language + ".resx");
+                        SourceDoc.Save(projDir + language + "\\" + CurrentFile + "." + language + ".resx");
 
                         SingleFile.SelectSingleNode("percentcompleted").InnerText = "0";
                     }
-                    else // if the english source file is there
+                    else // if the translation file
                     {
                         double FileElements = 0;
                         double TranslatedFileElements = 0;
 
                         // get through each node in the english doc ..
-                        foreach (XmlNode EnglishNode in EnglishDoc.SelectNodes("root/data"))
+                        foreach (XmlNode SourceNode in SourceDoc.SelectNodes("root/data"))
                         {
-                            string NodeName = EnglishNode.Attributes["name"].InnerXml;
+                            string NodeName = SourceNode.Attributes["name"].InnerXml;
 
                             Array NodePoints = default(Array);
                             NodePoints = NodeName.Split('.');
@@ -279,27 +279,6 @@ public class XMLFile
     /// <param name="xmlDoc">Document to be checked</param>
     /// <param name="nodeName">Name of the node which values should be returned</param>
     /// <returns>Value of the node. If node is nothing returns empty string</returns>
-    /// <remarks></remarks>
-    public static string GetXMLNodeValue(XmlDocument xmlDoc, string nodeName)
-    {
-        XmlNode ChildNode = default(XmlNode);
-        if (xmlDoc == null)
-        {
-            return "";
-        }
-        else
-        {
-            ChildNode = xmlDoc.SelectSingleNode(nodeName);
-            if (ChildNode == null)
-            {
-                return "";
-            }
-            else
-            {
-                return ChildNode.InnerText;
-            }
-        }
-    }
-
+    public static string GetXMLNodeValue(XmlDocument xmlDoc, string nodeName) => xmlDoc?.SelectSingleNode(nodeName)?.InnerText ?? "";
 
 }

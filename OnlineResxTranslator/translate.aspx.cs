@@ -7,6 +7,7 @@ using System.Configuration;
 using Microsoft.AspNet.Identity;
 using System.IO;
 using System.Web.UI.WebControls;
+using System.Web;
 
 partial class _Translate : PageBase
 {
@@ -31,7 +32,8 @@ partial class _Translate : PageBase
         if ((!Page.IsPostBack || Page.Request?.Form?["__EVENTTARGET"]?.Contains("rpt_languages") == true) && Session["CurrentlyChosenProject"] != null)
             initTranslationTable();
 
-        base.OnPreRenderComplete(e);    }
+        base.OnPreRenderComplete(e);
+    }
 
     protected void initTranslationTable()
     {
@@ -74,6 +76,12 @@ partial class _Translate : PageBase
             Save.Visible = true;
 
             XmlDocument EnglishFile = XMLFile.GetXMLDocument(Directory + Convert.ToString(Session["SelectedFilename"]) + ".resx");
+            if (EnglishFile == null)
+            {
+                Session["SelectedFilename"] = null;
+                Response.Redirect("/Account/Default.aspx"); // redirect to homepage, as this selected file does not longer seem to exist
+            }
+
             XmlDocument TranslatedFile = XMLFile.GetXMLDocument(Directory + Language + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx");
             DataTable Table = new DataTable();
             Table.Columns.Add("TextName");
@@ -81,11 +89,12 @@ partial class _Translate : PageBase
             Table.Columns.Add("Translation");
             Table.Columns.Add("Comment");
 
+
             foreach (XmlNode Text in EnglishFile.SelectNodes("/root/data"))
             {
                 DataRow Row = Table.NewRow();
                 Row["TextName"] = Text.Attributes["name"].InnerText;
-                Row["English"] = Text.SelectSingleNode("value").InnerText;
+                Row["English"] = Server.HtmlEncode(Text.SelectSingleNode("value").InnerText);
                 Row["Comment"] = TranslatedFile?.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment")?.InnerText ?? "";
 
                 XmlNode Translated = TranslatedFile?.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/value");
@@ -95,8 +104,7 @@ partial class _Translate : PageBase
                 }
                 else
                 {
-                    Row["Translation"] = Translated.InnerText;
-                    //HttpUtility.HtmlEncode(Translated.InnerText)
+                    Row["Translation"] = Server.HtmlEncode(Translated.InnerText);
                 }
 
                 bool CanBeAdded = true;
@@ -170,7 +178,8 @@ partial class _Translate : PageBase
 
             int Updates = 0;
 
-            XmlDocument EnglishFile = XMLFile.GetXMLDocument(ProjectDirectory + Convert.ToString(Session["SelectedFilename"]) + ".resx");
+            XmlDocument SourceFile = XMLFile.GetXMLDocument(ProjectDirectory + Convert.ToString(Session["SelectedFilename"]) + ".resx");
+
             string TargetFilename = ProjectDirectory + Language + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx";
             string TargetFileNameForGen = ProjectDirectory + Language + "\\Download" + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx";
 
@@ -193,7 +202,7 @@ partial class _Translate : PageBase
                 // Node does not exist in translation file, so add it
                 if (Node == null)
                 {
-                    Node = EnglishFile.SelectSingleNode("/root/data[@name=\"" + ElementName + "\"]");
+                    Node = SourceFile.SelectSingleNode("/root/data[@name=\"" + ElementName + "\"]");
                     XmlNode rootnode = TranslatedFile.SelectSingleNode("/root");
                     XmlNode CopiedNode = TranslatedFile.ImportNode(Node, true);
                     CopiedNode.SelectSingleNode("value").InnerText = TB.Text;

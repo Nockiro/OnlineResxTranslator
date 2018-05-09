@@ -142,7 +142,7 @@ namespace localhost
 
             // Add custom user claims here
             identity.AddClaim(new Claim("TranslatedStrings", user.TranslatedStrings.ToString()));
-            identity.AddClaim(new Claim("Language", user.DefaultLanguage));
+            identity.AddClaim(new Claim("Language", user.DefaultLanguage ?? ""));
 
             authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, identity);
         }
