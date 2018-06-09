@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.Mobile.master.cs" Inherits="Site_Mobile" MasterPageFile="~/Site.master" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.master.cs" Inherits="SiteMaster" %>
 
 <%@ Register Src="~/ViewSwitcher.ascx" TagPrefix="friendlyUrls" TagName="ViewSwitcher" %>
 
@@ -28,6 +28,36 @@
                         <li><a runat="server" href="~/Translate">Translate</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
+                        
+                        <asp:LoginView runat="server" ViewStateMode="Disabled" ID="loginview1">
+                            <LoggedInTemplate>
+                                <li class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="projectchoose" aria-expanded="false">Projects <span class="caret"></span></a>
+                                    <ul class="dropdown-menu" aria-labelledby="projectchoose">
+                                        <asp:Repeater runat="server" ID="projectList" ItemType="ProjectHelper.ProjectInfo">
+                                            <ItemTemplate>
+                                                <li>
+                                                    <asp:LinkButton OnCommand="SelectProject" CommandArgument="<%# Item.ID %>" Text="<%# Item.Name %>" runat="server"></asp:LinkButton>
+                                                </li>
+                                            </ItemTemplate>
+                                        </asp:Repeater>
+                                    </ul>
+                                </li>
+                                <li class="dropdown" id="langList" runat="server">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="langchoose" aria-expanded="false">Languages <span class="caret"></span></a>
+                                    <ul class="dropdown-menu" aria-labelledby="projectchoose">
+                                        <asp:Repeater runat="server" ID="rpt_languages" ItemType="System.Globalization.CultureInfo">
+                                            <ItemTemplate>
+                                                <li>
+                                                    <asp:LinkButton OnCommand="SelectLanguage" CommandArgument="<%# Item.TwoLetterISOLanguageName %>" Text="<%# Item.EnglishName %>" runat="server"></asp:LinkButton>
+                                                </li>
+                                            </ItemTemplate>
+                                        </asp:Repeater>
+                                    </ul>
+                                </li>
+                            </LoggedInTemplate>
+                        </asp:LoginView>
+
                         <asp:LoginView runat="server" ViewStateMode="Disabled">
                             <RoleGroups>
                                 <asp:RoleGroup Roles="admin">
