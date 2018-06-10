@@ -105,7 +105,7 @@ public class XMLFile
                 XmlDocument SourceFile;
 
                 if (Directory.Exists(Path.Combine(ProjectDirectory, sourceLang)))
-                    SourceFile = XMLFile.GetXMLDocument(Path.Combine(ProjectDirectory, sourceLang, CurrentFile));
+                    SourceFile = XMLFile.GetXMLDocument(Path.Combine(ProjectDirectory, sourceLang, CurrentFile + "." + sourceLang + ".resx"));
                 else
                     SourceFile = XMLFile.GetXMLDocument(ProjectDirectory + CurrentFile + ".resx");
 
