@@ -43,7 +43,7 @@ public partial class _Default : PageBase {
             int prevCount = getItemCount(TranslationSummaryCategory.Completed) == -1 ? (int)ViewState["CompleteCount"] : getItemCount(TranslationSummaryCategory.Completed);
 
             foreach (ProjectHelper.ProjectFileShortSummary psc in XMLFile.ComputeSummary((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], 100.0, 100.0))
-                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], psc.LangCode, null);
+                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], psc.LangCode, null, User.Identity.GetSourceLanguage());
 
             updateData(TranslationSummaryCategory.Completed);
 
@@ -63,7 +63,7 @@ public partial class _Default : PageBase {
             int prevCount = getItemCount(TranslationSummaryCategory.Uncompleted) == -1 ? (int)ViewState["UncompleteCount"] : getItemCount(TranslationSummaryCategory.Uncompleted);
 
             foreach (ProjectHelper.ProjectFileShortSummary psc in XMLFile.ComputeSummary((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"]))
-                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], psc.LangCode, null);
+                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], psc.LangCode, null, User.Identity.GetSourceLanguage());
 
             updateData(TranslationSummaryCategory.Uncompleted);
 

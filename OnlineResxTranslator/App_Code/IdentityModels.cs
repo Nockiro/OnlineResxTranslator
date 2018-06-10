@@ -17,7 +17,16 @@ namespace localhost
     public class ApplicationUser : IdentityUser
     {
         public int TranslatedStrings { get; set; }
+
+        /// <summary>
+        /// User's default language he translates into, can be entered on registration
+        /// </summary>
         public string DefaultLanguage { get; set; }
+
+        /// <summary>
+        /// Language the user translates _from_
+        /// </summary>
+        public string SourceLanguage { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -103,6 +112,24 @@ public static class IdentityExtensions
         return "";
     }
 
+    /// <summary>
+    /// Retrieves the user's source language or "en" if it doesn't exist
+    /// </summary>
+    public static string GetSourceLanguage(this IIdentity identity)
+    {
+        if (identity == null)
+        {
+            throw new ArgumentNullException("identity");
+        }
+
+        var ci = identity as ClaimsIdentity;
+        if (ci != null)
+        {
+            return ci.FindFirst("SourceLanguage").Value;
+        }
+        return "en";
+    }
+
 
     public static void SetTranslatedStrings(this IIdentity identity, int value)
     {
@@ -143,6 +170,7 @@ namespace localhost
             // Add custom user claims here
             identity.AddClaim(new Claim("TranslatedStrings", user.TranslatedStrings.ToString()));
             identity.AddClaim(new Claim("Language", user.DefaultLanguage ?? ""));
+            identity.AddClaim(new Claim("SourceLanguage", user.SourceLanguage ?? "en"));
 
             authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, identity);
         }

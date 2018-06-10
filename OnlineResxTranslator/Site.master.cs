@@ -81,7 +81,7 @@ public partial class SiteMaster : MasterPage
         }
         else ErrorMessage.Visible = false;
 
-        if (Session["CurrentlyChosenProject"] == null)
+        if (Context.User.Identity.IsAuthenticated && Session["CurrentlyChosenProject"] == null)
         {
             projects = Context.User.Identity.getUserProjects();
             Session["CurrentlyChosenProject"] = projects.Count > 0 ? projects[0] : null;

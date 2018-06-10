@@ -46,6 +46,7 @@ public partial class Admin_Info : PageBase
             "AspNetUsers.UserName as UserName",
             "AspNetUsers.Email as UserMail",
             "AspNetUsers.DefaultLanguage as UserDefaultLanguage",
+            "AspNetUsers.SourceLanguage as UserSourceLanguage",
             "TrUserLanguages.Language as UserLanguages",
 
             @"UserProjects = STUFF((
@@ -79,18 +80,19 @@ public partial class Admin_Info : PageBase
         String userProjects = (gvUsers.Rows[e.RowIndex].FindControl("tb_Projects") as TextBox).Text;
         String userLanguage = (gvUsers.Rows[e.RowIndex].FindControl("tb_UserLang") as TextBox).Text;
         String userDefaultLanguage = (gvUsers.Rows[e.RowIndex].FindControl("tb_UserDefLang") as TextBox).Text;
+        String userSourceLanguage = (gvUsers.Rows[e.RowIndex].FindControl("tb_UserSrcLang") as TextBox).Text;
 
         sqlhelper.OpenConnection();
         // update user table
         sqlhelper.UpdateTable("AspNetUsers", "id = '" + id + "'",
          new KeyValuePair<string, string>("UserName", userName),
          new KeyValuePair<string, string>("Email", userMail),
-         new KeyValuePair<string, string>("DefaultLanguage", userDefaultLanguage));
+         new KeyValuePair<string, string>("DefaultLanguage", userDefaultLanguage),
+         new KeyValuePair<string, string>("SourceLanguage", userSourceLanguage));
 
         // update language table
-        if (userLanguage != "")
-            sqlhelper.UpdateOrInsertIntoTable("TrUserLanguages", new KeyValuePair<string, string>("UserID", id),
-             new KeyValuePair<string, string>("Language", userLanguage));
+        sqlhelper.UpdateOrInsertIntoTable("TrUserLanguages", new KeyValuePair<string, string>("UserID", id),
+         new KeyValuePair<string, string>("Language", userLanguage));
 
         // update project table
         // its faster code to delete all projects of that user and readd the ones given in the list, really.

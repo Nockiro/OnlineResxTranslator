@@ -35,32 +35,35 @@ partial class _Translate : PageBase
         base.OnPreRenderComplete(e);
     }
 
+
     protected void initTranslationTable()
     {
+
         // if none was chosen, on site.master.cs the first one will be selected as default
         ProjectHelper.ProjectInfo Project = (ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"];
-        string Directory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
+        string ProjDirectory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
         string Language = User.Identity.getUserLanguage(Session);
+        string SourceLang = User.Identity.GetSourceLanguage();
 
         SelectedProject.Text = Project.Name + " files";
 
         // Getting Directory + Language + ".xml" - if it doesn't exist, it will automatically be created on percentage calculation
-        if (!File.Exists(Directory + Language + ".xml"))
-            XMLFile.ComputePercentage(Project, Language, null);
+        if (!File.Exists(ProjDirectory + Language + ".xml"))
+            XMLFile.ComputePercentage(Project, Language, null, SourceLang);
 
 
-        if (!File.Exists(Directory + Language + ".xml"))
+        if (!File.Exists(ProjDirectory + Language + ".xml"))
         {
             showError("Language file for '" + Language + "' could not be created!"); return;
         }
         else
         {
-            XmlDocument LanguageXML = XMLFile.GetXMLDocument(Directory + Language + ".xml");
+            XmlDocument LanguageXML = XMLFile.GetXMLDocument(ProjDirectory + Language + ".xml");
 
             XmlNodeList AllFiles = LanguageXML.SelectNodes("/files[@language=\"" + Language + "\"]/file");
 
             DataSet oDs = new DataSet();
-            oDs.ReadXml(Directory + Language + ".xml");
+            oDs.ReadXml(ProjDirectory + Language + ".xml");
 
             if (oDs.Tables.Count >= 2)
                 FileList.DataSource = oDs.Tables[1];
@@ -75,14 +78,21 @@ partial class _Translate : PageBase
             CurrentFile.Text = "Selected file: " + Convert.ToString(Session["SelectedFilename"]);
             Save.Visible = true;
 
-            XmlDocument EnglishFile = XMLFile.GetXMLDocument(Directory + Convert.ToString(Session["SelectedFilename"]) + ".resx");
-            if (EnglishFile == null)
+            XmlDocument SourceFile;
+
+            if (Directory.Exists(Path.Combine(ProjDirectory, SourceLang)))
+                SourceFile = XMLFile.GetXMLDocument(Path.Combine(ProjDirectory, SourceLang, Convert.ToString(Session["SelectedFilename"]) + "." + SourceLang + ".resx"));
+            else
+                SourceFile = XMLFile.GetXMLDocument(ProjDirectory + Convert.ToString(Session["SelectedFilename"]) + ".resx");
+
+            if (SourceFile == null)
             {
                 Session["SelectedFilename"] = null;
                 Response.Redirect("/Account/Default.aspx"); // redirect to homepage, as this selected file does not longer seem to exist
+                return;
             }
 
-            XmlDocument TranslatedFile = XMLFile.GetXMLDocument(Directory + Language + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx");
+            XmlDocument TranslatedFile = XMLFile.GetXMLDocument(ProjDirectory + Language + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx");
             DataTable Table = new DataTable();
             Table.Columns.Add("TextName");
             Table.Columns.Add("English");
@@ -90,7 +100,7 @@ partial class _Translate : PageBase
             Table.Columns.Add("Comment");
 
 
-            foreach (XmlNode Text in EnglishFile.SelectNodes("/root/data"))
+            foreach (XmlNode Text in SourceFile.SelectNodes("/root/data"))
             {
                 DataRow Row = Table.NewRow();
                 Row["TextName"] = Text.Attributes["name"].InnerText;
@@ -144,7 +154,7 @@ partial class _Translate : PageBase
             else
             {
                 Session["SelectedFilename"] = Filename;
-                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], User.Identity.getUserLanguage(Session), Convert.ToString(Session["SelectedFilename"]));
+                XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], User.Identity.getUserLanguage(Session), Convert.ToString(Session["SelectedFilename"]), User.Identity.GetSourceLanguage());
                 initTranslationTable();
             }
 
@@ -167,6 +177,7 @@ partial class _Translate : PageBase
             ProjectHelper.ProjectInfo Project = (ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"];
             string Language = User.Identity.getUserLanguage(Session);
             string ProjectDirectory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
+            string SourceLang = User.Identity.GetSourceLanguage();
 
             if (Project == null || Language == null)
             {
@@ -178,7 +189,12 @@ partial class _Translate : PageBase
 
             int Updates = 0;
 
-            XmlDocument SourceFile = XMLFile.GetXMLDocument(ProjectDirectory + Convert.ToString(Session["SelectedFilename"]) + ".resx");
+            XmlDocument SourceFile;
+
+            if (Directory.Exists(Path.Combine(ProjectDirectory, SourceLang)))
+                SourceFile = XMLFile.GetXMLDocument(Path.Combine(ProjectDirectory, SourceLang, Convert.ToString(Session["SelectedFilename"]) + "." + SourceLang + ".resx"));
+            else
+                SourceFile = XMLFile.GetXMLDocument(ProjectDirectory + Convert.ToString(Session["SelectedFilename"]) + ".resx");
 
             string TargetFilename = ProjectDirectory + Language + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx";
             string TargetFileNameForGen = ProjectDirectory + Language + "\\Download" + "\\" + Convert.ToString(Session["SelectedFilename"]) + "." + Language + ".resx";
@@ -261,14 +277,14 @@ partial class _Translate : PageBase
 
             // No updates made. No need to save file, but recalculate the percentage in case the file changed externally
             if (Updates == 0)
-                XMLFile.ComputePercentage(Project, Language, Convert.ToString(Session["SelectedFilename"]));
+                XMLFile.ComputePercentage(Project, Language, Convert.ToString(Session["SelectedFilename"]), SourceLang);
             else
             {
                 TranslatedFile.Save(TargetFilename);
 
                 Utils.CreateBackup(TranslatedFile, TargetFilename);
 
-                XMLFile.ComputePercentage(Project, Language, Convert.ToString(Session["SelectedFilename"]));
+                XMLFile.ComputePercentage(Project, Language, Convert.ToString(Session["SelectedFilename"]), SourceLang);
 
                 //Session["GlobalMessage"] = "File '" + TargetFilename.Split("\\".ToCharArray())[TargetFilename.Split("\\".ToCharArray()).GetUpperBound(0)] + "' saved sucessfully!";
 

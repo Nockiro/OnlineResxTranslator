@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Xml;
 using System.IO;
 using System.Data;
 using System.Data.SqlClient;
@@ -20,7 +18,6 @@ public class ProjectHelper
     {
 
     }
-
 
     /// <summary>
     /// Creates a list with projectinfo objects upon a datatable

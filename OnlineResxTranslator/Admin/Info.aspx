@@ -53,6 +53,17 @@
                             <asp:TextBox ID="tb_Projects" runat="server" Text='<%#Eval("UserProjects") %>'></asp:TextBox>
                         </EditItemTemplate>
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Source Language">
+                        <HeaderTemplate>
+                            <asp:Label ID="hd_sl" CssClass="help" ToolTip="Language the user translates from. If empty or the given ISO 639-1 conform code doesn't exist, the default files (the ones not in a language directory) are used" runat="server" Text="Source Language"></asp:Label>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="lbl_UserSrcLang" runat="server" Text='<%#Eval("UserSourceLanguage") %>'></asp:Label>
+                        </ItemTemplate>
+                        <EditItemTemplate>
+                            <asp:TextBox ID="tb_UserSrcLang" runat="server" Text='<%#Eval("UserSourceLanguage") %>'></asp:TextBox>
+                        </EditItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Default Language">
                         <ItemTemplate>
                             <asp:Label ID="lbl_UserDefLang" runat="server" Text='<%#Eval("UserDefaultLanguage") %>'></asp:Label>
@@ -63,7 +74,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Additional Languages">
                         <HeaderTemplate>
-                            <asp:Label ID="hd_vp" CssClass="help" ToolTip="Note: For more than one language, seperate by comma (,). Note also: The user will only get the language menu shown if there is one than more language for him available." runat="server" Text="Additional Languages"></asp:Label>
+                            <asp:Label ID="hd_al" CssClass="help" ToolTip="Note: For more than one language, seperate by comma (,). Note also: The user will only get the language menu shown if there is one than more language for him available." runat="server" Text="Additional Languages"></asp:Label>
                         </HeaderTemplate>
                         <ItemTemplate>
                             <asp:Label ID="lbl_UserLang" runat="server" Text='<%#Eval("UserLanguages") %>'></asp:Label>

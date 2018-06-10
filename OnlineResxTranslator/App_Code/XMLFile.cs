@@ -29,26 +29,27 @@ public class XMLFile
     /// <param name="project">ProjectInfo of the current project</param>
     /// <param name="language">shortcut of language, e.g. de</param>
     /// <param name="filename">File which was updated, e.g. beta.aspx. Or nothing to check all files</param>
+    /// <param name="sourceLang">Source language the file is compared to</param>
     /// <returns>Percentage as integer</returns>
     /// <remarks>Creates info file if not existing</remarks>
-    public static double ComputePercentage(ProjectHelper.ProjectInfo project, string language, string filename)
+    public static double ComputePercentage(ProjectHelper.ProjectInfo project, string language, string filename, string sourceLang)
     {
         double Percentage = 0;
 
-        string projDir = ConfigurationManager.AppSettings["ProjectDirectory"] + project.Folder + "\\";
-        if (!Directory.Exists(projDir))
-            Directory.CreateDirectory(projDir);
+        string ProjectDirectory = ConfigurationManager.AppSettings["ProjectDirectory"] + project.Folder + "\\";
+        if (!Directory.Exists(ProjectDirectory))
+            Directory.CreateDirectory(ProjectDirectory);
 
-        string[] allMainProjectFiles = Directory.GetFiles(projDir, "*.resx", SearchOption.TopDirectoryOnly);
+        string[] allMainProjectFiles = Directory.GetFiles(ProjectDirectory, "*.resx", SearchOption.TopDirectoryOnly);
 
         if (allMainProjectFiles.Length == 0)
-            throw new Exception("No Resource files in the project directory " + projDir);
+            throw new Exception("No Resource files in the project directory " + ProjectDirectory);
 
         // Language file does not exist, so create new language file in a potential new folder
-        if (!File.Exists(projDir + language + ".xml"))
+        if (!File.Exists(ProjectDirectory + language + ".xml"))
         {
             // Now write the main chart xml for Form Update
-            XmlTextWriter writer = new XmlTextWriter(projDir + language + ".xml", System.Text.Encoding.UTF8)
+            XmlTextWriter writer = new XmlTextWriter(ProjectDirectory + language + ".xml", System.Text.Encoding.UTF8)
             {
                 Formatting = Formatting.Indented,
                 Indentation = 3
@@ -67,7 +68,7 @@ public class XMLFile
                 // <file>
                 ResXFile = ResXFile_loopVariable;
                 writer.WriteStartElement("file");
-                ShortName = ResXFile.Substring(projDir.Length).Replace(".resx", "");
+                ShortName = ResXFile.Substring(ProjectDirectory.Length).Replace(".resx", "");
 
                 writer.WriteElementString("name", ShortName);
                 writer.WriteElementString("percentcompleted", "0");
@@ -84,7 +85,7 @@ public class XMLFile
             writer.Close();
         }
 
-        XmlDocument LanguageXML = XMLFile.GetXMLDocument(projDir + language + ".xml");
+        XmlDocument LanguageXML = XMLFile.GetXMLDocument(ProjectDirectory + language + ".xml");
 
         // get all files that are registered in that language file
         XmlNodeList AllFiles = LanguageXML.SelectNodes("/files/file");
@@ -92,8 +93,8 @@ public class XMLFile
         bool SummaryUpdated = false;
 
 
-        if (!Directory.Exists(projDir + language))
-            Directory.CreateDirectory(projDir + language);
+        if (!Directory.Exists(ProjectDirectory + language))
+            Directory.CreateDirectory(ProjectDirectory + language);
 
         foreach (XmlNode SingleFile in AllFiles)
         {
@@ -101,23 +102,27 @@ public class XMLFile
 
             if (CurrentFile != null && CurrentFile != filename)
             {
-                XmlDocument SourceDoc = XMLFile.GetXMLDocument(projDir + CurrentFile + ".resx");
+                XmlDocument SourceFile;
+
+                if (Directory.Exists(Path.Combine(ProjectDirectory, sourceLang)))
+                    SourceFile = XMLFile.GetXMLDocument(Path.Combine(ProjectDirectory, sourceLang, CurrentFile));
+                else
+                    SourceFile = XMLFile.GetXMLDocument(ProjectDirectory + CurrentFile + ".resx");
 
                 // if not null, english source file was found
-                if (SourceDoc != null)
+                if (SourceFile != null)
                 {
-                    XmlDocument TranslatedDoc = XMLFile.GetXMLDocument(projDir + language + "\\" + CurrentFile + "." + language + ".resx");
+                    XmlDocument TranslatedDoc = XMLFile.GetXMLDocument(Path.Combine(ProjectDirectory, language, (CurrentFile + "." + language + ".resx")));
 
                     // Is translated language file not there?
                     if (TranslatedDoc == null)
                     {
                         // Create empty translation file
-
-                        foreach (XmlNode Node in SourceDoc.SelectNodes("/root/data/value"))
+                        foreach (XmlNode Node in SourceFile.SelectNodes("/root/data/value"))
                             Node.InnerText = string.Empty;
 
                         // save the "emptied" english source file to the translated file name
-                        SourceDoc.Save(projDir + language + "\\" + CurrentFile + "." + language + ".resx");
+                        SourceFile.Save(Path.Combine(ProjectDirectory, language, (CurrentFile + "." + language + ".resx")));
 
                         SingleFile.SelectSingleNode("percentcompleted").InnerText = "0";
                     }
@@ -127,7 +132,7 @@ public class XMLFile
                         double TranslatedFileElements = 0;
 
                         // get through each node in the english doc ..
-                        foreach (XmlNode SourceNode in SourceDoc.SelectNodes("root/data"))
+                        foreach (XmlNode SourceNode in SourceFile.SelectNodes("root/data"))
                         {
                             string NodeName = SourceNode.Attributes["name"].InnerXml;
 
@@ -182,7 +187,7 @@ public class XMLFile
 
         // Save configuration file if it was changed
         if (SummaryUpdated)
-            LanguageXML.Save(projDir + language + ".xml");
+            LanguageXML.Save(ProjectDirectory + language + ".xml");
 
         return Percentage;
     }
