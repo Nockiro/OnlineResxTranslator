@@ -104,7 +104,7 @@ partial class _Translate : PageBase
             {
                 DataRow Row = Table.NewRow();
                 Row["TextName"] = Text.Attributes["name"].InnerText;
-                Row["English"] = Server.HtmlEncode(Text.SelectSingleNode("value").InnerText);
+                Row["English"] = Server.HtmlEncode(Text.SelectSingleNode("value")?.InnerText);
                 Row["Comment"] = TranslatedFile?.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/comment")?.InnerText ?? "";
 
                 XmlNode Translated = TranslatedFile?.SelectSingleNode("/root/data[@name=\"" + Row["Textname"].ToString() + "\"]/value");
