@@ -277,6 +277,10 @@ public class XMLFile
         {
             return null;
         }
+		catch (XmlException e)
+		{
+            throw new Exception($"File {filename} has invalid data.", e);
+		}
     }
 
     /// <summary>
