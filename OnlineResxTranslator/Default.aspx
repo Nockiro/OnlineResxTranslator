@@ -15,6 +15,7 @@
                     <hr />
                     <h4>Currently selected project: <b><%= ((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"]).Name %></b></h4>
                     <h4>Currently selected language: <b><%= new System.Globalization.CultureInfo(User.Identity.getUserLanguage(Session)).EnglishName %></b></h4>
+                    <h4>There are <b><%= (new localhost.UserManager()).Users.ToList().Count(u => u.DefaultLanguage == User.Identity.getUserLanguage(Session)) %> Users</b> registered for your language, so keep that in mind while translating.</b></h4>
                     <br />
                     <div class="panel panel-success">
                         <div class="panel-heading">
