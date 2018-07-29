@@ -120,10 +120,10 @@ partial class _Translate : PageBase
                 bool CanBeAdded = true;
 
                 foreach (String notToCheck in XMLFile.NotArgs)
-                    if (Row["TextName"].ToString().Contains("." + notToCheck)) CanBeAdded = false;
+                    if (Row["TextName"].ToString().Contains("." + notToCheck) 
+						|| String.IsNullOrEmpty(Row["English"].ToString())) CanBeAdded = false;
 
-                if (CanBeAdded && !String.IsNullOrEmpty(Row["English"].ToString()) &&
-                    (!cb_showOnlyUntr.Checked || String.IsNullOrEmpty(Row["Translation"].ToString())))
+                if (CanBeAdded && (!cb_showOnlyUntr.Checked || String.IsNullOrEmpty(Row["Translation"].ToString())))
                     Table.Rows.Add(Row);
 
             }

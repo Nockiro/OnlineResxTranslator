@@ -17,7 +17,8 @@ public class XMLFile
     public static readonly string[] NotArgs = new string[] { "Icon", "Size", "ImageStream", "Image", "Width", "Location", "ImeMode", "TabIndex", "TextAlign",
                                 "ToolTip", "Dock", "ClientSize", "Enabled", "Visible", "Groups", "ThousandsSeparator", "AutoSize", "BackgroundImage", "Type", "ZOrder", "Parent", "Name",
                                 "Padding", "Anchor", "AutoScaleDimensions", "Multiline", "Font", "TextImageRelation", "SplitterDistance","FlatStyle", "ColumnCount", "RowCount", "LayoutSettings", "CheckAlign",
-                                "Item"};
+                                "Item", "RightToLeft", "Nodes"};
+
 
     public XMLFile()
     {
@@ -28,7 +29,7 @@ public class XMLFile
     /// </summary>
     /// <param name="project">ProjectInfo of the current project</param>
     /// <param name="language">shortcut of language, e.g. de</param>
-    /// <param name="filename">File which was updated, e.g. beta.aspx. Or nothing to check all files</param>
+    /// <param name="filename">File which was updated, e.g. beta.aspx. Or null to check all files</param>
     /// <param name="sourceLang">Source language the file is compared to</param>
     /// <returns>Percentage as integer</returns>
     /// <remarks>Creates info file if not existing</remarks>
@@ -98,9 +99,10 @@ public class XMLFile
 
         foreach (XmlNode SingleFile in AllFiles)
         {
-            string CurrentFile = CurrentFile = SingleFile.SelectSingleNode("name").InnerText;
+            string CurrentFile = SingleFile.SelectSingleNode("name").InnerText;
 
-            if (CurrentFile != null && CurrentFile != filename)
+			// if the current file in the directoy is not invalid and either no file was specified to test (== all files) or the file matches the given one
+            if (CurrentFile != null && (filename == null || CurrentFile == filename))
             {
                 XmlDocument SourceFile;
 
@@ -134,7 +136,7 @@ public class XMLFile
                         // get through each node in the english doc ..
                         foreach (XmlNode SourceNode in SourceFile.SelectNodes("root/data"))
                         {
-                            string NodeName = SourceNode.Attributes["name"].InnerXml;
+                            string NodeName = SourceNode.Attributes["name"].InnerText;
 
                             Array NodePoints = default(Array);
                             NodePoints = NodeName.Split('.');
@@ -143,7 +145,8 @@ public class XMLFile
                             bool CanBeAdded = true;
 
                             for (int i = 0; i <= NotArgs.Length - 1; i++)
-                                if (NodeName.Contains("." + NotArgs[i])) CanBeAdded = false;
+                                if (NodeName.Contains("." + NotArgs[i])
+									|| String.IsNullOrEmpty(SourceNode.SelectSingleNode("value")?.InnerText)) CanBeAdded = false;
 
 
                             if (CanBeAdded)
@@ -159,7 +162,7 @@ public class XMLFile
 
                                     // if value was null or text empty, the node was empty and therefore not translated
                                     if (TranslatedNode != null && (TranslatedNode.InnerText).Trim().Length > 0)
-                                        TranslatedFileElements += 1;
+                                        TranslatedFileElements += 1;						
                                 }
                             }
                         }
@@ -168,9 +171,11 @@ public class XMLFile
                             Percentage = 100;
                         else
                             Percentage = (TranslatedFileElements / FileElements) * 100;
-
+	
                     }
                 }
+				
+				SingleFile.SelectSingleNode("caption").InnerText = "";
 
                 // Check whether percentage is changed - if this condition was true, the percentage was already stored correct
                 if (Convert.ToDouble(SingleFile.SelectSingleNode("percentcompleted").InnerText.Replace(",", "."), CultureInfo.InvariantCulture) != Percentage)
@@ -182,6 +187,7 @@ public class XMLFile
                     if (!SummaryUpdated)
                         SummaryUpdated = true;
                 }
+				
             }
         }
 
