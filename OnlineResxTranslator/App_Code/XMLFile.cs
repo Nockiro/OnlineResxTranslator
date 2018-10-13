@@ -17,7 +17,7 @@ public class XMLFile
     public static readonly string[] NotArgs = new string[] { "Icon", "Size", "ImageStream", "Image", "Width", "Location", "ImeMode", "TabIndex", "TextAlign",
                                 "ToolTip", "Dock", "ClientSize", "Enabled", "Visible", "Groups", "ThousandsSeparator", "AutoSize", "BackgroundImage", "Type", "ZOrder", "Parent", "Name",
                                 "Padding", "Anchor", "AutoScaleDimensions", "Multiline", "Font", "TextImageRelation", "SplitterDistance","FlatStyle", "ColumnCount", "RowCount", "LayoutSettings", "CheckAlign",
-                                "Item", "RightToLeft", "Nodes"};
+                                "Item", "RightToLeft", "Nodes", "Orientation", "MinimumSize", "MaximumSize", "AutoScroll"};
 
 
     public XMLFile()
