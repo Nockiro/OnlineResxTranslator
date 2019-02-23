@@ -31,6 +31,13 @@ namespace localhost
             
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include("~/Scripts/modernizr-*"));
 
+            ScriptManager.ScriptResourceMapping.AddDefinition(
+                    "bootstrap",
+                    new ScriptResourceDefinition
+                    {
+                        Path = "~/Scripts/bootstrap.min.js",
+                        DebugPath = "~/Scripts/bootstrap.js",
+                    });
 
             ScriptManager.ScriptResourceMapping.AddDefinition(
                     "respond",
