@@ -5,34 +5,10 @@ using System.Web;
 using System.Web.UI;
 using localhost;
 
-public partial class Account_Login : Page {
-    protected void Page_Load(object sender, EventArgs e)
+public partial class Account_Login : PageBase {
+    protected override void Page_LoadBegin(object sender, EventArgs e)
     {
         RegisterHyperLink.NavigateUrl = "Register";
-
-        var returnUrl = HttpUtility.UrlEncode(Request.QueryString["ReturnUrl"]);
-        var redirectProblem = HttpUtility.UrlEncode(Request.QueryString["re"]);
-
-        if (!String.IsNullOrEmpty(redirectProblem))
-        {
-            switch (redirectProblem)
-            {
-                // forbidden
-                case "403":
-                    FailureText.Text = "You... don't have access. Sorry.";
-                    break;
-                case "se":
-                    FailureText.Text = "Apparently your session is expired - please login.";
-                    break;
-
-            }
-            ErrorMessage.Visible = true;
-        }
-
-        if (!String.IsNullOrEmpty(returnUrl))
-        {
-            RegisterHyperLink.NavigateUrl += "?ReturnUrl=" + returnUrl;
-        }
     }
 
     protected void LogIn(object sender, EventArgs e)
@@ -51,8 +27,7 @@ public partial class Account_Login : Page {
             }
             else
             {
-                FailureText.Text = "Invalid username or password.";
-                ErrorMessage.Visible = true;
+                showError("Invalid username or password.");
             }
         }
     }

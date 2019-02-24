@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Translate" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="translate.aspx.cs" ValidateRequest="false" Inherits="_Translate" %>
+﻿<%@ Page Title="Translate" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="translate.aspx.cs" ValidateRequest="false" Inherits="_Translate" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <h2><%: this.Title %>.</h2>

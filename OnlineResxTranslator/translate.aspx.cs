@@ -21,7 +21,7 @@ partial class _Translate : PageBase
         if (!Page.IsPostBack)
         {
             if (!User.Identity.IsAuthenticated)
-                Response.Redirect("/Account/Login.aspx?re=403");
+                showError("You are not logged in. Please login!", "/Account/Login", "/translate");
             else if (User.Identity.getUserProjects().Count == 0)
                 showError("You are not registered for any project."); return;
         }
@@ -139,7 +139,7 @@ partial class _Translate : PageBase
     {
         if (!User.Identity.IsAuthenticated)
         {
-            Response.Redirect("/Account/Login.aspx?re=403");
+            showError("You are not logged in. Please login!", "/Account/Login", "/translate");
         }
         else
         {
@@ -170,7 +170,7 @@ partial class _Translate : PageBase
     {
         if (!User.Identity.IsAuthenticated)
         {
-            Response.Redirect("/Account/Login.aspx?re=403");
+            showError("You are not logged in. Please login!", "/Account/Login", "/translate");
         }
         else
         {
@@ -181,10 +181,8 @@ partial class _Translate : PageBase
 
             if (Project == null || Language == null)
             {
-                showError("Session expired. Could not read Project or Language. Please login!");
+                showError("Session expired. Could not read Project or Language. Please login!", "/Account/Login", "/translate");
                 // TODO: Save Values here for relog (like HttpCookie myCookie = new HttpCookie("savedValues");)
-
-                Response.Redirect("/Account/Login.aspx?re=se&ReturnUrl=/translate");
             }
 
             int Updates = 0;

@@ -74,7 +74,6 @@ public partial class SiteMaster : MasterPage
 
         if (Session["ErrorMessage"] != null && !String.IsNullOrEmpty(Session["ErrorMessage"].ToString()))
         {
-            MainContent.Visible = false;
             ErrorMessage.Visible = true;
             FailureText.Text = Session["ErrorMessage"].ToString();
             return;

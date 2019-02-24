@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 /// <summary>
 /// Base class for pages which can use some extended functions (eg error messages)
@@ -12,7 +9,6 @@ public class PageBase : Page
 {
     public PageBase()
     {
-        this.Load += Page_Load;
     }
 
     /// <summary>
@@ -48,12 +44,19 @@ public class PageBase : Page
 
     /// <summary>
     /// Shows error message at the beginning of a page (Attention: Needs page to use <see cref="Page_LoadBegin"/> and master page to handle the variable
+    /// Make sure to redirect the user if sensitive content isn't allowed on the current page
     /// </summary>
     /// <param name="msg">Message to be shown</param>
-    protected void showError(string msg)
+    /// <param name="redirect">if given, errorwill be shown on this page</param>
+    /// <param name="origin">can be used for redirects after showing the message</param>
+    protected void showError(string msg, string redirect = null, string origin = null)
     {
         Session["ErrorMessage"] = msg;
-        Response.Redirect(Request.Url.PathAndQuery);
-        return;
+
+        Uri EndURI = redirect != null ? new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), redirect) : Request.Url;
+        if (!String.IsNullOrEmpty(origin))
+            EndURI = EndURI.ExtendQuery(new Dictionary<string, string> { { "returnURL", origin } });
+
+        Response.Redirect(EndURI.PathAndQuery);
     }
 }

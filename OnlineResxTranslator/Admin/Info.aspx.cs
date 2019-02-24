@@ -23,7 +23,7 @@ public partial class Admin_Info : PageBase
     {
         if (!User.Identity.IsAuthenticated || !User.IsInRole("admin"))
         {
-            Response.Redirect("/Account/Login.aspx?ReturnUrl=/Admin/Info&re=403");
+            showError("You.. Don't have access, sorry.", "/Account/Login", "/Admin/Info");
         }
 
         if (!IsPostBack)
