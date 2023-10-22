@@ -2,7 +2,7 @@
 Let multiple users translate your resx files (.NET Resource files) in an online interface.  
 
 ## What does it do?
-OnlineResxTranslator is a asp.NET 4.6.1 online plattform to translate multiple files from multiple projects in multiple languages per user, bundled in one nice little bootstrap-themed (and mobile friendly, too) online interface.  
+OnlineResxTranslator is a ASP.NET 4.8 online plattform to translate multiple files from multiple projects in multiple languages per user, bundled in one nice little bootstrap-themed (and mobile friendly, too) online interface.  
 Originally I built the project for multi-project solutions (like standard C# Project solutions with multiple projects in it), but the platform can also be used for just one project.  
 So briefly summarized:  
 Multi-user online translation platform (looks good on most browsers through the holy bootstrap and javascripts)  
@@ -22,7 +22,7 @@ There are also images under [Screens/](https://github.com/Nockiro/OnlineResxTran
   
 ## Troubleshooting  
 Problems I've encountered:
-- If Visual Studio doesn't find certain classes in certain namespaces ("type or namespace name 'bla' does not exist in the namespace 'Microsoft'" or similar), run `Update-Package -reinstall` in the nuget package manager console, in this way the project is forced to get all important packages again 
+- If Visual Studio doesn't find certain classes in certain namespaces ("type or namespace name 'bla' does not exist in the namespace 'Microsoft'" or similar) or complains about not finding csc.exe, run `Update-Package -reinstall` in the nuget package manager console, this way the project is forced to get all important packages again 
 - If a translation file doesn't exist (e.g. because you imported an already translated language and the platform did not generate the files itself), hit the recalculate (⟳) button, the recalculation process will automatically create all not yet existing translation files
 - You don't see a resource for translation although it's in the corresponding file: Check if the type of resource is excluded by the plaform in `XMLFile#NotArgs[]`
 

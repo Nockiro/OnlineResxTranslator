@@ -1,10 +1,27 @@
-﻿/* Move down content because we have a fixed navbar that is 50px tall */
+﻿@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
+
+/* Move down content because we have a fixed navbar that is 50px tall */
 body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
 html, body {
     height: 100%;
+}
+
+h4, .h4 {
+    font-size: 19px !important;
+}
+
+h4, .h4, h5, .h5, h6, .h6 {
+    margin-top: 10.5px !important;
+    margin-bottom: 10.5px !important;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400 !important;
+    line-height: 1.1 !important;
 }
 
 /* Wrapping element */
@@ -14,11 +31,19 @@ html, body {
     padding-right: 15px;
 }
 
+@media (min-width: 1200px) {
+	.body-content, .container {
+		max-width: 90% !important;
+		width: 90% !important;
+	}	
+}
 
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
     .jumbotron {
-        margin-top: 20px;
+        margin-top: 40px;
+		padding-top: 48px;
+		padding-bottom: 48px;
     }
     .body-content {
         padding: 0;
@@ -34,9 +59,10 @@ html, body {
     min-width: 95px;
 }
 
-.container {
-    margin-top: 10px;
+.language-card-item {
+	padding: 10px 0 10px;
 }
+
 .fill {
     height: auto;
     /* height - footer - header*/
@@ -44,9 +70,6 @@ html, body {
     min-height: -o-calc(100vh - 95px - 70px); /* opera */
     min-height: -webkit-calc(100vh - 95px - 70px); /* google, safari */
     min-height: -moz-calc(100vh - 95px - 70px); /* firefox */
-}
-.panel {
-  box-shadow: none !important;
 }
 
 .help {

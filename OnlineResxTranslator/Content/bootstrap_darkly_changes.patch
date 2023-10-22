@@ -1,0 +1,393 @@
+diff --git "a/D:\\Downloads\\bootswatch-3.3.7\\bootswatch-3.3.7\\darkly\\bootstrap.css" "b/D:\\Projekte\\PHP u. HTML\\Websites\\TranslateNG\\OnlineResxTranslator\\Content\\bootstrap_darkly.css"
+index a91672f..a5d0a08 100644
+--- "a/D:\\Downloads\\bootswatch-3.3.7\\bootswatch-3.3.7\\darkly\\bootstrap.css"
++++ "b/D:\\Projekte\\PHP u. HTML\\Websites\\TranslateNG\\OnlineResxTranslator\\Content\\bootstrap_darkly.css"	
+@@ -1,8 +1,9 @@
+-@import url("https://fonts.googleapis.com/css?family=Lato:400,700,400italic");
++﻿@import url("https://fonts.googleapis.com/css?family=Lato:400,700,400italic");
+ /*!
+  * bootswatch v3.3.7
+  * Homepage: http://bootswatch.com
+  * Copyright 2012-2016 Thomas Park
++ * Modified by Robin Freund
+  * Licensed under MIT
+  * Based on Bootstrap
+ */
+@@ -269,8 +270,8 @@ th {
+ }
+ @font-face {
+   font-family: 'Glyphicons Halflings';
+-  src: url('../fonts/glyphicons-halflings-regular.eot');
+-  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
++  src: url('https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.eot');
++  src: url('https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.woff2') format('woff2'), url('https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.woff') format('woff'), url('https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+ }
+ .glyphicon {
+   position: relative;
+@@ -1310,7 +1311,7 @@ small,
+ }
+ mark,
+ .mark {
+-  background-color: #f39c12;
++  background-color: #a06b16;
+   padding: .2em;
+ }
+ .text-left {
+@@ -1384,7 +1385,7 @@ a.bg-primary:focus {
+   background-color: #28415b;
+ }
+ .bg-success {
+-  background-color: #00bc8c;
++  background-color: #007154;
+ }
+ a.bg-success:hover,
+ a.bg-success:focus {
+@@ -1398,7 +1399,7 @@ a.bg-info:focus {
+   background-color: #217dbb;
+ }
+ .bg-warning {
+-  background-color: #f39c12;
++  background-color: #a06b16;
+ }
+ a.bg-warning:hover,
+ a.bg-warning:focus {
+@@ -1603,7 +1604,7 @@ pre code {
+ }
+ @media (min-width: 1200px) {
+   .container {
+-    width: 1170px;
++    width: 90%;
+   }
+ }
+ .container-fluid {
+@@ -2321,10 +2322,10 @@ th {
+ .table-bordered > thead > tr > td {
+   border-bottom-width: 2px;
+ }
+-.table-striped > tbody > tr:nth-of-type(odd) {
++.table-striped > tbody > tr:nth-of-type(odd) > td, .table-striped > tbody > tr:nth-of-type(odd) > th {
+   background-color: #3d3d3d;
+ }
+-.table-hover > tbody > tr:hover {
++.table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > td  {
+   background-color: #464545;
+ }
+ table col[class*="col-"] {
+@@ -2371,7 +2372,7 @@ table th[class*="col-"] {
+ .table > thead > tr.success > th,
+ .table > tbody > tr.success > th,
+ .table > tfoot > tr.success > th {
+-  background-color: #00bc8c;
++  background-color: #007154;
+ }
+ .table-hover > tbody > tr > td.success:hover,
+ .table-hover > tbody > tr > th.success:hover,
+@@ -2413,7 +2414,7 @@ table th[class*="col-"] {
+ .table > thead > tr.warning > th,
+ .table > tbody > tr.warning > th,
+ .table > tfoot > tr.warning > th {
+-  background-color: #f39c12;
++  background-color: #a06b16;
+ }
+ .table-hover > tbody > tr > td.warning:hover,
+ .table-hover > tbody > tr > th.warning:hover,
+@@ -2839,7 +2840,7 @@ select[multiple].input-lg {
+ .has-success .input-group-addon {
+   color: #ffffff;
+   border-color: #ffffff;
+-  background-color: #00bc8c;
++  background-color: #007154;
+ }
+ .has-success .form-control-feedback {
+   color: #ffffff;
+@@ -2869,7 +2870,7 @@ select[multiple].input-lg {
+ .has-warning .input-group-addon {
+   color: #ffffff;
+   border-color: #ffffff;
+-  background-color: #f39c12;
++  background-color: #a06b16;
+ }
+ .has-warning .form-control-feedback {
+   color: #ffffff;
+@@ -3062,7 +3063,7 @@ fieldset[disabled] a.btn {
+ }
+ .btn-default {
+   color: #ffffff;
+-  background-color: #464545;
++  background-color: #2f2f2f;
+   border-color: #464545;
+ }
+ .btn-default:focus,
+@@ -3176,7 +3177,7 @@ fieldset[disabled] .btn-primary.focus {
+ }
+ .btn-success {
+   color: #ffffff;
+-  background-color: #00bc8c;
++  background-color: #007154;
+   border-color: #00bc8c;
+ }
+ .btn-success:focus,
+@@ -3224,7 +3225,7 @@ fieldset[disabled] .btn-success:focus,
+ .btn-success.disabled.focus,
+ .btn-success[disabled].focus,
+ fieldset[disabled] .btn-success.focus {
+-  background-color: #00bc8c;
++  background-color: #007154;
+   border-color: #00bc8c;
+ }
+ .btn-success .badge {
+@@ -3290,7 +3291,7 @@ fieldset[disabled] .btn-info.focus {
+ }
+ .btn-warning {
+   color: #ffffff;
+-  background-color: #f39c12;
++  background-color: #a06b16;
+   border-color: #f39c12;
+ }
+ .btn-warning:focus,
+@@ -3338,7 +3339,7 @@ fieldset[disabled] .btn-warning:focus,
+ .btn-warning.disabled.focus,
+ .btn-warning[disabled].focus,
+ fieldset[disabled] .btn-warning.focus {
+-  background-color: #f39c12;
++  background-color: #a06b16;
+   border-color: #f39c12;
+ }
+ .btn-warning .badge {
+@@ -4593,7 +4594,7 @@ fieldset[disabled] .navbar-default .btn-link:focus {
+   color: #cccccc;
+ }
+ .navbar-inverse {
+-  background-color: #00bc8c;
++  background-color: #007154;
+   border-color: transparent;
+ }
+ .navbar-inverse .navbar-brand {
+@@ -4729,7 +4730,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
+   line-height: 1.42857143;
+   text-decoration: none;
+   color: #ffffff;
+-  background-color: #00bc8c;
++  background-color: #007154;
+   border: 1px solid transparent;
+   margin-left: -1px;
+ }
+@@ -4821,7 +4822,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
+ .pager li > span {
+   display: inline-block;
+   padding: 5px 14px;
+-  background-color: #00bc8c;
++  background-color: #007154;
+   border: 1px solid transparent;
+   border-radius: 15px;
+ }
+@@ -4843,7 +4844,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
+ .pager .disabled > a:focus,
+ .pager .disabled > span {
+   color: #dddddd;
+-  background-color: #00bc8c;
++  background-color: #007154;
+   cursor: not-allowed;
+ }
+ .label {
+@@ -4886,7 +4887,7 @@ a.label:focus {
+   background-color: #28415b;
+ }
+ .label-success {
+-  background-color: #00bc8c;
++  background-color: #007154;
+ }
+ .label-success[href]:hover,
+ .label-success[href]:focus {
+@@ -4900,7 +4901,7 @@ a.label:focus {
+   background-color: #217dbb;
+ }
+ .label-warning {
+-  background-color: #f39c12;
++  background-color: #a06b16;
+ }
+ .label-warning[href]:hover,
+ .label-warning[href]:focus {
+@@ -5060,7 +5061,7 @@ a.thumbnail.active {
+   color: inherit;
+ }
+ .alert-success {
+-  background-color: #00bc8c;
++  background-color: #007154;
+   border-color: #00bc8c;
+   color: #ffffff;
+ }
+@@ -5071,7 +5072,7 @@ a.thumbnail.active {
+   color: #e6e6e6;
+ }
+ .alert-info {
+-  background-color: #3498db;
++  background-color: #2b3740;
+   border-color: #3498db;
+   color: #ffffff;
+ }
+@@ -5082,7 +5083,7 @@ a.thumbnail.active {
+   color: #e6e6e6;
+ }
+ .alert-warning {
+-  background-color: #f39c12;
++  background-color: #a06b16;
+   border-color: #f39c12;
+   color: #ffffff;
+ }
+@@ -5127,76 +5128,6 @@ a.thumbnail.active {
+     background-position: 0 0;
+   }
+ }
+-.progress {
+-  overflow: hidden;
+-  height: 21px;
+-  margin-bottom: 21px;
+-  background-color: #ebebeb;
+-  border-radius: 4px;
+-  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+-}
+-.progress-bar {
+-  float: left;
+-  width: 0%;
+-  height: 100%;
+-  font-size: 13px;
+-  line-height: 21px;
+-  color: #ffffff;
+-  text-align: center;
+-  background-color: #375a7f;
+-  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+-  -webkit-transition: width 0.6s ease;
+-  -o-transition: width 0.6s ease;
+-  transition: width 0.6s ease;
+-}
+-.progress-striped .progress-bar,
+-.progress-bar-striped {
+-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  -webkit-background-size: 40px 40px;
+-          background-size: 40px 40px;
+-}
+-.progress.active .progress-bar,
+-.progress-bar.active {
+-  -webkit-animation: progress-bar-stripes 2s linear infinite;
+-  -o-animation: progress-bar-stripes 2s linear infinite;
+-  animation: progress-bar-stripes 2s linear infinite;
+-}
+-.progress-bar-success {
+-  background-color: #00bc8c;
+-}
+-.progress-striped .progress-bar-success {
+-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-}
+-.progress-bar-info {
+-  background-color: #3498db;
+-}
+-.progress-striped .progress-bar-info {
+-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-}
+-.progress-bar-warning {
+-  background-color: #f39c12;
+-}
+-.progress-striped .progress-bar-warning {
+-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-}
+-.progress-bar-danger {
+-  background-color: #e74c3c;
+-}
+-.progress-striped .progress-bar-danger {
+-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+-}
+ .media {
+   margin-top: 15px;
+ }
+@@ -5329,7 +5260,7 @@ button.list-group-item {
+ }
+ .list-group-item-success {
+   color: #ffffff;
+-  background-color: #00bc8c;
++  background-color: #007154;
+ }
+ a.list-group-item-success,
+ button.list-group-item-success {
+@@ -5387,7 +5318,7 @@ button.list-group-item-info.active:focus {
+ }
+ .list-group-item-warning {
+   color: #ffffff;
+-  background-color: #f39c12;
++  background-color: #a06b16;
+ }
+ a.list-group-item-warning,
+ button.list-group-item-warning {
+@@ -5727,7 +5658,7 @@ button.list-group-item-danger.active:focus {
+ }
+ .panel-success > .panel-heading {
+   color: #ffffff;
+-  background-color: #00bc8c;
++  background-color: #007154;
+   border-color: #00bc8c;
+ }
+ .panel-success > .panel-heading + .panel-collapse > .panel-body {
+@@ -5763,7 +5694,7 @@ button.list-group-item-danger.active:focus {
+ }
+ .panel-warning > .panel-heading {
+   color: #ffffff;
+-  background-color: #f39c12;
++  background-color: #a06b16;
+   border-color: #f39c12;
+ }
+ .panel-warning > .panel-heading + .panel-collapse > .panel-body {
+@@ -6999,15 +6930,7 @@ textarea:focus {
+   color: #fff;
+   text-decoration: underline;
+ }
+-.progress {
+-  height: 10px;
+-  -webkit-box-shadow: none;
+-  box-shadow: none;
+-}
+-.progress .progress-bar {
+-  font-size: 10px;
+-  line-height: 10px;
+-}
++
+ .well {
+   -webkit-box-shadow: none;
+   box-shadow: none;
+@@ -7018,14 +6941,14 @@ a.list-group-item.active:focus {
+   border-color: #464545;
+ }
+ a.list-group-item-success.active {
+-  background-color: #00bc8c;
++  background-color: #007154;
+ }
+ a.list-group-item-success.active:hover,
+ a.list-group-item-success.active:focus {
+   background-color: #00a379;
+ }
+ a.list-group-item-warning.active {
+-  background-color: #f39c12;
++  background-color: #a06b16;
+ }
+ a.list-group-item-warning.active:hover,
+ a.list-group-item-warning.active:focus {
+@@ -7044,3 +6967,7 @@ a.list-group-item-danger.active:focus {
+ .panel-default > .panel-heading {
+   background-color: #464545;
+ }
++.progress {
++	background-color: #a09f9f;
++	height: auto;
++}
+\ No newline at end of file

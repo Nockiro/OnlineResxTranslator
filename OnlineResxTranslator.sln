@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33717.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OnlineResxTranslator", "D:\Google Drive\Websites\TranslateNG\OnlineResxTranslator\", "{6F32B6CB-0FA0-421E-A54D-B0A912285022}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "OnlineResxTranslator", "OnlineResxTranslator\", "{6F32B6CB-0FA0-421E-A54D-B0A912285022}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6.1"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_51114"
 		Debug.AspNetCompiler.PhysicalPath = "OnlineResxTranslator\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51114\"
