@@ -35,8 +35,8 @@ namespace localhost
                     "bootstrap",
                     new ScriptResourceDefinition
                     {
-                        Path = "~/Scripts/bootstrap.min.js",
-                        DebugPath = "~/Scripts/bootstrap.js",
+                        Path = "~/Scripts/bootstrap.bundle.min.js",
+                        DebugPath = "~/Scripts/bootstrap.bundle.js",
                     });
 
             ScriptManager.ScriptResourceMapping.AddDefinition(

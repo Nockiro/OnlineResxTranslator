@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 
-<html lang="de">
+<html lang="de" data-bs-theme="dark">
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
@@ -33,48 +33,43 @@
             </Scripts>
         </asp:ScriptManager>
 
-        <div class="navbar navbar-default navbar-fixed-top">
+        <div class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark">
             <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
+                <div class="navbar-brand">
                     <a class="navbar-brand" runat="server" href="~/"><%: ProjectName %> Translation</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
                 </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a runat="server" href="~/">Home</a></li>
-                        <li><a runat="server" href="~/Translate">Translate</a></li>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Translate">Translate</a></li>
                     </ul>
-                    <ul class="nav navbar-nav navbar-right">
+                    <ul class="navbar-nav ms-md-auto">
 
                         <asp:LoginView runat="server" ViewStateMode="Disabled" ID="loginview1">
                             <LoggedInTemplate>
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="projectchoose" aria-expanded="false">Projects <span class="caret"></span></a>
-                                    <ul class="dropdown-menu" aria-labelledby="projectchoose">
+                                <li class="nav-item dropdown" data-bs-theme="light">
+                                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="projectchoose" aria-expanded="false">Projects</a>
+                                    <div class="dropdown-menu" aria-labelledby="projectchoose">
                                         <asp:Repeater runat="server" ID="projectList" ItemType="ProjectHelper.ProjectInfo">
                                             <ItemTemplate>
-                                                <li>
-                                                    <asp:LinkButton OnCommand="SelectProject" CommandArgument="<%# Item.ID %>" Text="<%# Item.Name %>" runat="server"></asp:LinkButton>
-                                                </li>
+                                                <asp:LinkButton CssClass="dropdown-item" OnCommand="SelectProject" CommandArgument="<%# Item.ID %>" Text="<%# Item.Name %>" runat="server"></asp:LinkButton>
+
                                             </ItemTemplate>
                                         </asp:Repeater>
-                                    </ul>
+                                    </div>
                                 </li>
-                                <li class="dropdown" id="langList" runat="server">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="langchoose" aria-expanded="false">Languages <span class="caret"></span></a>
-                                    <ul class="dropdown-menu" aria-labelledby="projectchoose">
+                                <li class="nav-item dropdown" data-bs-theme="light" id="langList" runat="server">
+                                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="langchoose" aria-expanded="false">Languages</a>
+                                    <div class="dropdown-menu" aria-labelledby="langchoose">
                                         <asp:Repeater runat="server" ID="rpt_languages" ItemType="System.Globalization.CultureInfo">
                                             <ItemTemplate>
-                                                <li>
-                                                    <asp:LinkButton OnCommand="SelectLanguage" CommandArgument="<%# Item.TwoLetterISOLanguageName %>" Text="<%# Item.EnglishName %>" runat="server"></asp:LinkButton>
-                                                </li>
+                                                <asp:LinkButton CssClass="dropdown-item" OnCommand="SelectLanguage" CommandArgument="<%# Item.TwoLetterISOLanguageName %>" Text="<%# Item.EnglishName %>" runat="server"></asp:LinkButton>
                                             </ItemTemplate>
                                         </asp:Repeater>
-                                    </ul>
+                                    </div>
                                 </li>
                             </LoggedInTemplate>
                         </asp:LoginView>
@@ -82,13 +77,13 @@
                             <RoleGroups>
                                 <asp:RoleGroup Roles="admin">
                                     <ContentTemplate>
-                                        <li class="dropdown">
-                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="management" aria-expanded="false">Management <span class="caret"></span></a>
-                                            <ul class="dropdown-menu" aria-labelledby="management">
-                                                <li><a runat="server" href="~/Account/Register">Register user</a></li>
-                                                <li class="divider"></li>
-                                                <li><a runat="server" href="~/Admin/Info">Admin panel</a></li>
-                                            </ul>
+                                        <li class="nav-item dropdown" data-bs-theme="light">
+                                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="management" aria-expanded="false">Management</a>
+                                            <div class="dropdown-menu" aria-labelledby="management">
+                                                <a class="dropdown-item" runat="server" href="~/Account/Register">Register user</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" runat="server" href="~/Admin/Info">Admin panel</a>
+                                            </div>
                                         </li>
                                     </ContentTemplate>
                                 </asp:RoleGroup>
@@ -99,15 +94,18 @@
                             <AnonymousTemplate>
                                 <% if (SiteMaster.OpenRegistrationAllowed)
                                     { %>
-                                <li><a runat="server" href="~/Account/Register">Register</a></li>
+                                <li class="nav-item"><a class="nav-link" runat="server" href="~/Account/Register">Register</a></li>
                                 <% } %>
-                                <li><a runat="server" href="~/Account/Login"><span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp;Login</a></li>
+                                <li class="nav-item"><a class="nav-link" runat="server" href="~/Account/Login">&nbsp;&nbsp;Login</a></li>
                             </AnonymousTemplate>
                             <LoggedInTemplate>
-
-                                <li><a runat="server" href="~/Account/Manage" title="Manage your account">Hello, <%= HttpContext.Current.User.Identity.Name %>!</a></li>
-                                <li>
-                                    <asp:LoginStatus runat="server" LogoutAction="Redirect" LogoutText="&lt;i aria-hidden=&quot;true&quot; class=&quot;glyphicon glyphicon-log-out&quot;&gt;&lt;/i&gt; Log out" LogoutPageUrl="~/" OnLoggingOut="Unnamed_LoggingOut"></asp:LoginStatus>
+                                <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
+                                    <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-white"></div>
+                                    <hr class="d-lg-none my-2 text-white-50">
+                                </li>
+                                <li class="nav-item"><a class="nav-link" runat="server" href="~/Account/Manage" title="Manage your account">Hello, <%= HttpContext.Current.User.Identity.Name %>!</a></li>
+                                <li class="nav-item">
+                                    <asp:LoginStatus runat="server" CssClass="nav-link" LogoutAction="Redirect" LogoutText="&lt;i aria-hidden=&quot;true&quot; class=&quot;bi bi-box-arrow-right&quot;&gt;&lt;/i&gt; Log out" LogoutPageUrl="~/" OnLoggingOut="Unnamed_LoggingOut"></asp:LoginStatus>
                                 </li>
                             </LoggedInTemplate>
                         </asp:LoginView>
@@ -126,10 +124,11 @@
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
-            <footer><div class="container">
-                <div class="left ">See <a runat="server"  href="https://github.com/Nockiro/OnlineResxTranslator">OnlineResxTranslator on Github</a></div>
-                <div class="right"><%: ProjectName %> | <a runat="server" href="~/Contact">Contact</a></div> 
-        </div>
+            <footer>
+                <div class="container">
+                    <div class="left ">See <a runat="server" href="https://github.com/Nockiro/OnlineResxTranslator">OnlineResxTranslator on Github</a></div>
+                    <div class="right"><%: ProjectName %> | <a runat="server" href="~/Contact">Contact</a></div>
+                </div>
             </footer>
         </div>
     </form>

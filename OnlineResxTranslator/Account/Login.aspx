@@ -36,7 +36,7 @@
                                 runat="server"
                                 CssClass="btn btn-primary"
                                 OnClick="LogIn">
-    <span aria-hidden="true" class="glyphicon glyphicon-log-in"></span> &nbsp;Login
+                                <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> &nbsp;Login
                             </asp:LinkButton>
                         </div>
                     </div>

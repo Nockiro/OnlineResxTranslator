@@ -1,19 +1,20 @@
 ﻿<%@ Page Title="Translate" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="translate.aspx.cs" ValidateRequest="false" Inherits="_Translate" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-    <h2><%: this.Title %>.</h2>
+    <h2><%: this.Title %></h2>
 
 
     <%if (Session["CurrentlyChosenProject"] != null)
         { %>
-    <div class="panel panel-default">
-        <div class="panel-heading">
+    <div class="card">
+        <div class="card-header">
             <h4 style="display: inline-block;">
                 <asp:Label ID="SelectedProject" CssClass="" runat="server" /></h4>
-            <button style="float: right;" class="btn btn-xl btn-default spoiler-trigger" id="filelisttoggle" onclick="return false;">Toggle file list</button>
+            <button type="button" style="float: right;" class="btn btn-xl btn-primary" data-bs-toggle="collapse" data-bs-target="#fileListSpoiler" aria-expanded="true" aria-controls="fileListSpoiler" id="filelisttoggle">Toggle file list</button>
         </div>
-        <div class="panel-collapse collapse in">
-            <div class="panel-body">
+        <%-- collapse the file list if a file was selected --%>
+        <div class="collapse<%: Session["SelectedFilename"] == null ? ".show" : "" %>" id="fileListSpoiler">
+            <div class="card-body">
                 <asp:GridView ID="FileList" runat="server" CssClass="table table-hover table-striped table-bordered" AutoGenerateColumns="False" AllowSorting="true" DataKeyNames="name"
                     UseAccessibleHeader="true" OnRowCommand="FileList_RowCommand">
                     <Columns>
@@ -26,16 +27,6 @@
         </div>
     </div>
 
-    <!-- if javascript is enabled, collapse the file list if a file was selected -->
-    <% if (Session["SelectedFilename"] != null)
-        { %>
-
-    <script type="text/javascript">
-        $("#filelisttoggle").parent().next().collapse('hide');
-    </script>
-
-    <% } %>
-
     <asp:UpdatePanel ID="UpPanTranslations" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
             <div>
@@ -43,8 +34,9 @@
                 <asp:CheckBox ID="cb_showOnlyUntr" runat="server" Text="Show only untranslated elements" CssClass="right" AutoPostBack="true" OnCheckedChanged="cb_showOnlyUntr_CheckedChanged" />
             </div>
             <br />
-            <h1>
-                <asp:Label ID="CurrentFile" runat="server" /></h1>
+            <hr style="clear: both;" />
+            <h2>
+                <asp:Label ID="CurrentFile" runat="server" /></h2>
 
             <asp:Repeater ID="TextElements" runat="server">
                 <HeaderTemplate>
@@ -86,7 +78,9 @@
         </ContentTemplate>
     </asp:UpdatePanel>
 
-    <% } else { %>
+    <% }
+        else
+        { %>
     <div class="alert alert-warning">
         <strong>Warning!</strong> No projects registered. Please add one in the administration panel.
     </div>

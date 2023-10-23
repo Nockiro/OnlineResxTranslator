@@ -10,16 +10,18 @@
         <p class="lead">
             <%: SiteMaster.ProjectDescription %>
         </p>
-        <%if (Session["CurrentlyChosenProject"] != null) { %>
-            <asp:UpdatePanel ID="UpdtPnlForPbs" runat="server" UpdateMode="Conditional">
-                <ContentTemplate>
-                    <hr />
-                    <h4>Currently selected project: <b><%= ((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"]).Name %></b></h4>
-                    <h4>Currently selected language: <b><%= new System.Globalization.CultureInfo(User.Identity.getUserLanguage(Session)).EnglishName %></b></h4>
-                    <h4>There are <b><%= (new localhost.UserManager()).Users.ToList().Count(u => u.DefaultLanguage == User.Identity.getUserLanguage(Session)) %> Users</b> registered for your language, so keep that in mind while translating.</b></h4>
-                    <br />
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
+        <%if (Session["CurrentlyChosenProject"] != null)
+            { %>
+        <asp:UpdatePanel ID="UpdtPnlForPbs" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <hr />
+                <h4>Currently selected project: <b><%= ((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"]).Name %></b></h4>
+                <h4>Currently selected language: <b><%= new System.Globalization.CultureInfo(User.Identity.getUserLanguage(Session)).EnglishName %></b></h4>
+                <h4>There are <b><%= (new localhost.UserManager()).Users.ToList().Count(u => u.DefaultLanguage == User.Identity.getUserLanguage(Session)) %> Users</b> registered for your language, so keep that in mind while translating.</b></h4>
+                <br />
+                <div class="card">
+                    <span class="border border-success rounded-2">
+                        <div class="card-header bg-success">
                             Completely translated languages (yet)
                 
                             <asp:LoginView runat="server" ViewStateMode="Disabled">
@@ -42,33 +44,33 @@
                                 </ProgressTemplate>
                             </asp:UpdateProgress>
                         </div>
-                        <div class="panel-body">
-                            <div class="alert alert-info">
-                                <asp:Repeater ID="SuccessRepeater" runat="server" ItemType="ProjectHelper.ProjectFileShortSummary">
-                                    <ItemTemplate>
-                                        <div class="container">
-                                            <p>
-                                                <h4 class="progress-label make-space"><%# new System.Globalization.CultureInfo(Item.LangCode).EnglishName%></h4>
+                        <div class="card-body">
+                            <asp:Repeater ID="SuccessRepeater" runat="server" ItemType="ProjectHelper.ProjectFileShortSummary">
+                                <ItemTemplate>
+                                    <div class="language-card-item">
+                                        <div class="progress-label make-space"><%# new System.Globalization.CultureInfo(Item.LangCode).EnglishName%></div>
 
-                                                <div class="progress progress-success">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="<%# Item.Percentage.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) %>"
-                                                        aria-valuemin="0" aria-valuemax="100" style="width: <%# Item.Percentage.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) %>%">
-                                                        <%# Item.Percentage.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) %>%
-                                                    </div>
-                                                </div>
-                                            </p>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" aria-valuenow="<%# Item.Percentage.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) %>"
+                                                aria-valuemin="0" aria-valuemax="100" style="width: <%# Item.Percentage.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) %>%">
+                                                <%# Item.Percentage.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) %>%
+                                            </div>
                                         </div>
-                                    </ItemTemplate>
-                                </asp:Repeater>
-                            </div>
+                                    </div>
+                                </ItemTemplate>
+                            </asp:Repeater>
+
                         </div>
-                    </div>
-                </ContentTemplate>
-            </asp:UpdatePanel>
-            <asp:UpdatePanel ID="UpdtPnlForUncPbs" runat="server" UpdateMode="Conditional">
-                <ContentTemplate>
-                    <div class="panel panel-warning">
-                        <div class="panel-heading">
+                    </span>
+                </div>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+        <br />
+        <asp:UpdatePanel ID="UpdtPnlForUncPbs" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <div class="card">
+                    <span class="border border-warning rounded-2">
+                        <div class="card-header bg-warning">
                             Not completely translated
                 
                             <asp:LoginView runat="server" ViewStateMode="Disabled">
@@ -92,49 +94,53 @@
                                 </ProgressTemplate>
                             </asp:UpdateProgress>
                         </div>
-                        <div class="panel-body">
-                            <div class="alert alert-info">
-                                <asp:Repeater ID="UncompletedRepeater" runat="server" ItemType="ProjectHelper.ProjectFileShortSummary">
-                                    <ItemTemplate>
-                                        <div class="container">
-                                            <p>
-                                                <h4 class="progress-label make-space"><%# new System.Globalization.CultureInfo(Item.LangCode).EnglishName%></h4>
+                        <div class="card-body">
+                            <asp:Repeater ID="UncompletedRepeater" runat="server" ItemType="ProjectHelper.ProjectFileShortSummary">
+                                <ItemTemplate>
+                                    <div class="language-card-item">
+                                        <div class="progress-label make-space"><%# new System.Globalization.CultureInfo(Item.LangCode).EnglishName%></div>
 
-                                                <div class="progress progress-success">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="<%# Item.Percentage.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) %>"
-                                                        aria-valuemin="0" aria-valuemax="100" style="width: <%# Item.Percentage.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) %>%">
-                                                        <%# Item.Percentage.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) %>%
-                                                    </div>
-                                                </div>
-                                            </p>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" aria-valuenow="<%# Item.Percentage.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) %>"
+                                                aria-valuemin="0" aria-valuemax="100" style="width: <%# Item.Percentage.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) %>%">
+                                                <%# Item.Percentage.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) %>%
+                                            </div>
                                         </div>
-                                    </ItemTemplate>
-                                </asp:Repeater>
-                            </div>
+                                    </div>
+                                </ItemTemplate>
+                            </asp:Repeater>
                         </div>
-                    </div>
-                </ContentTemplate>
-            </asp:UpdatePanel>
-        <% } else if (Context.User.Identity.IsAuthenticated) { %>
-            <div class="alert alert-warning">
-                <strong>Warning!</strong> No projects registered. Please add one in the administration panel.
-            </div>
-        <% } else { %>
-            <div class="alert alert-info">
-                <strong>Note:</strong> You are not logged in and therefore not allowed to see this projects' statistics.
-            </div>
+                    </span>
+                </div>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+        <% }
+            else if (Context.User.Identity.IsAuthenticated)
+            { %>
+        <div class="alert alert-warning">
+            <strong>Warning!</strong> No projects registered. Please add one in the administration panel.
+        </div>
+        <% }
+            else
+            { %>
+        <div class="alert alert-info">
+            <strong>Note:</strong> You are not logged in and therefore not allowed to see this projects' statistics.
+        </div>
         <% } %>
-
+        <br />
         <asp:LoginView runat="server" ViewStateMode="Disabled">
             <AnonymousTemplate>
                 <p><a runat="server" href="~/account/login" class="btn btn-primary btn-lg">Let's go &raquo;</a></p>
             </AnonymousTemplate>
             <LoggedInTemplate>
-        <%if (Session["CurrentlyChosenProject"] != null) { %>
+                <%if (Session["CurrentlyChosenProject"] != null)
+                    { %>
                 <p><a runat="server" href="~/translate" class="btn btn-primary btn-lg">Let's go &raquo;</a></p>
-        <% } else { %>
+                <% }
+                    else
+                    { %>
                 <p><a runat="server" href="~/admin/info" class="btn btn-primary btn-lg">Let's go &raquo;</a></p>
-        <% } %>
+                <% } %>
             </LoggedInTemplate>
         </asp:LoginView>
     </div>
