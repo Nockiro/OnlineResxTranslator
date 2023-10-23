@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Identity;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,7 +8,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
-using Identity;
 
 /// <summary>
 /// Contains all methods regarding the translation projects (not the ones working with the XML files)
@@ -63,30 +63,33 @@ public class ProjectHelper
     {
         try
         {
-            SqlManager sqlManager = new SqlManager();
-            sqlManager.OpenConnection();
-
-            if (sqlManager.connectionOpen)
+            using (SqlManager sqlManager = new SqlManager().OpenConnection())
             {
+                if (!sqlManager.connectionOpen)
+                    return new List<ProjectInfo>();
+
                 List<ProjectInfo> list;
 
                 if (UserID == "")
-                    list = getProjectListFromDataTable(sqlManager.SelectFromTable("TrProjects", new string[] { "id", "project", "folder" }));
+                    list = getProjectListFromDataTable(sqlManager.SelectFromTable("TrProjects",
+                        new string[] { "id", "project", "folder" }));
                 else
                     list = getProjectListFromDataTable(sqlManager.SelectFromTable("TrProjects, TrUserProjects",
-                        new string[] { "TrProjects.id as id", "TrProjects.project as project", "TrProjects.folder as folder" },
+                        new string[]
+                        {
+                            "TrProjects.id as id", "TrProjects.project as project", "TrProjects.folder as folder"
+                        },
                         "TrUserProjects.UserID = '" + UserID + "' AND TrUserProjects.ProjID = TrProjects.id"));
-
-                sqlManager.CloseConnection();
+                
                 return list;
             }
-            else return new List<ProjectInfo>();
         }
         catch (Exception e) // probably the table doesn't exist - but since this method is called on every page call, it'd cost a bit of resources, so only catch it if needed
         {
             if ((e is SqlException && !e.Message.Contains("syntax")) || e is InvalidOperationException)
             {
-                if (createMainTables()) return getProjects(UserID);
+                if (createMainTables())
+                    return getProjects(UserID);
             }
             else throw;
 
@@ -100,25 +103,29 @@ public class ProjectHelper
     /// <param name="UserID">if given, only targets for that project will be returned</param>
     public static List<FTPTarget> getFTPTargets(ProjectInfo project = null)
     {
-        SqlManager sqlManager = new SqlManager();
-        sqlManager.OpenConnection();
-
-        if (sqlManager.connectionOpen)
+        using (SqlManager sqlManager = new SqlManager().OpenConnection())
         {
+            if (!sqlManager.connectionOpen)
+                return new List<FTPTarget>();
+
             List<FTPTarget> list;
 
             if (project == null)
-                list = getFTPTargetsFromDataTable(sqlManager.SelectFromTable("TrFTPTargets", new string[] { "id", "username", "password", "path", "server", "ssl" }));
+                list = getFTPTargetsFromDataTable(sqlManager.SelectFromTable("TrFTPTargets",
+                    new string[] { "id", "username", "password", "path", "server", "ssl" }));
             else
                 list = getFTPTargetsFromDataTable(sqlManager.SelectFromTable("TrFTPTargets, TrProjectFTPTargets",
-                    new string[] { "TrFTPTargets.id as id", "TrFTPTargets.username as username", "TrFTPTargets.password as password","TrFTPTargets.path as path", "TrFTPTargets.server as server",
-                        "TrFTPTargets.ssl as TrFTPTargets", "TrProjectFTPTargets.ProjID as ProjID"},
-                        "ProjID = " + project.ID));
-
-            sqlManager.CloseConnection();
+                    new string[]
+                    {
+                        "TrFTPTargets.id as id", "TrFTPTargets.username as username",
+                        "TrFTPTargets.password as password", "TrFTPTargets.path as path",
+                        "TrFTPTargets.server as server",
+                        "TrFTPTargets.ssl as TrFTPTargets", "TrProjectFTPTargets.ProjID as ProjID"
+                    },
+                    "ProjID = " + project.ID));
+            
             return list;
         }
-        else return new List<FTPTarget>();
     }
 
     /// <summary>
@@ -127,19 +134,19 @@ public class ProjectHelper
     /// <returns>True if main tables were created successfully</returns>
     public static bool createMainTables()
     {
-        Boolean success = false;
-        SqlManager sqlManager = new SqlManager();
-        sqlManager.OpenConnection();
-
-        // we can't create the tables until the automatic creation process for the identity tables hasn't begun, so skip it in that case
-        if (sqlManager.DoesTableExist("AspNetUsers"))
+        using (SqlManager sqlManager = new SqlManager().OpenConnection())
         {
+            // we can't create the tables until the automatic creation process for the identity tables hasn't begun, so skip it in that case
+            if (!sqlManager.DoesTableExist("AspNetUsers"))
+                return false;
+
             if (!sqlManager.DoesTableExist("TrProjects"))
                 sqlManager.CreateTable("TrProjects",
-                    new KeyValuePair<string, string>[] {
-                new KeyValuePair<string, string>("id", "int NOT NULL IDENTITY (0,1) PRIMARY KEY"),
-                new KeyValuePair<string, string>("project", "varchar(255) NOT NULL"),
-                new KeyValuePair<string, string>("folder", "varchar(255) NOT NULL")
+                    new KeyValuePair<string, string>[]
+                    {
+                        new KeyValuePair<string, string>("id", "int NOT NULL IDENTITY (0,1) PRIMARY KEY"),
+                        new KeyValuePair<string, string>("project", "varchar(255) NOT NULL"),
+                        new KeyValuePair<string, string>("folder", "varchar(255) NOT NULL")
                     }
                 );
 
@@ -147,47 +154,48 @@ public class ProjectHelper
                 sqlManager.CreateTable("TrUserProjects",
                     new KeyValuePair<string, string>[]
                     {
-                new KeyValuePair<string, string>("UserID", "nvarchar(128) NOT NULL"),
-                new KeyValuePair<string, string>("ProjID", "int NOT NULL")
+                        new KeyValuePair<string, string>("UserID", "nvarchar(128) NOT NULL"),
+                        new KeyValuePair<string, string>("ProjID", "int NOT NULL")
                     },
                     new string[]
-                     {
-                     @" FK_PROJECT_USERS FOREIGN KEY (UserID)
+                    {
+                        @" FK_PROJECT_USERS FOREIGN KEY (UserID)
                         REFERENCES AspNetUsers (Id)
                         ON DELETE CASCADE
                         ON UPDATE CASCADE",
-                     @" FK_PROJECT_Projects FOREIGN KEY (ProjID)
+                        @" FK_PROJECT_Projects FOREIGN KEY (ProjID)
                         REFERENCES TrProjects (id)
                         ON DELETE CASCADE
                         ON UPDATE CASCADE",
-                     }
+                    }
                 );
 
             if (!sqlManager.DoesTableExist("TrUserLanguages"))
                 sqlManager.CreateTable("TrUserLanguages",
                     new KeyValuePair<string, string>[]
                     {
-                new KeyValuePair<string, string>("UserID", "nvarchar(128) NOT NULL"),
-                new KeyValuePair<string, string>("Language", "varchar(128) NOT NULL")
+                        new KeyValuePair<string, string>("UserID", "nvarchar(128) NOT NULL"),
+                        new KeyValuePair<string, string>("Language", "varchar(128) NOT NULL")
                     },
                     new string[]
-                     {
-                     @" FK_PROJECTLANG_USERS FOREIGN KEY (UserID)
+                    {
+                        @" FK_PROJECTLANG_USERS FOREIGN KEY (UserID)
                         REFERENCES AspNetUsers (Id)
                         ON DELETE CASCADE
                         ON UPDATE CASCADE"
-                     }
+                    }
                 );
 
             if (!sqlManager.DoesTableExist("TrFTPTargets"))
                 sqlManager.CreateTable("TrFTPTargets",
-                    new KeyValuePair<string, string>[] {
-                new KeyValuePair<string, string>("id", "int NOT NULL IDENTITY (0,1) PRIMARY KEY"),
-                new KeyValuePair<string, string>("server", "varchar(255) NOT NULL"),
-                new KeyValuePair<string, string>("username", "varchar(255) NOT NULL"),
-                new KeyValuePair<string, string>("password", "varchar(255) NOT NULL"),
-                new KeyValuePair<string, string>("path", "varchar(1023) NOT NULL"),
-                new KeyValuePair<string, string>("ssl", "bit NOT NULL")
+                    new KeyValuePair<string, string>[]
+                    {
+                        new KeyValuePair<string, string>("id", "int NOT NULL IDENTITY (0,1) PRIMARY KEY"),
+                        new KeyValuePair<string, string>("server", "varchar(255) NOT NULL"),
+                        new KeyValuePair<string, string>("username", "varchar(255) NOT NULL"),
+                        new KeyValuePair<string, string>("password", "varchar(255) NOT NULL"),
+                        new KeyValuePair<string, string>("path", "varchar(1023) NOT NULL"),
+                        new KeyValuePair<string, string>("ssl", "bit NOT NULL")
                     }
                 );
 
@@ -195,26 +203,23 @@ public class ProjectHelper
                 sqlManager.CreateTable("TrProjectFTPTargets",
                     new KeyValuePair<string, string>[]
                     {
-                new KeyValuePair<string, string>("ProjID", "int NOT NULL"),
-                new KeyValuePair<string, string>("TargetID", "int NOT NULL")
+                        new KeyValuePair<string, string>("ProjID", "int NOT NULL"),
+                        new KeyValuePair<string, string>("TargetID", "int NOT NULL")
                     },
                     new string[]
-                     {
-                     @" FK_FTPS_PROJECT FOREIGN KEY (ProjID)
+                    {
+                        @" FK_FTPS_PROJECT FOREIGN KEY (ProjID)
                         REFERENCES TrProjects (id)
                         ON DELETE CASCADE
                         ON UPDATE CASCADE",
-                     @" FK_FTPS_TARGET FOREIGN KEY (TargetID)
+                        @" FK_FTPS_TARGET FOREIGN KEY (TargetID)
                         REFERENCES TrFTPTargets (id)
                         ON DELETE CASCADE
                         ON UPDATE CASCADE",
-                     }
+                    }
                 );
-            success = true;
         }
-
-        sqlManager.CloseConnection();
-        return success;
+        return true;
     }
 
     /// <summary>
@@ -226,19 +231,19 @@ public class ProjectHelper
         if (User.GetUserId() == null)
             return new List<CultureInfo>();
 
-        SqlManager sqlManager = new SqlManager();
-        sqlManager.OpenConnection();
         List<CultureInfo> list = new List<CultureInfo>();
+        using (SqlManager sqlManager = new SqlManager().OpenConnection())
+        {
+            if (User.GetDefaultLanguage() != "")
+                list.Add(new CultureInfo(User.GetDefaultLanguage()));
 
-        if (User.GetDefaultLanguage() != "")
-            list.Add(new CultureInfo(User.GetDefaultLanguage()));
+            // take the string out of the database, split it by comma and create cultureinfos from it
+            DataRowCollection tableRows = sqlManager.SelectFromTable("TrUserLanguages", new string[] { "language" },
+                "TrUserLanguages.UserID = '" + User.GetUserId() + "'").Rows;
+            if (tableRows.Count > 0 && !String.IsNullOrEmpty((string)tableRows[0]["language"]))
+                list.AddRange(((string)tableRows[0]["language"]).Split(',').Select(s => new CultureInfo(s.Trim())));
+        }
 
-        // take the string out of the database, split it by comma and create cultureinfos from it
-        DataRowCollection tableRows = sqlManager.SelectFromTable("TrUserLanguages", new string[] { "language" }, "TrUserLanguages.UserID = '" + User.GetUserId() + "'").Rows;
-        if (tableRows.Count > 0 && !String.IsNullOrEmpty((string)tableRows[0]["language"]))
-            list.AddRange(((string)tableRows[0]["language"]).Split(',').Select(s => new CultureInfo(s.Trim())));
-
-        sqlManager.CloseConnection();
         return list;
     }
 
@@ -295,8 +300,10 @@ public class ProjectHelper
     {
         public int ID { get; set; }
         private string _server;
+
         public string Server
         { get { return _server.StartsWith("ftp://") ? _server : "ftp://" + _server; } set { _server = value; } }
+
         public string Username { get; set; }
         public string Password { get; set; }
         public string Path { get; set; }

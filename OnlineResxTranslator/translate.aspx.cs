@@ -11,7 +11,6 @@ using Identity;
 public partial class _Translate : PageBase
 {
     public static List<ProjectHelper.ProjectInfo> projects = ProjectHelper.getProjects();
-    private SqlManager sqlManager = new SqlManager();
 
     protected override void Page_LoadBegin(object sender, EventArgs e)
     {

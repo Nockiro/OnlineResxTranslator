@@ -9,7 +9,7 @@ namespace Admin
 {
     public partial class Admin_Info : PageBase
     {
-        private SqlManager sqlManager = new SqlManager();
+        private readonly SqlManager sqlManager = new SqlManager();
 
         public static DataTable projectList = new DataTable();
         public DataTable userList = new DataTable();
@@ -35,14 +35,15 @@ namespace Admin
             }
         }
 
-        protected void ShowUserData()
+    protected void ShowUserData()
+    {
+        using (sqlManager.OpenConnection())
         {
-            sqlManager.OpenConnection();
-
             if (!sqlManager.connectionOpen)
                 return;
 
-            userList = sqlManager.SelectFromTables("AspNetUsers", "Left Join TrUserLanguages ON TrUserLanguages.UserID = AspNetUsers.id",
+            userList = sqlManager.SelectFromTables("AspNetUsers",
+                "Left Join TrUserLanguages ON TrUserLanguages.UserID = AspNetUsers.id",
                 "AspNetUsers.id as UserID",
                 "AspNetUsers.UserName as UserName",
                 "AspNetUsers.Email as UserMail",
@@ -60,9 +61,8 @@ namespace Admin
 
             gvUsers.DataSource = userList;
             gvUsers.DataBind();
-
-            sqlManager.CloseConnection();
         }
+    }
 
         protected void gvUsers_RowEditing(object sender, GridViewEditEventArgs e)
         {

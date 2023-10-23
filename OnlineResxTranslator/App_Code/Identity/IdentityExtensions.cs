@@ -97,19 +97,15 @@ namespace Identity
                 throw new ArgumentNullException("identity");
             }
 
-            var ci = identity as ClaimsIdentity;
-            if (ci != null)
+            if (identity is ClaimsIdentity)
             {
-                SqlManager sqlManager = new SqlManager().OpenConnection();
-
-                // update user table
-                sqlManager.UpdateTable("AspNetUsers", "id = '" + identity.GetUserId() + "'",
-                    new KeyValuePair<string, string>("TranslatedStrings", value.ToString()));
-
-                sqlManager.CloseConnection();
+                using (SqlManager sqlManager = new SqlManager().OpenConnection())
+                {
+                    // update user table
+                    sqlManager.UpdateTable("AspNetUsers", "id = '" + identity.GetUserId() + "'",
+                        new KeyValuePair<string, string>("TranslatedStrings", value.ToString()));
+                }
             }
-
-            return;
         }
     }
 }

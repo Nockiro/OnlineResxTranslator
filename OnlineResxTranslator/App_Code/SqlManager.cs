@@ -8,29 +8,25 @@ using System.Linq;
 /// <summary>
 /// Manages an SQL connection and provides possibilities to interact through it
 /// </summary>
-public class SqlManager
+public class SqlManager : IDisposable
 {
-    private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-    private SqlConnection conn = new SqlConnection(connectionString);
+    private static readonly string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+    private readonly SqlConnection connection = new(connectionString);
 
     public bool connectionOpen = false;
-
-    public SqlManager()
-    {
-    }
 
     public SqlManager OpenConnection()
     {
         try
         {
-            conn.Open();
+            connection.Open();
             connectionOpen = true;
 
             return this;
         }
         catch (Exception)
         {
-            conn.Close();
+            connection.Close();
             connectionOpen = false;
 
             return this;
@@ -39,7 +35,8 @@ public class SqlManager
 
     public void CloseConnection()
     {
-        conn.Close();
+        connection.Close();
+        connectionOpen = false;
     }
 
     /// <summary>
@@ -63,7 +60,7 @@ public class SqlManager
 
             cmd = cmd.Remove(cmd.LastIndexOf(","), 1) + ");";
 
-            var createTable = new SqlCommand(cmd, conn);
+            SqlCommand createTable = new(cmd, connection);
 
             return createTable.ExecuteNonQuery() != -1;
         }
@@ -86,7 +83,7 @@ public class SqlManager
     {
         try
         {
-            DataTable dataTable = new DataTable();
+            DataTable dataTable = new();
 
             string command = "SELECT " + string.Join(",", columns) + " FROM " + table;
 
@@ -96,12 +93,12 @@ public class SqlManager
             if (where != "")
                 command += " WHERE " + where;
 
-            SqlCommand read = new SqlCommand(command, conn);
+            SqlCommand read = new(command, connection);
 
             // create data adapter
-            SqlDataAdapter da = new SqlDataAdapter(read);
+            SqlDataAdapter da = new(read);
 
-            DataTable dtable = new DataTable();
+            DataTable dtable = new();
             da.Fill(dtable);
 
             return dtable;
@@ -153,9 +150,9 @@ public class SqlManager
             string atkeys = string.Join(",", pairs.ToList().Select(t => "@" + t.Key));
             command += keys + ") values (" + atkeys + ")";
 
-            SqlCommand insert = new SqlCommand(command, conn);
+            SqlCommand insert = new(command, connection);
 
-            foreach (var kvp in pairs)
+            foreach (KeyValuePair<string, string> kvp in pairs)
                 insert.Parameters.AddWithValue("@" + kvp.Key, kvp.Value);
 
             return insert.ExecuteNonQuery();
@@ -201,8 +198,8 @@ public class SqlManager
         try
         {
             // ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL.
-            var cmd = new SqlCommand(
-              "select case when exists((select * from information_schema.tables where table_name = '" + table + "')) then 1 else 0 end", conn);
+            SqlCommand cmd = new(
+              "select case when exists((select * from information_schema.tables where table_name = '" + table + "')) then 1 else 0 end", connection);
 
             object scal = cmd.ExecuteScalar();
 
@@ -213,7 +210,7 @@ public class SqlManager
             try
             {
                 // Other RDBMS.
-                var cmdOthers = new SqlCommand("select 1 from " + table + " where 1 = 0");
+                SqlCommand cmdOthers = new("select 1 from " + table + " where 1 = 0");
                 cmdOthers.ExecuteNonQuery();
                 exists = true;
             }
@@ -236,8 +233,8 @@ public class SqlManager
             if (DoesTableExist(table))
             {
                 // ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL.
-                var cmd = new SqlCommand(
-                  "select case when exists(select 1 FROM " + table + " WHERE " + PrimaryKey.Key + " = '" + PrimaryKey.Value + "') then 1 else 0 end", conn);
+                SqlCommand cmd = new(
+                  "select case when exists(select 1 FROM " + table + " WHERE " + PrimaryKey.Key + " = '" + PrimaryKey.Value + "') then 1 else 0 end", connection);
 
                 object scal = cmd.ExecuteScalar();
 
@@ -273,7 +270,7 @@ public class SqlManager
             if (where != "")
                 cmd += " where " + where;
 
-            var createTable = new SqlCommand(cmd, conn);
+            SqlCommand createTable = new(cmd, connection);
 
             return createTable.ExecuteNonQuery() != -1;
         }
@@ -295,7 +292,7 @@ public class SqlManager
         try
         {
             string cmd = "delete from " + table + " where " + where;
-            var createTable = new SqlCommand(cmd, conn);
+            SqlCommand createTable = new(cmd, connection);
 
             return createTable.ExecuteNonQuery() != -1;
         }
@@ -304,5 +301,10 @@ public class SqlManager
             CloseConnection();
             throw;
         }
+    }
+
+    public void Dispose()
+    {
+        CloseConnection();
     }
 }
