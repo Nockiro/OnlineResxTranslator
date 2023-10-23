@@ -14,7 +14,7 @@ public partial class SiteMaster : MasterPage
     private const string AntiXsrfUserNameKey = "__AntiXsrfUserName";
     private string _antiXsrfTokenValue;
 
-    public const string SiteVersion = "2.0.1";
+    public const string SiteVersion = "2.0.2";
     public static string ProjectName = ConfigurationManager.AppSettings["ProjectName"];
     public static string ProjectDescription = "Translate " + ProjectName + " into other languages!";
     public static Boolean OpenRegistrationAllowed = ConfigurationManager.AppSettings["EnableOpenRegistration"] != "false";

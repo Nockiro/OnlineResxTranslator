@@ -56,25 +56,22 @@ public class XMLFile
                 Indentation = 3
             };
             writer.WriteStartDocument();
-            writer.WriteComment("Created on " + DateTime.Now.ToString());
+            writer.WriteComment("Created on " + DateTime.Now.ToString(CultureInfo.InvariantCulture));
 
             // <files>
             writer.WriteStartElement("files");
             writer.WriteAttributeString("language", language);
 
-            string ResXFile = null;
-            string ShortName = null;
-            foreach (string ResXFile_loopVariable in allMainProjectFiles)
+            foreach (string projectFile in allMainProjectFiles)
             {
                 // <file>
-                ResXFile = ResXFile_loopVariable;
                 writer.WriteStartElement("file");
-                ShortName = ResXFile.Substring(ProjectDirectory.Length).Replace(".resx", "");
+                string ShortName = projectFile.Substring(ProjectDirectory.Length).Replace(".resx", "");
 
                 writer.WriteElementString("name", ShortName);
                 writer.WriteElementString("percentcompleted", "0");
                 writer.WriteElementString("caption", "");
-                writer.WriteElementString("lastchange", DateTime.Now.ToShortDateString());
+                writer.WriteElementString("lastchange", DateTime.Now.ToString(CultureInfo.InvariantCulture));
                 writer.WriteEndElement();
                 // </file>
             }
@@ -101,7 +98,7 @@ public class XMLFile
         {
             string CurrentFile = SingleFile.SelectSingleNode("name").InnerText;
 
-			// if the current file in the directoy is not invalid and either no file was specified to test (== all files) or the file matches the given one
+            // if the current file in the directoy is not invalid and either no file was specified to test (== all files) or the file matches the given one
             if (CurrentFile != null && (filename == null || CurrentFile == filename))
             {
                 XmlDocument SourceFile;
@@ -146,7 +143,7 @@ public class XMLFile
 
                             for (int i = 0; i <= NotArgs.Length - 1; i++)
                                 if (NodeName.Contains("." + NotArgs[i])
-									|| String.IsNullOrEmpty(SourceNode.SelectSingleNode("value")?.InnerText)) CanBeAdded = false;
+                                    || String.IsNullOrEmpty(SourceNode.SelectSingleNode("value")?.InnerText)) CanBeAdded = false;
 
 
                             if (CanBeAdded)
@@ -162,7 +159,7 @@ public class XMLFile
 
                                     // if value was null or text empty, the node was empty and therefore not translated
                                     if (TranslatedNode != null && (TranslatedNode.InnerText).Trim().Length > 0)
-                                        TranslatedFileElements += 1;						
+                                        TranslatedFileElements += 1;
                                 }
                             }
                         }
@@ -171,23 +168,23 @@ public class XMLFile
                             Percentage = 100;
                         else
                             Percentage = (TranslatedFileElements / FileElements) * 100;
-	
+
                     }
                 }
-				
-				SingleFile.SelectSingleNode("caption").InnerText = "";
+
+                SingleFile.SelectSingleNode("caption").InnerText = "";
 
                 // Check whether percentage is changed - if this condition was true, the percentage was already stored correct
                 if (Convert.ToDouble(SingleFile.SelectSingleNode("percentcompleted").InnerText.Replace(",", "."), CultureInfo.InvariantCulture) != Percentage)
                 {
 
-                    SingleFile.SelectSingleNode("percentcompleted").InnerText = Percentage.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
-                    SingleFile.SelectSingleNode("lastchange").InnerText = DateTime.Now.ToString();
+                    SingleFile.SelectSingleNode("percentcompleted").InnerText = Percentage.ToString("0.00", CultureInfo.InvariantCulture);
+                    SingleFile.SelectSingleNode("lastchange").InnerText = DateTime.Now.ToString(CultureInfo.InvariantCulture);
 
                     if (!SummaryUpdated)
                         SummaryUpdated = true;
                 }
-				
+
             }
         }
 
@@ -236,13 +233,7 @@ public class XMLFile
                 foreach (XmlNode FileNode in LanguageXML.SelectNodes("/files/file"))
                 {
                     Percentage += Convert.ToDouble(FileNode["percentcompleted"].InnerText, CultureInfo.InvariantCulture);
-                    try
-                    {
-                        DateTime LastChange = DateTime.Parse(FileNode["lastchange"].InnerText);
-                        if (LastChange > LastUpdate)
-                            LastUpdate = LastChange;
-                    }
-                    catch (FormatException) { }
+                    updateLastUpdate(FileNode, ref LastUpdate);
                 }
 
                 Percentage = Math.Round(Percentage / LanguageXML.SelectNodes("/files/file").Count, 4);
@@ -255,6 +246,31 @@ public class XMLFile
             }
         }
         return functionReturnValue;
+    }
+
+    private static void updateLastUpdate(XmlNode FileNode, ref DateTime LastUpdate)
+    {
+        DateTime lastUpdateInternal;
+        string lastUpdateFileState = FileNode["lastchange"].InnerText;
+        bool parseResult =
+          DateTime.TryParse(lastUpdateFileState, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime invariantDateTime);
+
+        if (parseResult)
+        {
+            lastUpdateInternal = invariantDateTime;
+        }
+        else
+        {
+            parseResult =
+              DateTime.TryParse(lastUpdateFileState, CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime currentCultureDateTime);
+            lastUpdateInternal = currentCultureDateTime;
+        }
+
+        if (!parseResult)
+            return;
+
+        if (lastUpdateInternal > LastUpdate)
+            LastUpdate = lastUpdateInternal;
     }
 
     /// <summary>
@@ -283,10 +299,10 @@ public class XMLFile
         {
             return null;
         }
-		catch (XmlException e)
-		{
+        catch (XmlException e)
+        {
             throw new Exception($"File {filename} has invalid data.", e);
-		}
+        }
     }
 
     /// <summary>
