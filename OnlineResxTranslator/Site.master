@@ -126,7 +126,7 @@
             <hr />
             <footer>
                 <div class="container">
-                    <div class="left ">See <a runat="server" href="https://github.com/Nockiro/OnlineResxTranslator">OnlineResxTranslator on Github</a></div>
+                    <div class="left ">See <a runat="server" href="https://github.com/Nockiro/OnlineResxTranslator">OnlineResxTranslator on Github</a> | v<%:SiteVersion %></div>
                     <div class="right"><%: ProjectName %> | <a runat="server" href="~/Contact">Contact</a></div>
                 </div>
             </footer>
