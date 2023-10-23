@@ -1,7 +1,8 @@
 ﻿<%@ Page Title="Login" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Login.aspx.cs" Inherits="Account_Login" Async="true" %>
 
 <asp:Content runat="server" ID="BodyContent" ContentPlaceHolderID="MainContent">
-    <h2><%: Title %>.</h2>
+    <h2><%: Title %></h2>
+    <hr />
 
     <div class="row">
         <div class="col-md-8">
@@ -10,19 +11,20 @@
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="UserName" CssClass="col-md-2 control-label">User</asp:Label>
                         <div class="col-md-10">
-                            <asp:TextBox runat="server" ID="UserName" CssClass="form-control" />
+                            <asp:TextBox runat="server" ID="UserName" CssClass="form-control bg-dark text-white" />
                             <asp:RequiredFieldValidator runat="server" ControlToValidate="UserName"
-                                CssClass="text-danger" ErrorMessage="Das Benutzernamefeld ist erforderlich." />
+                                CssClass="text-danger" Display="Dynamic" ErrorMessage="Das Benutzernamefeld ist erforderlich." />
                         </div>
                     </div>
                     <div class="form-group">
                         <asp:Label runat="server" AssociatedControlID="Password" CssClass="col-md-2 control-label">Password</asp:Label>
                         <div class="col-md-10">
-                            <asp:TextBox runat="server" ID="Password" TextMode="Password" CssClass="form-control" />
-                            <asp:RequiredFieldValidator runat="server" ControlToValidate="Password" CssClass="text-danger" ErrorMessage="Das Kennwortfeld ist erforderlich." />
+                            <asp:TextBox runat="server" ID="Password" TextMode="Password" CssClass="form-control bg-dark text-white" />
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="Password" CssClass="text-danger" 
+                                                        Display="Dynamic" ErrorMessage="Das Kennwortfeld ist erforderlich." />
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group form-user-setting">
                         <div class="col-md-offset-2 col-md-10">
                             <div class="checkbox">
                                 <asp:CheckBox runat="server" ID="RememberMe" />
@@ -30,7 +32,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group form-user-setting">
                         <div class="col-md-offset-2 col-md-10">
                             <asp:LinkButton ID="btnLogin"
                                 runat="server"
