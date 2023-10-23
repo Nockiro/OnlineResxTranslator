@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Microsoft.AspNet.Identity;
+using Identity;
 
 public partial class SiteMaster : MasterPage
 {
@@ -71,8 +71,6 @@ public partial class SiteMaster : MasterPage
 
         Page.PreLoad += master_Page_PreLoad;
 
-
-
         if (Session["ErrorMessage"] != null && !String.IsNullOrEmpty(Session["ErrorMessage"].ToString()))
         {
             ErrorMessage.Visible = true;
@@ -86,7 +84,6 @@ public partial class SiteMaster : MasterPage
             projects = Context.User.Identity.getUserProjects();
             Session["CurrentlyChosenProject"] = projects.Count > 0 ? projects[0] : null;
         }
-
     }
 
     protected void Page_Load(object sender, EventArgs e)

@@ -1,5 +1,4 @@
 ﻿<%@ Application Language="C#" %>
-<%@ Import Namespace="localhost" %>
 <%@ Import Namespace="System.Web.Optimization" %>
 <%@ Import Namespace="System.Web.Routing" %>
 

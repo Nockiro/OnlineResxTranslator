@@ -1,6 +1,7 @@
 ﻿<%@ Page Debug="true" Title="Home Page" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
 
 <%@ Import Namespace="System.Linq" %>
+<%@ Import Namespace="Identity" %>
 <%@ MasterType VirtualPath="~/Site.master" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
@@ -17,7 +18,7 @@
                 <hr />
                 <h4>Currently selected project: <b><%= ((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"]).Name %></b></h4>
                 <h4>Currently selected language: <b><%= new System.Globalization.CultureInfo(User.Identity.getUserLanguage(Session)).EnglishName %></b></h4>
-                <h4>There are <b><%= (new localhost.UserManager()).Users.ToList().Count(u => u.DefaultLanguage == User.Identity.getUserLanguage(Session)) %> Users</b> registered for your language, so keep that in mind while translating.</b></h4>
+                <h4>There are <b><%= (new UserManager()).Users.ToList().Count(u => u.DefaultLanguage == User.Identity.getUserLanguage(Session)) %> Users</b> registered for your language, so keep that in mind while translating.</b></h4>
                 <br />
                 <div class="card">
                     <span class="border border-success rounded-2">

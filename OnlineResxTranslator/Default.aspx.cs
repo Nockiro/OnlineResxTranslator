@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Web.UI;
 using System.Web.UI.WebControls;
+using Identity;
 
-public partial class _Default : PageBase {
-
+public partial class _Default : PageBase
+{
     [Flags]
-    enum TranslationSummaryCategory {
+    private enum TranslationSummaryCategory
+    {
         Uncompleted = 1,
         Completed
     }
@@ -27,11 +27,11 @@ public partial class _Default : PageBase {
                 case "Complete":
                     refreshData(TranslationSummaryCategory.Completed);
                     break;
+
                 case "Uncomplete":
                     refreshData(TranslationSummaryCategory.Uncompleted);
                     break;
             }
-
         }
     }
 
@@ -55,7 +55,6 @@ public partial class _Default : PageBase {
                 // Update panel manually since it wouldn't do it if we got called from the other panel
                 UpdtPnlForUncPbs.Update();
             }
-
         }
         else if (tsc == TranslationSummaryCategory.Uncompleted)
         {
@@ -74,7 +73,6 @@ public partial class _Default : PageBase {
                 // Update panel manually since it wouldn't do it if we got called from the other panel
                 UpdtPnlForPbs.Update();
             }
-
         }
         return;
     }
@@ -102,6 +100,5 @@ public partial class _Default : PageBase {
             return SuccessRepeater.DataSource != null ? ((List<ProjectHelper.ProjectFileShortSummary>)SuccessRepeater.DataSource).Count : -1;
         else
             return UncompletedRepeater.DataSource != null ? ((List<ProjectHelper.ProjectFileShortSummary>)UncompletedRepeater.DataSource).Count : -1;
-
     }
 }

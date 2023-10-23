@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNet.FriendlyUrls.Resolvers;
+using System;
 using System.Web;
 using System.Web.Routing;
-using Microsoft.AspNet.FriendlyUrls;
-using Microsoft.AspNet.FriendlyUrls.Resolvers;
 
 public partial class ViewSwitcher : System.Web.UI.UserControl
 {

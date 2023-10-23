@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Web;
 
 /// <summary>
 /// Files for Transfer over the FTP Protocol
@@ -22,9 +19,12 @@ public class FTP
     private int bufferSize = 2048;
 
     /* Construct Object */
-    public FTP(string hostIP, string userName, string password, bool ssl = true) { host = hostIP; user = userName; pass = password; this.ssl = ssl; }
+
+    public FTP(string hostIP, string userName, string password, bool ssl = true)
+    { host = hostIP; user = userName; pass = password; this.ssl = ssl; }
 
     /* Download File */
+
     public void download(string remoteFile, string localFile)
     {
         /* Create an FTP Request */
@@ -64,6 +64,7 @@ public class FTP
     }
 
     /* Upload File */
+
     public void upload(string remoteFile, string localFile)
     {
         /* Create an FTP Request */
@@ -95,9 +96,10 @@ public class FTP
         ftpStream.Close();
         ftpRequest = null;
         return;
-
     }
+
     /* Delete File */
+
     public void delete(string deleteFile)
     {
         /* Create an FTP Request */
@@ -120,6 +122,7 @@ public class FTP
     }
 
     /* Rename File */
+
     public void rename(string currentFileNameAndPath, string newFileName)
     {
         try
@@ -148,6 +151,7 @@ public class FTP
     }
 
     /* Create a New Directory on the FTP Server */
+
     public void createDirectory(string newDirectory)
     {
         try
@@ -173,6 +177,7 @@ public class FTP
     }
 
     /* Get the Size of a File */
+
     public string getFileSize(string fileName)
     {
         try
@@ -212,6 +217,7 @@ public class FTP
     }
 
     /* List Directory Contents File/Folder Name Only */
+
     public string[] directoryListSimple(string directory)
     {
         /* Create an FTP Request */
@@ -245,6 +251,7 @@ public class FTP
     }
 
     /* List Directory Contents in Detail (Name, Size, Created, etc.) */
+
     public string[] directoryListDetailed(string directory)
     {
         /* Create an FTP Request */

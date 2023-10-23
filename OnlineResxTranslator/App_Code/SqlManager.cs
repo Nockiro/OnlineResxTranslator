@@ -6,22 +6,20 @@ using System.Data.SqlClient;
 using System.Linq;
 
 /// <summary>
-/// Helps with SQL queries
+/// Manages an SQL connection and provides possibilities to interact through it
 /// </summary>
-public class SQLHelper
+public class SqlManager
 {
-
     private static string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
     private SqlConnection conn = new SqlConnection(connectionString);
 
     public bool connectionOpen = false;
 
-    public SQLHelper()
+    public SqlManager()
     {
-
     }
 
-    public SQLHelper OpenConnection()
+    public SqlManager OpenConnection()
     {
         try
         {
@@ -43,7 +41,6 @@ public class SQLHelper
     {
         conn.Close();
     }
-
 
     /// <summary>
     /// creates table with given columns
@@ -203,7 +200,7 @@ public class SQLHelper
         bool exists = false;
         try
         {
-            // ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL.  
+            // ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL.
             var cmd = new SqlCommand(
               "select case when exists((select * from information_schema.tables where table_name = '" + table + "')) then 1 else 0 end", conn);
 
@@ -228,7 +225,7 @@ public class SQLHelper
     }
 
     /// <summary>
-    /// checks if entry in table 
+    /// checks if entry in table
     /// </summary>
     /// <param name="table"></param>
     /// <returns>true if exists</returns>
@@ -238,8 +235,7 @@ public class SQLHelper
         {
             if (DoesTableExist(table))
             {
-
-                // ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL.  
+                // ANSI SQL way.  Works in PostgreSQL, MSSQL, MySQL.
                 var cmd = new SqlCommand(
                   "select case when exists(select 1 FROM " + table + " WHERE " + PrimaryKey.Key + " = '" + PrimaryKey.Value + "') then 1 else 0 end", conn);
 
@@ -302,7 +298,6 @@ public class SQLHelper
             var createTable = new SqlCommand(cmd, conn);
 
             return createTable.ExecuteNonQuery() != -1;
-
         }
         catch (Exception)
         {

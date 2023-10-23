@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Xml;
-using System.Web.UI;
 using System.Configuration;
-using Microsoft.AspNet.Identity;
+using System.Data;
 using System.IO;
-using System.Web.UI.WebControls;
 using System.Web;
+using System.Web.UI.WebControls;
+using System.Xml;
+using Identity;
 
-partial class _Translate : PageBase
+public partial class _Translate : PageBase
 {
-
     public static List<ProjectHelper.ProjectInfo> projects = ProjectHelper.getProjects();
-    private SQLHelper sqlhelper = new SQLHelper();
-
+    private SqlManager sqlManager = new SqlManager();
 
     protected override void Page_LoadBegin(object sender, EventArgs e)
     {
@@ -35,10 +32,8 @@ partial class _Translate : PageBase
         base.OnPreRenderComplete(e);
     }
 
-
     protected void initTranslationTable()
     {
-
         // if none was chosen, on site.master.cs the first one will be selected as default
         ProjectHelper.ProjectInfo Project = (ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"];
         string ProjDirectory = ConfigurationManager.AppSettings["ProjectDirectory"].ToString() + Project.Folder + "\\";
@@ -50,7 +45,6 @@ partial class _Translate : PageBase
         // Getting Directory + Language + ".xml" - if it doesn't exist, it will automatically be created on percentage calculation
         if (!File.Exists(ProjDirectory + Language + ".xml"))
             XMLFile.ComputePercentage(Project, Language, null, SourceLang);
-
 
         if (!File.Exists(ProjDirectory + Language + ".xml"))
         {
@@ -70,7 +64,6 @@ partial class _Translate : PageBase
 
             FileList.DataBind();
         }
-
 
         //Check if a file is selected
         if (Session["SelectedFilename"] != null)
@@ -99,7 +92,6 @@ partial class _Translate : PageBase
             Table.Columns.Add("Translation");
             Table.Columns.Add("Comment");
 
-
             foreach (XmlNode Text in SourceFile.SelectNodes("/root/data"))
             {
                 DataRow Row = Table.NewRow();
@@ -120,12 +112,11 @@ partial class _Translate : PageBase
                 bool CanBeAdded = true;
 
                 foreach (String notToCheck in XMLFile.NotArgs)
-                    if (Row["TextName"].ToString().Contains("." + notToCheck) 
-						|| String.IsNullOrEmpty(Row["English"].ToString())) CanBeAdded = false;
+                    if (Row["TextName"].ToString().Contains("." + notToCheck)
+                        || String.IsNullOrEmpty(Row["English"].ToString())) CanBeAdded = false;
 
                 if (CanBeAdded && (!cb_showOnlyUntr.Checked || String.IsNullOrEmpty(Row["Translation"].ToString())))
                     Table.Rows.Add(Row);
-
             }
             TextElements.DataSource = Table;
             TextElements.DataBind();
@@ -157,7 +148,6 @@ partial class _Translate : PageBase
                 XMLFile.ComputePercentage((ProjectHelper.ProjectInfo)Session["CurrentlyChosenProject"], User.Identity.getUserLanguage(Session), Convert.ToString(Session["SelectedFilename"]), User.Identity.GetSourceLanguage());
                 initTranslationTable();
             }
-
         }
     }
 
@@ -209,7 +199,7 @@ partial class _Translate : PageBase
                 Label LB = Item.FindControl("Element") as Label;
                 TextBox TB = Item.FindControl("TranslatedText") as TextBox;
                 string TComment = (Item.FindControl("TranslateComment") as TextBox).Text;
-                string ElementName = Utils.HTMLDecode(LB.Text);
+                string ElementName = HttpUtility.HtmlDecode(LB.Text);
 
                 XmlNode Node = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + ElementName + "\"]/value");
 
@@ -223,7 +213,6 @@ partial class _Translate : PageBase
 
                     rootnode.AppendChild(CopiedNode);
                     Updates += 1;
-
                 }
                 else
                 {
@@ -237,7 +226,6 @@ partial class _Translate : PageBase
                         Updates += 1;
                     }
                 }
-
 
                 XmlNode CommentNode = TranslatedFile.SelectSingleNode("/root/data[@name=\"" + ElementName + "\"]/comment");
                 // Node does not exist in translation file, so add it
@@ -253,7 +241,6 @@ partial class _Translate : PageBase
 
                     rootnode.AppendChild(CommentNode);
                     Updates += 1;
-
                 }
                 else
                 {
@@ -300,9 +287,7 @@ partial class _Translate : PageBase
 
                 Response.Redirect("Translate.aspx");
                 Session.Remove("SelectedFilename");
-
             }
-
         }
     }
 
@@ -323,9 +308,9 @@ partial class _Translate : PageBase
             return "success";
         }
     }
+
     public _Translate()
     {
         Load += Page_Load;
     }
-
 }

@@ -1,14 +1,14 @@
-﻿using System.Xml;
-using System.IO;
-using System.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
+using System.IO;
+using System.Xml;
 
 /// <summary>
 /// XMLFile: Manages XML files
 /// Original work Copyright (C) 2010 Kai Wilzer
-/// Modified by Nockiro 2017-2018 in order to improve and document the code 
+/// Modified by Nockiro 2017-2018 in order to improve and document the code
 /// and adapt it to the rest of the project
 /// </summary>
 public class XMLFile
@@ -18,7 +18,6 @@ public class XMLFile
                                 "ToolTip", "Dock", "ClientSize", "Enabled", "Visible", "Groups", "ThousandsSeparator", "AutoSize", "BackgroundImage", "Type", "ZOrder", "Parent", "Name",
                                 "Padding", "Anchor", "AutoScaleDimensions", "Multiline", "Font", "TextImageRelation", "SplitterDistance","FlatStyle", "ColumnCount", "RowCount", "LayoutSettings", "CheckAlign",
                                 "Item", "RightToLeft", "Nodes", "Orientation", "MinimumSize", "MaximumSize", "AutoScroll"};
-
 
     public XMLFile()
     {
@@ -90,7 +89,6 @@ public class XMLFile
 
         bool SummaryUpdated = false;
 
-
         if (!Directory.Exists(ProjectDirectory + language))
             Directory.CreateDirectory(ProjectDirectory + language);
 
@@ -138,13 +136,11 @@ public class XMLFile
                             Array NodePoints = default(Array);
                             NodePoints = NodeName.Split('.');
 
-
                             bool CanBeAdded = true;
 
                             for (int i = 0; i <= NotArgs.Length - 1; i++)
                                 if (NodeName.Contains("." + NotArgs[i])
                                     || String.IsNullOrEmpty(SourceNode.SelectSingleNode("value")?.InnerText)) CanBeAdded = false;
-
 
                             if (CanBeAdded)
                             {
@@ -168,7 +164,6 @@ public class XMLFile
                             Percentage = 100;
                         else
                             Percentage = (TranslatedFileElements / FileElements) * 100;
-
                     }
                 }
 
@@ -177,14 +172,12 @@ public class XMLFile
                 // Check whether percentage is changed - if this condition was true, the percentage was already stored correct
                 if (Convert.ToDouble(SingleFile.SelectSingleNode("percentcompleted").InnerText.Replace(",", "."), CultureInfo.InvariantCulture) != Percentage)
                 {
-
                     SingleFile.SelectSingleNode("percentcompleted").InnerText = Percentage.ToString("0.00", CultureInfo.InvariantCulture);
                     SingleFile.SelectSingleNode("lastchange").InnerText = DateTime.Now.ToString(CultureInfo.InvariantCulture);
 
                     if (!SummaryUpdated)
                         SummaryUpdated = true;
                 }
-
             }
         }
 
@@ -312,5 +305,4 @@ public class XMLFile
     /// <param name="nodeName">Name of the node which values should be returned</param>
     /// <returns>Value of the node. If node is nothing returns empty string</returns>
     public static string GetXMLNodeValue(XmlDocument xmlDoc, string nodeName) => xmlDoc?.SelectSingleNode(nodeName)?.InnerText ?? "";
-
 }

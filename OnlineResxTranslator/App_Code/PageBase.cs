@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using Extensions;
 
 /// <summary>
 /// Base class for pages which can use some extended functions (eg error messages)
@@ -25,7 +26,6 @@ public class PageBase : Page
     /// </summary>
     protected virtual void Page_LoadBegin(object sender, EventArgs e)
     {
-
     }
 
     /// <summary>
