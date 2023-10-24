@@ -20,7 +20,7 @@ public partial class SiteMaster : MasterPage
     private List<UserProjectListItem> projectDropdownList;
     private List<UserLanguageListItem> languageDropdownList;
 
-    public const string SiteVersion = "2.0.4";
+    public const string SiteVersion = "2.1.0";
     public static string ProjectName = ConfigurationManager.AppSettings["ProjectName"];
     public static string ProjectDescription = "Translate " + ProjectName + " into other languages!";
     public static bool OpenRegistrationAllowed = ConfigurationManager.AppSettings["EnableOpenRegistration"] != "false";

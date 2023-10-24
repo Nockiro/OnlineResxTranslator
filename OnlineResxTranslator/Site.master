@@ -133,7 +133,6 @@
                 </div>
             </footer>
         </div>
-        <friendlyUrls:ViewSwitcher ID="ViewSwitcher1" runat="server" />
     </form>
 
     <!-- Load Javascript for spoiler boxes -->
