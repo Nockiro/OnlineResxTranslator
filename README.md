@@ -25,7 +25,11 @@ Problems I've encountered:
 - If Visual Studio doesn't find certain classes in certain namespaces ("type or namespace name 'bla' does not exist in the namespace 'Microsoft'" or similar) or complains about not finding csc.exe, run `Update-Package -reinstall` in the nuget package manager console, this way the project is forced to get all important packages again 
 - If a translation file doesn't exist (e.g. because you imported an already translated language and the platform did not generate the files itself), hit the recalculate (⟳) button, the recalculation process will automatically create all not yet existing translation files
 - You don't see a resource for translation although it's in the corresponding file: Check if the type of resource is excluded by the plaform in `XMLFile#NotArgs[]`
+- The site looks weird or requesting ~/Content/css results in a 404: Restart your VS instance (or IIS App Pool)
+- There are compilation errors complaining about a wrong version of .NET Framwork or C#:
+  Using `targetFramework="4.7"` (as attribute in the httpRuntime/compilation node) and `/langversion:9.0` (as c# `compilerOptions` flat) in your Web.config should be enough.
+  Be aware though that the plan for this project is to be upgraded to .NET Core in the future.
 
 ## Credits and Misc.
-The fundamentals and idea I was originally starting to work from were taken from the (~already archived~ now only viewable via Web Archive) "[ResX Translation Helper](https://web.archive.org/web/20180428060409/https://archive.codeplex.com/?p=resx)", which was licensed under the GPLv2 as therefore this project is, too.  
-If you have suggestions or wishes, just open an issue and I'll have a look at it, if you have questions, don't hesitate to write me.
+- The fundamentals and idea I was originally starting to work from were taken from the (~already archived~ now only viewable via Web Archive) "[ResX Translation Helper](https://web.archive.org/web/20180428060409/https://archive.codeplex.com/?p=resx)", which was licensed under the GPLv2 as therefore this project is, too.  
+- If you have suggestions or ideas, just open an issue and I'll have a look at it, if you have questions, don't hesitate to write me.
