@@ -53,9 +53,10 @@
                                 <li class="nav-item dropdown" data-bs-theme="light">
                                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="projectchoose" aria-expanded="false">Projects</a>
                                     <div class="dropdown-menu" aria-labelledby="projectchoose">
-                                        <asp:Repeater runat="server" ID="projectList" ItemType="ProjectHelper.ProjectInfo">
+                                        <asp:Repeater runat="server" ID="projectList" ItemType="SiteMaster.UserProjectListItem">
                                             <ItemTemplate>
-                                                <asp:LinkButton CssClass="dropdown-item" OnCommand="SelectProject" CommandArgument="<%# Item.ID %>" Text="<%# Item.Name %>" runat="server"></asp:LinkButton>
+                                                <asp:LinkButton CssClass="dropdown-item" OnCommand="SelectProject" CommandArgument="<%# Item.Id %>"
+                                                                Text='<%# Item.DisplayName  + (Item.IsActive ? " (&#x1F5F8;)" : "") %>' runat="server"></asp:LinkButton>
 
                                             </ItemTemplate>
                                         </asp:Repeater>
@@ -64,9 +65,10 @@
                                 <li class="nav-item dropdown" data-bs-theme="light" id="langList" runat="server">
                                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" id="langchoose" aria-expanded="false">Languages</a>
                                     <div class="dropdown-menu" aria-labelledby="langchoose">
-                                        <asp:Repeater runat="server" ID="rpt_languages" ItemType="System.Globalization.CultureInfo">
+                                        <asp:Repeater runat="server" ID="rpt_languages" ItemType="SiteMaster.UserLanguageListItem">
                                             <ItemTemplate>
-                                                <asp:LinkButton CssClass="dropdown-item" OnCommand="SelectLanguage" CommandArgument="<%# Item.TwoLetterISOLanguageName %>" Text="<%# Item.EnglishName %>" runat="server"></asp:LinkButton>
+                                                <asp:LinkButton CssClass="dropdown-item" OnCommand="SelectLanguage" CommandArgument="<%# Item.TwoLetterISOLanguageName %>" 
+                                                                Text='<%# Item.DisplayName + (Item.IsActive ? " (&#x1F5F8;)" : "") %>' runat="server"></asp:LinkButton>
                                             </ItemTemplate>
                                         </asp:Repeater>
                                     </div>
@@ -131,6 +133,7 @@
                 </div>
             </footer>
         </div>
+        <friendlyUrls:ViewSwitcher ID="ViewSwitcher1" runat="server" />
     </form>
 
     <!-- Load Javascript for spoiler boxes -->

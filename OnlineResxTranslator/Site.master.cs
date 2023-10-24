@@ -2,23 +2,60 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
+using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Identity;
+using static ProjectHelper;
 
 public partial class SiteMaster : MasterPage
 {
+    private static List<ProjectInfo> projects = getProjects();
+
     private const string AntiXsrfTokenKey = "__AntiXsrfToken";
     private const string AntiXsrfUserNameKey = "__AntiXsrfUserName";
     private string _antiXsrfTokenValue;
+    private List<UserProjectListItem> projectDropdownList;
+    private List<UserLanguageListItem> languageDropdownList;
 
-    public const string SiteVersion = "2.0.3";
+    public const string SiteVersion = "2.0.4";
     public static string ProjectName = ConfigurationManager.AppSettings["ProjectName"];
     public static string ProjectDescription = "Translate " + ProjectName + " into other languages!";
-    public static Boolean OpenRegistrationAllowed = ConfigurationManager.AppSettings["EnableOpenRegistration"] != "false";
-    public static List<ProjectHelper.ProjectInfo> projects = ProjectHelper.getProjects();
+    public static bool OpenRegistrationAllowed = ConfigurationManager.AppSettings["EnableOpenRegistration"] != "false";
+
+    /// <summary>
+    /// Represents one language that the list the user chooses from contains.
+    /// </summary>
+    protected internal class UserLanguageListItem
+    {
+        public string TwoLetterISOLanguageName { get; set; }
+        public string DisplayName { get; set; }
+        public bool IsActive { get; set; }
+
+        public UserLanguageListItem(CultureInfo cultureInfo)
+        {
+            TwoLetterISOLanguageName = cultureInfo.TwoLetterISOLanguageName;
+            DisplayName = cultureInfo.DisplayName;
+        }
+    }
+
+    /// <summary>
+    /// Represents one project that the list the user chooses from contains.
+    /// </summary>
+    protected internal class UserProjectListItem
+    {
+        public int Id { get; set; }
+        public string DisplayName { get; set; }
+        public bool IsActive { get; set; }
+
+        public UserProjectListItem(ProjectInfo projectInfo)
+        {
+            Id = projectInfo.ID;
+            DisplayName = projectInfo.Name;
+        }
+    }
 
     protected void SelectProject(object sender, CommandEventArgs e)
     {
@@ -26,12 +63,15 @@ public partial class SiteMaster : MasterPage
         // reset selected filename
         Session["SelectedFilename"] = null;
 
+        updateMenuActiveIndicators();
+
         Response.Redirect(Request.RawUrl);
     }
 
     protected void SelectLanguage(object sender, CommandEventArgs e)
     {
         Session["CurrentlyChosenLanguage"] = e.CommandArgument;
+        updateMenuActiveIndicators();
     }
 
     protected void Unnamed_LoggingOut(object sender, LoginCancelEventArgs e)
@@ -69,7 +109,8 @@ public partial class SiteMaster : MasterPage
             Response.Cookies.Set(responseCookie);
         }
 
-        Page.PreLoad += master_Page_PreLoad;
+        Page.PreLoad += Page_PreLoad;
+        Page.LoadComplete += Page_LoadComplete;
 
         if (Session["ErrorMessage"] != null && !String.IsNullOrEmpty(Session["ErrorMessage"].ToString()))
         {
@@ -86,33 +127,21 @@ public partial class SiteMaster : MasterPage
         }
     }
 
-    protected void Page_Load(object sender, EventArgs e)
+    private void Page_LoadComplete(object sender, EventArgs e)
     {
-        Repeater projectListRepeater = (Repeater)loginview1.FindControl("projectList");
-
-        // after a LOT of not getting why everything in asp has to be so completly idiotic I don't care if the user is logged in or not, just check if the element is there
-        if (projectListRepeater != null)
-        {
-            projectListRepeater.DataSource = Context.User.Identity.getUserProjects();
-            projectListRepeater.DataBind();
-        }
-
-        Repeater languageListRepeater = (Repeater)loginview1.FindControl("rpt_languages");
-
-        if (languageListRepeater != null)
-        {
-            List<CultureInfo> list = Context.User.Identity.getUserLanguages();
-            if (list.Count > 1)
-            {
-                languageListRepeater.DataSource = list;
-                languageListRepeater.DataBind();
-            }
-            else
-                loginview1.FindControl("langList").Visible = false;
-        }
+        initializeMenu();
     }
 
-    protected void master_Page_PreLoad(object sender, EventArgs e)
+    private void Page_Load(object sender, EventArgs e)
+    {
+        updateLanguageDropdownList();
+        updateProjectDropdownList();
+
+        initializeMenu();
+        updateMenuActiveIndicators();
+    }
+
+    private void Page_PreLoad(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
@@ -128,6 +157,58 @@ public partial class SiteMaster : MasterPage
             {
                 throw new InvalidOperationException("Fehler bei der Überprüfung des Anti-XSRF-Tokens.");
             }
+        }
+    }
+
+    private void initializeMenu()
+    {
+        Repeater projectListRepeater = (Repeater)loginview1.FindControl("projectList");
+
+        // after a LOT of not getting why everything in asp has to be so completly idiotic I don't care if the user is logged in or not, just check if the element is there
+        if (projectListRepeater != null)
+        {
+            projectListRepeater.DataSource = projectDropdownList;
+            projectListRepeater.DataBind();
+        }
+
+        Repeater languageListRepeater = (Repeater)loginview1.FindControl("rpt_languages");
+        if (languageListRepeater == null)
+            return;
+
+        if (languageDropdownList.Count > 1)
+        {
+            languageListRepeater.DataSource = languageDropdownList;
+            languageListRepeater.DataBind();
+        }
+        else
+            loginview1.FindControl("langList").Visible = false;
+    }
+
+    private void updateLanguageDropdownList()
+    {
+        List<CultureInfo> cultureInfos = Context.User.Identity.getUserLanguages();
+        languageDropdownList = cultureInfos.Select(cultureInfo => new UserLanguageListItem(cultureInfo)).ToList();
+    }
+
+    private void updateProjectDropdownList()
+    {
+        List<ProjectInfo> userProjects = Context.User.Identity.getUserProjects();
+        projectDropdownList = userProjects.Select(projectInfo => new UserProjectListItem(projectInfo)).ToList();
+    }
+
+    private void updateMenuActiveIndicators()
+    {
+        ProjectInfo currentUserProject = (ProjectInfo)Session["CurrentlyChosenProject"];
+        string currentUserLanguage = Context.User.Identity.getUserLanguage(Session);
+
+        foreach (UserProjectListItem projectItem in projectDropdownList)
+        {
+            projectItem.IsActive = projectItem.Id == currentUserProject.ID;
+        }
+
+        foreach (UserLanguageListItem languageItem in languageDropdownList)
+        {
+            languageItem.IsActive = currentUserLanguage.Equals(languageItem.TwoLetterISOLanguageName);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Identity
         /// </summary>
         /// <param name="Identity">The users current identity</param>
         /// <param name="Session">The current page session</param>
+        /// <returns>Two Letter ISO Code of the current user language</returns>
         public static string getUserLanguage(this IIdentity Identity, HttpSessionState Session)
         {
             if (Session["CurrentlyChosenLanguage"] == null || String.IsNullOrEmpty((string)Session["CurrentlyChosenLanguage"]) || (string)Session["CurrentlyChosenLanguage"] == "iv")
